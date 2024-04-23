@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:franz/new_transcription_dialogue.dart';
 import 'package:franz/pages/about.dart';
 import 'package:franz/pages/contact.dart';
 import 'package:franz/pages/settings.dart';
@@ -61,7 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(context: context, builder: (_) => const NewTransDialogue());
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),

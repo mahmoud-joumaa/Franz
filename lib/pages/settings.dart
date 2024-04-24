@@ -118,34 +118,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           Container(
             alignment: Alignment.centerLeft,
-            child: Card(
-              child: const Column(
+            child: const Card(
+              child: Column(
                 children: [
                 ],
               ),
             ),
           ),
-          Expanded(
-            child: Card(
-              child: Container(
-                child: Column(
-                  children: [
-                    Container(
-                      alignment: Alignment.centerLeft,
-                        child: Icon(Icons.warning, size: 60,)
-                    ),
-                    Spacer(),
-                    Row(
-                      children: [
-                        TextButton(onPressed: () => displayWarning(disableAccount),
-                            child: Text("Disable Account")),
-                        Spacer(),
-                        TextButton(onPressed: () => displayWarning(deleteAccount),
-                            child: Text("Delete Account")),
-                      ],
-                    ),
-                  ],
-                ),
+          Card(
+            child: Container(
+              child: Column(
+                children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Icon(Icons.warning, size: 40, color: Colors.red,),
+                          Text("DANGER ZONE", style: TextStyle(color: Colors.red),),
+                        ],
+                      )
+                  ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: [
+                      TextButton(onPressed: () => displayWarning(disableAccount),
+                          child: Text("Disable Account")),
+                      Spacer(),
+                      TextButton(onPressed: () => displayWarning(deleteAccount),
+                          child: Text("Delete Account")),
+                    ],
+                  ),
+                ],
               ),
             ),
           )

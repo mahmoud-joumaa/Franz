@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
+// TODO: maybe support downloading local pdfs and loading them
+
 class ApiService {
   Future<String> loadPDF(String pdfUrl) async {
     var response = await http.get(Uri.parse(pdfUrl));

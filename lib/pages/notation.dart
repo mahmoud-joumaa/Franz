@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:franz/components/audio_player.dart';
 import 'package:franz/services/api_service.dart';
-// import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class SheetMusicViewerScreen extends StatefulWidget {
   final String link;
@@ -26,7 +26,6 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     ApiService().loadPDF(widget.link).then((value) {
       setState(() {
@@ -42,20 +41,29 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            const Text("Sheet Music Viewer"),
-            Text(widget.link),
-            Text(errorMessage),
-            Expanded(
-              child: _localFilePath == ""
-                  ? const Center(child: CircularProgressIndicator())
-                  : PDFView(
-                    filePath: _localFilePath,
-                  ),
-            ),
-          ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            children: [
+              const Text("Sheet Music Viewer"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(widget.link),
+                  AudioPlayerButton(),
+                ],
+              ),
+              Text(errorMessage),
+              Expanded(
+                child: _localFilePath == ""
+                    ? const Center(child: CircularProgressIndicator())
+                    : PDFView(
+                      filePath: _localFilePath,
+                    ),
+              ),
+            ],
+          ),
         ),
       ),
     );

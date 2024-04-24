@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:franz/components/audio_player.dart';
 import 'package:franz/pages/notation.dart';
 
 class TranscribeScreen extends StatefulWidget {
@@ -257,10 +258,7 @@ class TransriptionRow extends StatelessWidget {
             );
           },
         ),
-        TextButton(
-          child: const Icon(Icons.play_arrow),
-          onPressed: () {},
-        ),
+        AudioPlayerButton(),
       ],
     );
   }

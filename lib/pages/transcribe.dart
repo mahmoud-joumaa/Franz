@@ -13,12 +13,12 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
     {
       "title": "weak and powerless",
       "date": "today",
-      "link": "https://www.jalal.com"
+      "link": "https://arxiv.org/pdf/2111.03017v4.pdf"
     },
     {
       "title": "weak and powerless",
       "date": "today",
-      "link": "https://www.jalal.com"
+      "link": "assets/1205.2618.pdf"
     },
     {
       "title": "weak and powerless",

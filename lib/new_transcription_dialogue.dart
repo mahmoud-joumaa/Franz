@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
 class NewTransDialogue extends StatefulWidget {
   const NewTransDialogue({super.key});
@@ -10,6 +11,22 @@ class NewTransDialogue extends StatefulWidget {
 class _NewTransDialogueState extends State<NewTransDialogue> {
   String _mode = "Audio";
   String _instrument = "Piano";
+  String _selectedFileName = "";
+
+  void _pickFile() async {
+    // Open the file picker and allow multiple file selection
+    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+
+    // Check if any file was picked
+    if (result != null) {
+      // You can access the picked files using result.files
+      // For example, to print the name of the first picked file
+      print(result.files.first.name);
+      setState(() {
+        _selectedFileName = result.files.first.name;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +56,16 @@ class _NewTransDialogueState extends State<NewTransDialogue> {
                 maintainState: true,
                 visible: _mode == "Audio",
                 child: TextButton(
+                  onPressed: _pickFile,
                   child: const Text("Choose file"),
-                  onPressed: () {},
                 ),
+              ),
+              Visibility(
+                maintainSize: false,
+                maintainAnimation: true,
+                maintainState: true,
+                visible: _selectedFileName != "",
+                child: Text(_selectedFileName),
               ),
               const SizedBox(height: 5),
               RadioListTile(

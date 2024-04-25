@@ -26,8 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               CircleAvatar(
                 radius: 50,
-                backgroundImage: NetworkImage(
-                    'https://img.freepik.com/free-psd/psd-old-paper-scroll-ancient-papyrus-isolated-background_1409-3501.jpg?w=740&t=st=1713952057~exp=1713952657~hmac=ce56805bc7ce6b65963748c164242610cf2b034a1cb55f3c20e51b9d8962eb08'),
+                backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb5ay974Ak1bGFIDStEQaYK7qK60bzbbmczDft-ao-Xw&s'),
               ),
               SizedBox(width: 30,),
               Column(
@@ -42,7 +41,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Card(
             child: Container(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
+              child:
+              Column(
                 children: [
                   Row(
                     children: [
@@ -87,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Card(
                     color: Colors.grey[200],
                     child: Container(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: [
                           TextField(
@@ -101,10 +101,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Row(
                             children: [
                               TextButton(
-                                  onPressed: () => usernameController.text = "USERNAME", child: Text("Cancel")),
+                                  onPressed: () => usernameController.text = "USERNAME", child: const Text("Cancel")),
                               const Spacer(),
                               TextButton(
-                                  onPressed: confirmUsername, child: Text("Confirm")),
+                                  onPressed: confirmUsername, child: const Text("Confirm")),
                             ],
                           )
                         ],
@@ -126,30 +126,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           Card(
-            child: Container(
-              child: Column(
-                children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: [
-                          Icon(Icons.warning, size: 40, color: Colors.red,),
-                          Text("DANGER ZONE", style: TextStyle(color: Colors.red),),
-                        ],
-                      )
-                  ),
-                  SizedBox(height: 20,),
-                  Row(
-                    children: [
-                      TextButton(onPressed: () => displayWarning(disableAccount),
-                          child: Text("Disable Account")),
-                      Spacer(),
-                      TextButton(onPressed: () => displayWarning(deleteAccount),
-                          child: Text("Delete Account")),
-                    ],
-                  ),
-                ],
-              ),
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.centerLeft,
+                    child: const Row(
+                      children: [
+                        Icon(Icons.warning, size: 40, color: Colors.red,),
+                        Text("DANGER ZONE", style: TextStyle(color: Colors.red),),
+                      ],
+                    )
+                ),
+                const SizedBox(height: 20,),
+                Row(
+                  children: [
+                    TextButton(onPressed: () => displayWarning(disableAccount),
+                        child: const Text("Disable Account")),
+                    const Spacer(),
+                    TextButton(onPressed: () => displayWarning(deleteAccount),
+                        child: const Text("Delete Account")),
+                  ],
+                ),
+              ],
             ),
           )
         ],
@@ -180,12 +178,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               builder: (BuildContext context, StateSetter setState) {
                 return AlertDialog(
                   title: const Text("DANGER ZONE"),
-                  content: Container(
+                  content: SizedBox(
                     width: 300,
                     height: 100,
                     child: Column(
                       children: [
-                        Spacer(),
+                        const Spacer(),
                         const Row(
                           children: [
                             Icon(Icons.warning),
@@ -194,7 +192,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ],
                         ),
-                        Spacer(),
+                        const Spacer(),
                         Row(
                           children: [
                             TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),

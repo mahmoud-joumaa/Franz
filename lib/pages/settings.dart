@@ -12,8 +12,8 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String language = "English";
   bool isDarkMode = false;
-  final TextEditingController usernameController = TextEditingController(
-      text: "USERNAME");
+  final TextEditingController usernameController =
+      TextEditingController(text: "USERNAME");
 
   @override
   Widget build(BuildContext context) {
@@ -27,24 +27,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb5ay974Ak1bGFIDStEQaYK7qK60bzbbmczDft-ao-Xw&s'),
+                  backgroundImage: NetworkImage(
+                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb5ay974Ak1bGFIDStEQaYK7qK60bzbbmczDft-ao-Xw&s'),
                 ),
-                SizedBox(width: 30,),
+                SizedBox(
+                  width: 30,
+                ),
                 Column(
                   children: [
-                    Text("Welcome,", style: TextStyle(fontSize: 20),),
-                    Text("Username"),
+                    Text(
+                      "Welcome,",
+                    ),
+                    Text(
+                      "Username",
+                      style: TextStyle(fontSize: 20),
+                    ),
                   ],
                 )
               ],
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             Card(
               child: Container(
                 padding: const EdgeInsets.all(16.0),
                 height: 270,
-                child:
-                Column(
+                child: Column(
                   children: [
                     Row(
                       children: [
@@ -62,8 +71,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   language = newValue!;
                                 });
                               },
-                              items: <String>['English', 'Arabic', 'Spanish']
-                                  .map<DropdownMenuItem<String>>((String value) {
+                              items: <String>[
+                                'English',
+                                'Arabic',
+                                'Spanish'
+                              ].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),
@@ -72,8 +84,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 20,),
-                        const Icon(Icons.wb_sunny, color: Colors.orange,),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        const Icon(
+                          Icons.wb_sunny,
+                          color: Colors.orange,
+                        ),
                         Switch(
                           value: isDarkMode,
                           onChanged: (value) {
@@ -82,10 +99,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             });
                           },
                         ),
-                        const Icon(Icons.nights_stay, color: Colors.black,),
+                        const Icon(
+                          Icons.nights_stay,
+                          color: Colors.black,
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     Expanded(
                       child: Card(
                         color: Colors.grey[200],
@@ -103,16 +125,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Row(
                                 children: [
                                   TextButton(
-                                      onPressed: () => usernameController.text = "USERNAME", child: const Text("Cancel")),
+                                      onPressed: () =>
+                                          usernameController.text = "USERNAME",
+                                      child: const Text("Cancel")),
                                   const Spacer(),
                                   TextButton(
-                                      onPressed: confirmUsername, child: const Text("Confirm")),
+                                    onPressed: confirmUsername,
+                                    child: const Text("Confirm"),
+                                  ),
                                 ],
                               )
                             ],
                           ),
                         ),
-                      
                       ),
                     ),
                   ],
@@ -120,25 +145,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Card(
-              child: Container(
-                height: 100,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
                     Container(
-                      alignment: Alignment.centerLeft,
+                        alignment: Alignment.centerLeft,
                         child: const Row(
                           children: [
-                            Icon(Icons.warning, size: 40, color: Colors.red,),
-                            Text("DANGER ZONE", style: TextStyle(color: Colors.red),),
+                            Icon(
+                              Icons.warning,
+                              size: 40,
+                              color: Colors.red,
+                            ),
+                            Text(
+                              "DANGER ZONE",
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ],
-                        )
-                    ),
+                        )),
                     Row(
                       children: [
-                        TextButton(onPressed: () => displayWarning(disableAccount),
+                        TextButton(
+                            onPressed: () => displayWarning(disableAccount),
                             child: const Text("Disable Account")),
                         const Spacer(),
-                        TextButton(onPressed: () => displayWarning(deleteAccount),
+                        TextButton(
+                            onPressed: () => displayWarning(deleteAccount),
                             child: const Text("Delete Account")),
                       ],
                     ),
@@ -156,7 +189,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     print("CONFIRMUSERNAME FUNCTION");
   }
 
-
   void disableAccount() {
     print("DISABLE FUNCTION");
     Navigator.pop(context);
@@ -173,39 +205,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
         builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-                return AlertDialog(
-                  title: const Text("DANGER ZONE", style: TextStyle(color: Colors.red),),
-                  content: SizedBox(
-                    width: 300,
-                    height: 100,
-                    child: Column(
+            return AlertDialog(
+              title: const Text(
+                "DANGER ZONE",
+                style: TextStyle(color: Colors.red),
+              ),
+              content: SizedBox(
+                width: 300,
+                height: 100,
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    Row(
                       children: [
-                        const Spacer(),
-                        Row(
-                          children: [
-                            Container(margin: const EdgeInsets.only(right: 10),child: const Icon(Icons.warning, color: Colors.red)),
-                            const Flexible(
-                              child: Text(
-                                "Are you sure you want to proceed?",
-                              ),
-                            ),
-                          ],
+                        Container(
+                            margin: const EdgeInsets.only(right: 10),
+                            child:
+                                const Icon(Icons.warning, color: Colors.red)),
+                        const Flexible(
+                          child: Text(
+                            "Are you sure you want to proceed?",
+                          ),
                         ),
-                        const Spacer(),
-                        Row(
-                          children: [
-                            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-                            const Spacer(),
-                            TextButton(onPressed: func, child: const Text("Proceed", style: TextStyle(color: Colors.red),)),
-                          ],
-                        )
                       ],
                     ),
-                  ),
-                );
-              }
-          );
-        }
-    );
+                    const Spacer(),
+                    Row(
+                      children: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Cancel")),
+                        const Spacer(),
+                        TextButton(
+                            onPressed: func,
+                            child: const Text(
+                              "Proceed",
+                              style: TextStyle(color: Colors.red),
+                            )),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          });
+        });
   }
 }

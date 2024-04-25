@@ -63,7 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(context: context, builder: (_) => const NewTransDialogue());
+          showDialog(
+              context: context, builder: (_) => const NewTransDialogue());
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),

@@ -116,38 +116,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          Container(
-            alignment: Alignment.centerLeft,
-            child: const Card(
+          Expanded(
+            child: Card(
               child: Column(
                 children: [
+                  Container(
+                    alignment: Alignment.centerLeft,
+                      child: const Row(
+                        children: [
+                          Icon(Icons.warning, size: 40, color: Colors.red,),
+                          Text("DANGER ZONE", style: TextStyle(color: Colors.red),),
+                        ],
+                      )
+                  ),
+                  Row(
+                    children: [
+                      TextButton(onPressed: () => displayWarning(disableAccount),
+                          child: const Text("Disable Account")),
+                      const Spacer(),
+                      TextButton(onPressed: () => displayWarning(deleteAccount),
+                          child: const Text("Delete Account")),
+                    ],
+                  ),
                 ],
               ),
-            ),
-          ),
-          Card(
-            child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.centerLeft,
-                    child: const Row(
-                      children: [
-                        Icon(Icons.warning, size: 40, color: Colors.red,),
-                        Text("DANGER ZONE", style: TextStyle(color: Colors.red),),
-                      ],
-                    )
-                ),
-                const SizedBox(height: 20,),
-                Row(
-                  children: [
-                    TextButton(onPressed: () => displayWarning(disableAccount),
-                        child: const Text("Disable Account")),
-                    const Spacer(),
-                    TextButton(onPressed: () => displayWarning(deleteAccount),
-                        child: const Text("Delete Account")),
-                  ],
-                ),
-              ],
             ),
           )
         ],
@@ -177,18 +169,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
                 return AlertDialog(
-                  title: const Text("DANGER ZONE"),
+                  title: const Text("DANGER ZONE", style: TextStyle(color: Colors.red),),
                   content: SizedBox(
                     width: 300,
                     height: 100,
                     child: Column(
                       children: [
                         const Spacer(),
-                        const Row(
+                        Row(
                           children: [
-                            Icon(Icons.warning),
-                            Text(
-                              "Are you sure you want to proceed?"
+                            Container(margin: const EdgeInsets.only(right: 10),child: const Icon(Icons.warning, color: Colors.red)),
+                            const Flexible(
+                              child: Text(
+                                "Are you sure you want to proceed?",
+                              ),
                             ),
                           ],
                         ),

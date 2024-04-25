@@ -24,7 +24,8 @@ class _ContactScreenState extends State<ContactScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(margin: const EdgeInsets.only(right: 50), child: const Text("Rating", style: TextStyle(fontSize: 30))),
+              const Text("Rating", style: TextStyle(fontSize: 30)),
+              const Spacer(),
               IconButton(onPressed: (){setState(() {rating = 1;});}, icon: Icon(rating > 0 ? Icons.star : Icons.star_border, color: Colors.orange, size: 30,)),
               IconButton(onPressed: (){setState(() {rating = 2;});}, icon: Icon(rating > 1 ? Icons.star : Icons.star_border, color: Colors.orange, size: 30,)),
               IconButton(onPressed: (){setState(() {rating = 3;});}, icon: Icon(rating > 2 ? Icons.star : Icons.star_border, color: Colors.orange, size: 30,)),

@@ -14,7 +14,7 @@ class TranscribeScreen extends StatefulWidget {
 
 class _TranscribeScreenState extends State<TranscribeScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  UniqueKey? _currentPlaying = null;
+  UniqueKey? _currentPlaying;
 
   List<Map<String, dynamic>> info = [
     {
@@ -31,26 +31,55 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
     },
   ];
 
+  // void changePlayer(UniqueKey key, String audioUrl) {
+  //   print(">> current id playing: $_currentPlaying");
+  //   print(">> requesting id: $key");
+  //   print(">> requesting url: $audioUrl");
+  //   print(">> current player state: ${_audioPlayer.state.toString()}");
+  //   print("\n");
+  //   setState(() async {
+  //     if (key == _currentPlaying) {
+  //       if (_audioPlayer.state == PlayerState.playing) {
+  //         await _audioPlayer.pause();
+  //       } else if (_audioPlayer.state == PlayerState.paused) {
+  //         await _audioPlayer.resume();
+  //       }
+  //     } else {
+  //       await _audioPlayer.stop();
+  //       await _audioPlayer.setSourceUrl(audioUrl);
+  //       await _audioPlayer.setVolume(1);
+  //       await _audioPlayer.resume();
+  //       _currentPlaying = key;
+  //     }
+  //   });
+  // }
+
   void changePlayer(UniqueKey key, String audioUrl) {
     print(">> current id playing: $_currentPlaying");
     print(">> requesting id: $key");
     print(">> requesting url: $audioUrl");
     print(">> current player state: ${_audioPlayer.state.toString()}");
     print("\n");
-    setState(() async {
-      if (key == _currentPlaying) {
-        if (_audioPlayer.state == PlayerState.playing) {
-          await _audioPlayer.pause();
-        } else if (_audioPlayer.state == PlayerState.paused) {
-          await _audioPlayer.resume();
-        }
-      } else {
-        await _audioPlayer.stop();
-        await _audioPlayer.setSourceUrl(audioUrl);
-        await _audioPlayer.setVolume(1);
-        await _audioPlayer.resume();
-        _currentPlaying = key;
+
+    if (key == _currentPlaying) {
+      if (_audioPlayer.state == PlayerState.playing) {
+        _audioPlayer.pause();
+      } else if (_audioPlayer.state == PlayerState.paused) {
+        _audioPlayer.resume();
       }
+    } else {
+      _handleNewAudioSource(key, audioUrl);
+    }
+  }
+
+  Future<void> _handleNewAudioSource(UniqueKey key, String audioUrl) async {
+    await _audioPlayer.stop();
+    await _audioPlayer.setSourceUrl(audioUrl);
+    await _audioPlayer.setVolume(1);
+    await _audioPlayer.resume();
+
+    setState(() {
+      _currentPlaying = key;
     });
   }
 
@@ -84,6 +113,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
                   audioLink: info[index]["audioLink"],
                   audioPlayer: _audioPlayer,
                   changePlayerState: changePlayer,
+                  currentPlayingKey: _currentPlaying,
                 );
               },
             ),
@@ -101,6 +131,7 @@ class TransriptionRow extends StatelessWidget {
   final String audioLink;
   final AudioPlayer audioPlayer;
   final Function changePlayerState;
+  final UniqueKey? currentPlayingKey;
 
   const TransriptionRow({
     super.key,
@@ -110,6 +141,7 @@ class TransriptionRow extends StatelessWidget {
     required this.audioLink,
     required this.audioPlayer,
     required this.changePlayerState,
+    required this.currentPlayingKey,
   });
 
   @override
@@ -137,6 +169,7 @@ class TransriptionRow extends StatelessWidget {
         NewAudioPlayerButton(
           changePlayerState: changePlayerState,
           audioLink: audioLink,
+          playingKey: currentPlayingKey,
         ),
       ],
     );

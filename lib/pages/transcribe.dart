@@ -150,26 +150,32 @@ class TransriptionRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title),
-        Text(date),
-        TextButton(
-          child: const Icon(Icons.file_copy),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SheetMusicViewerScreen(
-                  link: transcriptionLink,
-                  title: title,
+        Expanded(flex: 5, child: Text(title),),
+        Expanded(flex: 3, child: Text(date),),
+        Expanded(
+          flex: 1,
+          child: TextButton(
+            child: const Icon(Icons.file_copy),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SheetMusicViewerScreen(
+                    link: transcriptionLink,
+                    title: title,
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
-        NewAudioPlayerButton(
-          changePlayerState: changePlayerState,
-          audioLink: audioLink,
-          playingKey: currentPlayingKey,
+        Expanded(
+          flex: 1,
+          child: NewAudioPlayerButton(
+            changePlayerState: changePlayerState,
+            audioLink: audioLink,
+            playingKey: currentPlayingKey,
+          ),
         ),
       ],
     );

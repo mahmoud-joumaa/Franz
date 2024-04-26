@@ -15,6 +15,7 @@ class TranscribeScreen extends StatefulWidget {
 class _TranscribeScreenState extends State<TranscribeScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   UniqueKey? _currentPlaying;
+  String _searchValue = "";
 
   List<Map<String, dynamic>> info = [
     {
@@ -75,6 +76,11 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
                 border: const OutlineInputBorder(),
                 label: const Text("Search your transcriptions"),
               ),
+              onChanged: (value) {
+                setState(() {
+                  _searchValue = value;
+                });
+              },
             ),
           ),
           Expanded(
@@ -83,14 +89,19 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
               separatorBuilder: (context, index) => const Divider(),
               itemCount: info.length,
               itemBuilder: (context, index) {
-                return TransriptionRow(
-                  title: info[index]["title"],
-                  date: info[index]["date"],
-                  transcriptionLink: info[index]["transcriptionLink"],
-                  audioLink: info[index]["audioLink"],
-                  audioPlayer: _audioPlayer,
-                  changePlayerState: changePlayer,
-                  currentPlayingKey: _currentPlaying,
+                return Visibility(
+                  visible:
+                      info[index]["title"].toString().contains(_searchValue),
+                  maintainSize: false,
+                  child: TransriptionRow(
+                    title: info[index]["title"],
+                    date: info[index]["date"],
+                    transcriptionLink: info[index]["transcriptionLink"],
+                    audioLink: info[index]["audioLink"],
+                    audioPlayer: _audioPlayer,
+                    changePlayerState: changePlayer,
+                    currentPlayingKey: _currentPlaying,
+                  ),
                 );
               },
             ),
@@ -126,8 +137,14 @@ class TransriptionRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(flex: 5, child: Text(title),),
-        Expanded(flex: 3, child: Text(date),),
+        Expanded(
+          flex: 5,
+          child: Text(title),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(date),
+        ),
         Expanded(
           flex: 1,
           child: TextButton(

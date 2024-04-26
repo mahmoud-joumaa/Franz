@@ -16,12 +16,6 @@ class _WelcomeState extends State<Welcome> {
   // Toggle between the two tabs
   static bool? isLogin;
 
-  // Form Inputs
-
-  static void clearInputs() {
-
-  }
-
   @override
   void initState() { // TODO: Add authentication logic here
     super.initState();
@@ -30,6 +24,8 @@ class _WelcomeState extends State<Welcome> {
 
   @override
   Widget build(BuildContext context) {
+
+    // Form Inputs Start ==========================================================================
 
     final TextEditingController loginEmailController = TextEditingController();
     final TextEditingController loginPasswordController = TextEditingController();
@@ -44,6 +40,8 @@ class _WelcomeState extends State<Welcome> {
     final signupEmail = InputField(type: "email", controller: signUpEmailController);
     final signupPassword = InputField(type: "password", controller: signUpPasswordController);
     final signupConfirmPassword = InputField(type: "password", controller: signUpConfirmPasswordController);
+
+    // Form Inputs End ============================================================================
 
     return Scaffold(
       backgroundColor: Colors.orange[800],
@@ -259,7 +257,7 @@ class _SubmitButtonState extends State<SubmitButton> {
           // TODO: Sign in with Google
         }
         setState(() {isLoading = false;});
-        await Future.delayed(const Duration(milliseconds: 500), _WelcomeState.clearInputs);
+        // await Future.delayed(const Duration(milliseconds: 500), _WelcomeState.clearInputs); FIXME: Add proper clearInputs() logic
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(Colors.white),

@@ -31,29 +31,6 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
     },
   ];
 
-  // void changePlayer(UniqueKey key, String audioUrl) {
-  //   print(">> current id playing: $_currentPlaying");
-  //   print(">> requesting id: $key");
-  //   print(">> requesting url: $audioUrl");
-  //   print(">> current player state: ${_audioPlayer.state.toString()}");
-  //   print("\n");
-  //   setState(() async {
-  //     if (key == _currentPlaying) {
-  //       if (_audioPlayer.state == PlayerState.playing) {
-  //         await _audioPlayer.pause();
-  //       } else if (_audioPlayer.state == PlayerState.paused) {
-  //         await _audioPlayer.resume();
-  //       }
-  //     } else {
-  //       await _audioPlayer.stop();
-  //       await _audioPlayer.setSourceUrl(audioUrl);
-  //       await _audioPlayer.setVolume(1);
-  //       await _audioPlayer.resume();
-  //       _currentPlaying = key;
-  //     }
-  //   });
-  // }
-
   void changePlayer(UniqueKey key, String audioUrl) {
     print(">> current id playing: $_currentPlaying");
     print(">> requesting id: $key");
@@ -146,7 +123,6 @@ class TransriptionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: make this flex 4 3 1 1
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:franz/components/audio_player.dart';
@@ -22,7 +23,8 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
   int currentPage = 0;
   bool isReady = false;
   String errorMessage = '';
-  String _localFilePath ="";
+  String _localFilePath = "";
+  AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -51,7 +53,11 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(widget.link),
-                  AudioPlayerButton(),
+                  AudioPlayerButton(
+                    audioPlayer: _audioPlayer,
+                    audioUrl:
+                        "https://filesamples.com/samples/audio/mp3/sample2.mp3",
+                  ),
                 ],
               ),
               Text(errorMessage),
@@ -59,8 +65,8 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
                 child: _localFilePath == ""
                     ? const Center(child: CircularProgressIndicator())
                     : PDFView(
-                      filePath: _localFilePath,
-                    ),
+                        filePath: _localFilePath,
+                      ),
               ),
             ],
           ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:franz/new_transcription_dialogue.dart';
-import 'package:franz/pages/about.dart';
-import 'package:franz/pages/contact.dart';
-import 'package:franz/pages/settings.dart';
-import 'package:franz/pages/transcribe.dart';
+import 'package:franz/pages/home/new_transcription_dialogue.dart';
+import 'package:franz/pages/home/about.dart';
+import 'package:franz/pages/home/contact.dart';
+import 'package:franz/pages/home/settings.dart';
+import 'package:franz/pages/home/transcribe.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});

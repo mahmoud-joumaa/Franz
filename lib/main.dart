@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:franz/home.dart';
-import 'package:franz/welcome.dart';
+import 'package:franz/pages/home/home.dart';
+import 'package:franz/pages/welcome.dart';
 
 void main() {
   runApp(

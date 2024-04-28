@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:franz/pages/notation.dart';
+import 'package:franz/pages/home/notation.dart';
 
 class TranscribeScreen extends StatefulWidget {
   const TranscribeScreen({super.key});

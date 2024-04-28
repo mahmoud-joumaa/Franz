@@ -47,7 +47,7 @@ class _WelcomeState extends State<Welcome> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Colors.orange[800],
+      backgroundColor: Colors.deepPurple[500],
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
@@ -100,7 +100,7 @@ class _WelcomeState extends State<Welcome> {
                 child: Container(
                   padding: const EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
-                    color: Colors.orange[500]!,
+                    color: Colors.deepPurple[200],
                     borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
                   child: Column(
@@ -124,7 +124,7 @@ class _WelcomeState extends State<Welcome> {
                         ),
                       ),
                       SubmitButton(text: isLogin!?"Login with Email":"Sign Up with Email", type: isLogin!?"login":"signup"),
-                      SubmitButton(text: "Connect with Google", type: "google"),
+                      const SubmitButton(text: "Connect with Google", type: "google"),
                     ],
                   ),
                 ),
@@ -146,7 +146,7 @@ class _WelcomeState extends State<Welcome> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
           decoration: BoxDecoration(
-            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? Colors.orange[500]! : Colors.transparent,
+            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? Colors.deepPurple[200] : Colors.transparent,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
           ),
           child: Text(
@@ -243,7 +243,8 @@ class _SubmitButtonState extends State<SubmitButton> {
             // Validate password
             // TODO: Add validation logic
             // No error
-            // TODO: Add navigation logic
+            // COMBAK: Add proper navigation logic
+            Navigator.pushReplacementNamed(context, "HomeScreen");
             // Error
             // TODO: Add catch error logic
           }
@@ -251,7 +252,8 @@ class _SubmitButtonState extends State<SubmitButton> {
           else {
             // TODO: Add authentication logic
             // No error
-            // TODO: Add navigation logic
+            // COMBAK: Add proper navigation logic
+            Navigator.pushReplacementNamed(context, "HomeScreen");
             // Error
             // TODO: Add catch error logic
           }

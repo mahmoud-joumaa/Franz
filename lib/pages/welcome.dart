@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import 'package:franz/config.dart';
+
 // COMBAK: Fix the color scheme of the page
 
 // Form Inputs Start ==============================================================================
@@ -236,6 +238,7 @@ class _SubmitButtonState extends State<SubmitButton> {
     return ElevatedButton(
       onPressed: () async {
         setState(() {isLoading = true;});
+        await Future.delayed(const Duration(seconds: 2), () {}); // COMBAK: DEBUGGING, remove later
         if (type != "google") {
           // User Sign Up
           if (!_WelcomeState.isLogin!) {
@@ -273,8 +276,7 @@ class _SubmitButtonState extends State<SubmitButton> {
           Icon(type=="google"?MdiIcons.google:type=="login"?Icons.login:type=="signup"?Icons.login:null,
           ),
           Expanded(
-            // child: isLoading ? Loading(color: UserTheme.isDark ? const Color(Palette.white) : const Color(Palette.black), backgroundColor: Colors.transparent, size: 20.0) : Text(text!, FIXME:  Add loading animation
-            child: Text(text,
+            child: isLoading ? Loading(color: UserTheme.isDark ? Colors.white : Colors.black, backgroundColor: Colors.transparent, size: 20.0) : Text(text,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13.0,

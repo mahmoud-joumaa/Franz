@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:franz/registration.dart';
+import 'package:franz/home.dart';
+import 'package:franz/welcome.dart';
 
 void main() {
   runApp(
@@ -11,7 +12,12 @@ void main() {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const Welcome(),
+      initialRoute: "WelcomeScreen",
+      routes: {
+        // "SplashScreen": (context) => const Splash(),
+        "WelcomeScreen": (context) => const Welcome(),
+        "HomeScreen": (context) => const MyHomePage(title: "title"),
+      }
     )
   );
 }

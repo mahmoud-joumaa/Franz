@@ -1,6 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+// COMBAK: Fix the color scheme of the page
+
+// Form Inputs Start ==============================================================================
+
+final TextEditingController loginEmailController = TextEditingController();
+final TextEditingController loginPasswordController = TextEditingController();
+final TextEditingController signUpUsernameController = TextEditingController();
+final TextEditingController signUpEmailController = TextEditingController();
+final TextEditingController signUpPasswordController = TextEditingController();
+final TextEditingController signUpConfirmPasswordController = TextEditingController();
+
+final loginUsername = InputField(type: "username", controller: loginEmailController);
+final loginPassword = InputField(type: "password", controller: loginPasswordController);
+final signupUsername = InputField(type: "username", controller: signUpUsernameController);
+final signupEmail = InputField(type: "email", controller: signUpEmailController);
+final signupPassword = InputField(type: "password", controller: signUpPasswordController);
+final signupConfirmPassword = InputField(type: "confirm password", controller: signUpConfirmPasswordController);
+
+// Form Inputs End ================================================================================
+
+// Welcome Page Start =============================================================================
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
 
@@ -10,10 +31,10 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
 
-  // Styling vars
+  // Styling constants
   final BorderSide tabBorder = const BorderSide(color: Colors.white, width: 2.5);
 
-  // Toggle between the two tabs
+  // Toggle between the two tabs (login & sign up)
   static bool? isLogin;
 
   @override
@@ -24,24 +45,6 @@ class _WelcomeState extends State<Welcome> {
 
   @override
   Widget build(BuildContext context) {
-
-    // Form Inputs Start ==========================================================================
-
-    final TextEditingController loginEmailController = TextEditingController();
-    final TextEditingController loginPasswordController = TextEditingController();
-    final TextEditingController signUpUsernameController = TextEditingController();
-    final TextEditingController signUpEmailController = TextEditingController();
-    final TextEditingController signUpPasswordController = TextEditingController();
-    final TextEditingController signUpConfirmPasswordController = TextEditingController();
-
-    final loginUsername = InputField(type: "username", controller: loginEmailController);
-    final loginPassword = InputField(type: "password", controller: loginPasswordController);
-    final signupUsername = InputField(type: "username", controller: signUpUsernameController);
-    final signupEmail = InputField(type: "email", controller: signUpEmailController);
-    final signupPassword = InputField(type: "password", controller: signUpPasswordController);
-    final signupConfirmPassword = InputField(type: "password", controller: signUpConfirmPasswordController);
-
-    // Form Inputs End ============================================================================
 
     return Scaffold(
       backgroundColor: Colors.orange[800],
@@ -81,12 +84,12 @@ class _WelcomeState extends State<Welcome> {
               Positioned(
                 top: 200,
                 left: 0,
-                child: tab("login"),
+                child: generateTab("login"),
               ),
               Positioned(
                 top: 400,
                 left: 0,
-                child: tab("sign up"),
+                child: generateTab("sign up"),
               ),
               // Login / Signup Forms
               Positioned(
@@ -99,7 +102,6 @@ class _WelcomeState extends State<Welcome> {
                   decoration: BoxDecoration(
                     color: Colors.orange[500]!,
                     borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                    // border: Border.all(color: Colors.white, width: 2.5),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,7 +123,8 @@ class _WelcomeState extends State<Welcome> {
                           ],
                         ),
                       ),
-                      SubmitButton(text: isLogin!?"Login":"Sign Up", type: isLogin!?"login":"signup"),
+                      SubmitButton(text: isLogin!?"Login with Email":"Sign Up with Email", type: isLogin!?"login":"signup"),
+                      SubmitButton(text: "Connect with Google", type: "google"),
                     ],
                   ),
                 ),
@@ -133,8 +136,9 @@ class _WelcomeState extends State<Welcome> {
     );
   }
 
-  Widget tab(String title) {
-    title = title.toLowerCase();
+  // Tab widget
+  Widget generateTab(String title) {
+    title = title.toLowerCase(); // Lowercase string for comparison
     return GestureDetector(
       onTap: () { setState(() { isLogin = title=="login"; }); },
       child: RotatedBox(
@@ -142,13 +146,8 @@ class _WelcomeState extends State<Welcome> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
           decoration: BoxDecoration(
-            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? Colors.orange[500]! : Colors.orange[800]!,
+            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? Colors.orange[500]! : Colors.transparent,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-            // border: Border(
-            //   top: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? tabBorder : BorderSide.none,
-            //   left: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? tabBorder : BorderSide.none,
-            //   right: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? tabBorder : BorderSide.none,
-            // ),
           ),
           child: Text(
             title.toUpperCase(),
@@ -163,7 +162,9 @@ class _WelcomeState extends State<Welcome> {
   }
 
 }
+// Welcome Page End ===============================================================================
 
+// Form Inputs Start ==============================================================================
 class InputField extends StatefulWidget {
 
   final String? type;
@@ -190,15 +191,15 @@ class _InputFieldState extends State<InputField> {
       decoration: InputDecoration(
         prefixIcon: type=="username" ? const Icon(Icons.account_circle_outlined) :
                     type=="email" ? const Icon(Icons.email_outlined) :
-                    type=="password" ? const Icon(Icons.lock_outlined) :
+                    type=="password" || type=="confirm password" ? const Icon(Icons.lock_outlined) :
                     null,
-        suffixIcon: type=="password" ? IconButton(icon: _hidePassword ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off), onPressed: () {setState(() {_hidePassword = !_hidePassword;});}) : null,
+        suffixIcon: type=="password" || type=="confirm password" ? IconButton(icon: _hidePassword ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off), onPressed: () {setState(() {_hidePassword = !_hidePassword;});}) : null,
         labelText: type!.substring(0,1).toUpperCase()+type.substring(1),
         labelStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
         enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0)),
       ),
-      keyboardType: type=="email"?TextInputType.emailAddress:TextInputType.text,
+      keyboardType: type=="email" ? TextInputType.emailAddress : TextInputType.text,
       style: const TextStyle(color: Colors.black),
       cursorColor: Colors.black,
       obscureText: type=="password"||type=="confirm password"?_hidePassword:false,
@@ -208,7 +209,9 @@ class _InputFieldState extends State<InputField> {
     );
   }
 }
+// Form Inputs End ================================================================================
 
+// Submit Buttons Start ===========================================================================
 class SubmitButton extends StatefulWidget {
 
   final String? text;
@@ -281,3 +284,4 @@ class _SubmitButtonState extends State<SubmitButton> {
     );
   }
 }
+// Submit Buttons End =============================================================================

@@ -15,6 +15,20 @@ class UserTheme extends ChangeNotifier {
   }
 }
 
+// Color Palette ==================================================================================
+
+class Palette {
+  static const int white = 0xFFC3CCC8;
+  static const int lightblue = 0xFFA0B4B1;
+  static const int darkblue = 0xFF172426;
+  static const int blue = 0xFF34444C;
+  static const int brown = 0xFF50382A;
+  static const int goldbrown = 0xFF6D5F39;
+  static const int lightbrown = 0xFF7A6556;
+  static const int pink = 0xFFCC947C;
+  static const int gold = 0xFF94865A;
+}
+
 /* ================================================================================================
 Loading Animation
 ================================================================================================ */

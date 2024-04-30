@@ -66,12 +66,14 @@ class _WelcomeState extends State<Welcome> {
                       // Image.asset("assets/Franz.jpg", height: 65.0, width: 65.0),
                       Text("Franz",
                         style: TextStyle(
+                          color: Colors.white,
                           fontSize: 40.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text("Your personal Automatic Music Transcriber!",
                         style: TextStyle(
+                          color: Colors.white,
                           fontSize: 15.0,
                         ),
                       ),
@@ -98,9 +100,9 @@ class _WelcomeState extends State<Welcome> {
                 right: 0,
                 child: Container(
                   padding: const EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple[200],
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  decoration: const BoxDecoration(
+                    color: Color(Palette.orange),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -145,13 +147,14 @@ class _WelcomeState extends State<Welcome> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
           decoration: BoxDecoration(
-            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? Colors.deepPurple[200] : Colors.transparent,
+            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? const Color(Palette.orange) : Colors.transparent,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
           ),
           child: Text(
             title.toUpperCase(),
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
+              color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? Colors.black : Colors.white,
               fontSize: 35.0,
             ),
           )

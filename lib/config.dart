@@ -44,11 +44,11 @@ class Loading extends StatelessWidget {
     return Center(
       child: Container(
         decoration: BoxDecoration(
-          color: backgroundColor ?? (UserTheme.isDark ? const Color(Palette.brown) : Colors.deepPurple),
+          color: backgroundColor ?? (UserTheme.isDark ? Colors.black : const Color(Palette.orange)),
           borderRadius: const BorderRadius.all(Radius.circular(5.0)),
         ),
         child: SpinKitFadingCircle(
-          color: color ?? (UserTheme.isDark ? Colors.deepPurple : const Color(Palette.brown)),
+          color: color ?? (UserTheme.isDark ? const Color(Palette.orange) : Colors.black),
           size: size ?? 50.0,
         ),
       ),

@@ -270,7 +270,7 @@ class _SubmitButtonState extends State<SubmitButton> {
         // await Future.delayed(const Duration(milliseconds: 500), _WelcomeState.clearInputs); FIXME: Add proper clearInputs() logic
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+        backgroundColor: MaterialStateProperty.all<Color>(const Color(Palette.yellow)),
         foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
       ),
       child: Row(
@@ -278,7 +278,7 @@ class _SubmitButtonState extends State<SubmitButton> {
           Icon(type=="google"?MdiIcons.google:type=="login"?Icons.login:type=="signup"?Icons.login:null,
           ),
           Expanded(
-            child: isLoading ? Loading(color: UserTheme.isDark ? Colors.white : Colors.black, backgroundColor: Colors.transparent, size: 20.0) : Text(text,
+            child: isLoading ? Loading(color: Colors.black, backgroundColor: Colors.transparent, size: 20.0) : Text(text,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13.0,

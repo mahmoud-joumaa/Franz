@@ -33,9 +33,6 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
 
-  // Styling constants
-  final BorderSide tabBorder = const BorderSide(color: Colors.white, width: 2.5);
-
   // Toggle between the two tabs (login & sign up)
   static bool? isLogin;
 
@@ -49,7 +46,7 @@ class _WelcomeState extends State<Welcome> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Colors.deepPurple[500],
+      backgroundColor: UserTheme.isDark ? const Color(Palette.brown) : const Color(Palette.lightbrown),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(

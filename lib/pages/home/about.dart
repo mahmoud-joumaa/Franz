@@ -164,7 +164,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   const Text("Check ", style: TextStyle(color: Color(Palette.grey))),
                   InkWell(
                     child: const Text("Readme.md", style: TextStyle(color: Color(Palette.grey), decoration: TextDecoration.underline,)),
-                    onTap: () => launchUrl(Uri.parse("https://icons8.com/")), // FIXME: Fix URL
+                    onTap: () => launchUrl(Uri.parse("https://icons8.com/")),
                   ),
                   const Text(" for detailed references", style: TextStyle(color: Color(Palette.grey))),
                 ],

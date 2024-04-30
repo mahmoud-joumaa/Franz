@@ -247,6 +247,7 @@ class _SubmitButtonState extends State<SubmitButton> {
             // TODO: Add validation logic
             // No error
             // COMBAK: Add proper navigation logic
+            // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, "HomeScreen");
             // Error
             // TODO: Add catch error logic
@@ -256,6 +257,7 @@ class _SubmitButtonState extends State<SubmitButton> {
             // TODO: Add authentication logic
             // No error
             // COMBAK: Add proper navigation logic
+            // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, "HomeScreen");
             // Error
             // TODO: Add catch error logic

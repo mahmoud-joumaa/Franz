@@ -18,15 +18,13 @@ class UserTheme extends ChangeNotifier {
 // Color Palette ==================================================================================
 
 class Palette {
-  static const int white = 0xFFC3CCC8;
-  static const int lightblue = 0xFFA0B4B1;
-  static const int darkblue = 0xFF172426;
-  static const int blue = 0xFF34444C;
-  static const int brown = 0xFF50382A;
-  static const int goldbrown = 0xFF6D5F39;
-  static const int lightbrown = 0xFF7A6556;
-  static const int pink = 0xFFCC947C;
-  static const int gold = 0xFF94865A;
+  static const int darkgrey = 0xFF6b705c;
+  static const int grey = 0xFFb7b7a4;
+  static const int brown = 0xFF825f45;
+  static const int lightbrown = 0xFF997b66;
+  static const int green = 0xFF797d62;
+  static const int orange = 0xFFd08c60;
+  static const int yellow = 0xFFffcb69;
 }
 
 /* ================================================================================================
@@ -46,11 +44,11 @@ class Loading extends StatelessWidget {
     return Center(
       child: Container(
         decoration: BoxDecoration(
-          color: backgroundColor ?? (UserTheme.isDark ? Colors.black : Colors.deepPurple),
+          color: backgroundColor ?? (UserTheme.isDark ? const Color(Palette.brown) : Colors.deepPurple),
           borderRadius: const BorderRadius.all(Radius.circular(5.0)),
         ),
         child: SpinKitFadingCircle(
-          color: color ?? (UserTheme.isDark ? Colors.deepPurple : Colors.black),
+          color: color ?? (UserTheme.isDark ? Colors.deepPurple : const Color(Palette.brown)),
           size: size ?? 50.0,
         ),
       ),

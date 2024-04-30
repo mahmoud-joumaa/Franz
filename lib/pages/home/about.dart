@@ -21,11 +21,12 @@ class _AboutScreenState extends State<AboutScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
+        // FIXME: Change text and illustration images of each child
         children: [
-          const Text("Hi there!", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Illustrations/RobotAssistant.gif", width: 400.0, fit: BoxFit.contain,),
-          const Text("My name is Mahmoud Joumaa, and I'm the developer behind Balanced Craves!", textAlign: TextAlign.center,),
-          const Text("(No, I'm not a robot)", textAlign: TextAlign.center,),
+          const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
+          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
+          const Text("Text", textAlign: TextAlign.center,),
+          const Text("Text", textAlign: TextAlign.center,),
         ]
       ),
     ),
@@ -34,10 +35,10 @@ class _AboutScreenState extends State<AboutScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text("Grinding with Passion", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Illustrations/UniversityRocket.gif", width: 400.0, fit: BoxFit.contain,),
-          const Text("I'm still a university student, and I'm always curious to learn and explore!", textAlign: TextAlign.center,),
-          const Text("P.S. Should be graduating soon, fingers crossed", textAlign: TextAlign.center,),
+          const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
+          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
+          const Text("Text", textAlign: TextAlign.center,),
+          const Text("Text", textAlign: TextAlign.center,),
         ]
       ),
     ),
@@ -47,7 +48,7 @@ class _AboutScreenState extends State<AboutScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text("Balance your Craves", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Illustrations/KanbanTrackers.gif", width: 400.0, fit: BoxFit.contain,),
+          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
           const Text("Balanced Craves helps you track your diet by standards YOU set!", textAlign: TextAlign.center,),
           const Text("Your progress is private to you and you alone", textAlign: TextAlign.center,),
         ]
@@ -58,10 +59,10 @@ class _AboutScreenState extends State<AboutScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text("Share your Crafts", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Illustrations/Shopping.gif", width: 400.0, fit: BoxFit.contain,),
-          const Text("Your scores may be private, but your art shouldn't necessarily be!", textAlign: TextAlign.center,),
-          const Text("Share the recipes you find interesting and inspire others to make their own!", textAlign: TextAlign.center,),
+          const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
+          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
+          const Text("Text", textAlign: TextAlign.center,),
+          const Text("Text", textAlign: TextAlign.center,),
         ]
       ),
     ),
@@ -70,10 +71,10 @@ class _AboutScreenState extends State<AboutScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text("Let's Connect!", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Illustrations/Connect.gif", width: 400.0, fit: BoxFit.contain,),
-          const Text("For anything related to the project, feel free to check out its GitHub repo!", textAlign: TextAlign.center,),
-          InkWell(child: const Text("Balanced Craves on GitHub", style: TextStyle(decoration: TextDecoration.underline,)), onTap: () => launchUrl(Uri.parse("https://icons8.com/")),), // FIXME: Fix URL
+          const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
+          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
+          const Text("Text", textAlign: TextAlign.center,),
+          const Text("Text", textAlign: TextAlign.center,),
         ]
       ),
     ),

@@ -9,6 +9,9 @@ class NewTransDialogue extends StatefulWidget {
 }
 
 class _NewTransDialogueState extends State<NewTransDialogue> {
+  final TextEditingController _linkController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _artistController = TextEditingController();
   String _mode = "Audio";
   String _instrument = "Piano";
   String _selectedFileName = "";
@@ -41,9 +44,25 @@ class _NewTransDialogueState extends State<NewTransDialogue> {
     });
   }
 
-  void _triggerLambda() {
+  void _triggerTranscription() {
+    Map<String, dynamic> information = {
+      "source": _mode == "Audio" ? _selectedFileName : _linkController.text,
+      "instrument": _instrument,
+      "title": _titleController.text,
+      "artist": _artistController.text,
+    };
+    // TODO: use information dict to trigger either upload function or download lambda
+    if (_mode == "Audio") {
+      _uploadToS3(information);
+    } else if (_mode == "Link") {
+      _triggerDownloadLambda(information);
+    }
     Navigator.of(context).pop();
   }
+
+  void _uploadToS3(Map<String, dynamic> info) {}
+
+  void _triggerDownloadLambda(Map<String, dynamic> info) {}
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +83,8 @@ class _NewTransDialogueState extends State<NewTransDialogue> {
                       RadioListTile(
                         title: const Text('Audio File'),
                         subtitle: const Text(
-                          // "Select an audio file from your local storage",
-                          "Select audio from local storage"
-                        ),
+                            // "Select an audio file from your local storage",
+                            "Select audio from local storage"),
                         value: "Audio",
                         groupValue: _mode,
                         onChanged: (String? value) {
@@ -96,7 +114,8 @@ class _NewTransDialogueState extends State<NewTransDialogue> {
                       const SizedBox(height: 5),
                       RadioListTile(
                         title: const Text('Youtube Link'),
-                        subtitle: const Text("Enter the link to a youtube video"),
+                        subtitle:
+                            const Text("Enter the link to a youtube video"),
                         value: "Link",
                         groupValue: _mode,
                         onChanged: (String? value) {
@@ -111,10 +130,11 @@ class _NewTransDialogueState extends State<NewTransDialogue> {
                         maintainAnimation: true,
                         maintainState: true,
                         visible: _mode == "Link",
-                        child: const Padding(
-                          padding: EdgeInsets.all(16.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
                           child: TextField(
-                            decoration: InputDecoration(
+                            controller: _linkController,
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               label: Text("Youtube Link"),
                             ),
@@ -158,17 +178,19 @@ class _NewTransDialogueState extends State<NewTransDialogue> {
                   maintainState: true,
                   maintainSize: false,
                   visible: _page == 1,
-                  child: const Column(
+                  child: Column(
                     children: [
                       TextField(
-                        decoration: InputDecoration(
+                        controller: _titleController,
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           label: Text("Song Title *"),
                         ),
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       TextField(
-                        decoration: InputDecoration(
+                        controller: _artistController,
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           label: Text("Song Artist"),
                         ),
@@ -203,7 +225,7 @@ class _NewTransDialogueState extends State<NewTransDialogue> {
             Visibility(
               visible: _page == 1,
               child: TextButton(
-                onPressed: _triggerLambda,
+                onPressed: _triggerTranscription,
                 child: const Text("Submit"),
               ),
             ),

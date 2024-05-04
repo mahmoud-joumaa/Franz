@@ -4,8 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
-import 'package:franz/pages/transcribe.dart';
-import 'package:record/record.dart';
 
 import '../components/audio_recorder.dart';
 import '../main.dart';
@@ -75,161 +73,166 @@ class _NewTransScreenP1State extends State<NewTransScreenP1> {
         automaticallyImplyLeading: false,
         title: const Text("Choose Source Type"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile(
-              title: const Text('Audio File'),
-              subtitle:
-                  const Text("Select an audio file from your local storage"),
-              value: "Audio",
-              groupValue: _mode,
-              onChanged: (String? value) {
-                setState(() {
-                  _mode = value!;
-                  _cancelRecord();
-                  _ytlink.text = '';
-                });
-              },
-            ),
-            const SizedBox(height: 5),
-            Visibility(
-              maintainSize: false,
-              maintainAnimation: true,
-              maintainState: true,
-              visible: _mode == "Audio",
-              child: Column(
-                children: [
-                  TextButton(
-                    onPressed: _pickFile,
-                    child: const Text("Choose file"),
-                  ),
-                  Visibility(
-                    maintainSize: false,
-                    maintainAnimation: true,
-                    maintainState: true,
-                    visible: _selectedFileName != "",
-                    child: Text(_selectedFileName),
-                  ),
-                ],
-              ),
-            ),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: (MediaQuery.of(context).size.height - 75),
 
-            const SizedBox(height: 5),
-            RadioListTile(
-              title: const Text('Youtube Link'),
-              subtitle: const Text("Enter the link to a youtube video"),
-              value: "Link",
-              groupValue: _mode,
-              onChanged: (String? value) {
-                setState(() {
-                  _mode = value!;
-                  _cancelRecord();
-                  _selectedFileName = "";
-                });
-              },
-            ),
-            const SizedBox(height: 5),
-            Visibility(
-              maintainSize: false,
-              maintainAnimation: true,
-              maintainState: true,
-              visible: _mode == "Link",
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: _ytlink,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    label: Text("Youtube Link"),
-                  ),
-
-                ),
-              ),
-            ),
-            RadioListTile(
-              title: const Text('Record Audio'),
-              subtitle: const Text("Record your own audio"),
-              value: "Record",
-              groupValue: _mode,
-              onChanged: (String? value) {
-                setState(() {
-                  _mode = value!;
-                  _selectedFileName = "";
-                  _ytlink.text = '';
-                });
-              },
-            ),
-            const SizedBox(height: 5),
-            Visibility(
-              maintainSize: false,
-              maintainAnimation: true,
-              maintainState: true,
-              visible: _mode == "Record",
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Visibility(
-                      maintainSize: false,
-                      maintainAnimation: true,
-                      maintainState: true,
-                      visible: audioPath == '',
-                      child: Recorder(
-                        onStop: (path) {
-                          setState(() {
-                            audioPath = path;
-                          });
-                        },
-                      ),
-                    ),
-                    Visibility(
-                      maintainSize: false,
-                      maintainAnimation: true,
-                      maintainState: true,
-                      visible: audioPath != '',
-                      child: Row(
-                        children: [
-                          Text(audioPath!.split('/').last),
-                          TextButton(
-                              onPressed: _cancelRecord, child: Text("Cancel"))
-                        ],
-                      ),
-                    ),
-                  ]
-                ),
-              ),
-            ),
-            if (hasError) const Text("Error: You need to select an audio", style: TextStyle(color: Colors.red),) else Text(''),
-
-            Spacer(),
-            Row(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text("Back")),
+                RadioListTile(
+                  title: const Text('Audio File'),
+                  subtitle:
+                      const Text("Select an audio file from your local storage"),
+                  value: "Audio",
+                  groupValue: _mode,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _mode = value!;
+                      _cancelRecord();
+                      _ytlink.text = '';
+                    });
+                  },
+                ),
+                const SizedBox(height: 5),
+                Visibility(
+                  maintainSize: false,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  visible: _mode == "Audio",
+                  child: Column(
+                    children: [
+                      TextButton(
+                        onPressed: _pickFile,
+                        child: const Text("Choose file"),
+                      ),
+                      Visibility(
+                        maintainSize: false,
+                        maintainAnimation: true,
+                        maintainState: true,
+                        visible: _selectedFileName != "",
+                        child: Text(_selectedFileName),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 5),
+                RadioListTile(
+                  title: const Text('Youtube Link'),
+                  subtitle: const Text("Enter the link to a youtube video"),
+                  value: "Link",
+                  groupValue: _mode,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _mode = value!;
+                      _cancelRecord();
+                      _selectedFileName = "";
+                    });
+                  },
+                ),
+                const SizedBox(height: 5),
+                Visibility(
+                  maintainSize: false,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  visible: _mode == "Link",
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: _ytlink,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        label: Text("Youtube Link"),
+                      ),
+
+                    ),
+                  ),
+                ),
+                RadioListTile(
+                  title: const Text('Record Audio'),
+                  subtitle: const Text("Record your own audio"),
+                  value: "Record",
+                  groupValue: _mode,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _mode = value!;
+                      _selectedFileName = "";
+                      _ytlink.text = '';
+                    });
+                  },
+                ),
+                const SizedBox(height: 5),
+                Visibility(
+                  maintainSize: false,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  visible: _mode == "Record",
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Visibility(
+                          maintainSize: false,
+                          maintainAnimation: true,
+                          maintainState: true,
+                          visible: audioPath == '',
+                          child: Recorder(
+                            onStop: (path) {
+                              setState(() {
+                                audioPath = path;
+                              });
+                            },
+                          ),
+                        ),
+                        Visibility(
+                          maintainSize: false,
+                          maintainAnimation: true,
+                          maintainState: true,
+                          visible: audioPath != '',
+                          child: Row(
+                            children: [
+                              Text(audioPath!.split('/').last),
+                              TextButton(
+                                  onPressed: _cancelRecord, child: Text("Cancel"))
+                            ],
+                          ),
+                        ),
+                      ]
+                    ),
+                  ),
+                ),
+                if (hasError) const Text("Error: You need to select an audio", style: TextStyle(color: Colors.red),) else Text(''),
                 Spacer(),
-                TextButton(
-                      onPressed: () {
-                        if ((audioPath != '') || (_ytlink.text != '') || (_selectedFileName != '')) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NewTransScreenP2(),
-                            ),
-                          );
-                        } else {
-                          setState(() {
-                            hasError = true;
-                          });
-                        }
-                    },
-                    child: Text("Next"))
+                Row(
+                  children: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text("Back")),
+                    Spacer(),
+                    TextButton(
+                          onPressed: () {
+                            if ((audioPath != '') || (_ytlink.text != '') || (_selectedFileName != '')) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const NewTransScreenP2(),
+                                ),
+                              );
+                            } else {
+                              setState(() {
+                                hasError = true;
+                              });
+                            }
+                        },
+                        child: Text("Next"))
+                  ],
+                )
               ],
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
@@ -438,11 +441,11 @@ class _NewTransScreenP2State extends State<NewTransScreenP2> {
               child: Container(
                 margin: const EdgeInsets.only(top: 10, bottom: 20),
                 child: ListView.separated(
-                    separatorBuilder: (context, index) => const Divider(),
+                    separatorBuilder: (context, index) => (midiPrograms[index].toLowerCase().contains(_searchValue.toLowerCase())) ? const Divider() : const SizedBox(),
                     itemCount: checked.length,
                     itemBuilder: (BuildContext context, int index) {
                       if(midiPrograms[index].toLowerCase().contains(_searchValue.toLowerCase())) {
-                        return Container(
+                        return SizedBox(
                           height: 35,
                           child: CheckboxListTile(
                               title: Text(midiPrograms[index]),

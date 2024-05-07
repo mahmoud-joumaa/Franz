@@ -1,192 +1,65 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:franz/components/audio_player.dart';
 import 'package:franz/pages/notation.dart';
 
 class TranscribeScreen extends StatefulWidget {
-  const TranscribeScreen({super.key});
+  const TranscribeScreen({
+    super.key,
+  });
 
   @override
   State<TranscribeScreen> createState() => _TranscribeScreenState();
 }
 
 class _TranscribeScreenState extends State<TranscribeScreen> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  UniqueKey? _currentPlaying;
+  String _searchValue = "";
+
   List<Map<String, dynamic>> info = [
     {
       "title": "weak and powerless",
       "date": "today",
-      "link": "https://arxiv.org/pdf/2111.03017v4.pdf"
+      "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
+      "audioLink": "https://filesamples.com/samples/audio/mp3/sample3.mp3"
     },
     {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "assets/1205.2618.pdf"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
-    },
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "link": "https://www.jalal.com"
+      "title": "nookie",
+      "date": "yesterday",
+      "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
+      "audioLink": "https://filesamples.com/samples/audio/mp3/sample2.mp3"
     },
   ];
+
+  void changePlayer(UniqueKey key, String audioUrl) {
+    print(">> current id playing: $_currentPlaying");
+    print(">> requesting id: $key");
+    print(">> requesting url: $audioUrl");
+    print(">> current player state: ${_audioPlayer.state.toString()}");
+    print("\n");
+
+    if (key == _currentPlaying) {
+      if (_audioPlayer.state == PlayerState.playing) {
+        _audioPlayer.pause();
+      } else if (_audioPlayer.state == PlayerState.paused) {
+        _audioPlayer.resume();
+      }
+    } else {
+      _handleNewAudioSource(key, audioUrl);
+    }
+  }
+
+  Future<void> _handleNewAudioSource(UniqueKey key, String audioUrl) async {
+    await _audioPlayer.stop();
+    await _audioPlayer.setSourceUrl(audioUrl);
+    await _audioPlayer.setVolume(1);
+    await _audioPlayer.resume();
+
+    setState(() {
+      _currentPlaying = key;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -203,6 +76,11 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
                 border: const OutlineInputBorder(),
                 label: const Text("Search your transcriptions"),
               ),
+              onChanged: (value) {
+                setState(() {
+                  _searchValue = value;
+                });
+              },
             ),
           ),
           Expanded(
@@ -211,10 +89,19 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
               separatorBuilder: (context, index) => const Divider(),
               itemCount: info.length,
               itemBuilder: (context, index) {
-                return TransriptionRow(
-                  title: info[index]["title"],
-                  date: info[index]["date"],
-                  link: info[index]["link"],
+                return Visibility(
+                  visible:
+                      info[index]["title"].toString().contains(_searchValue),
+                  maintainSize: false,
+                  child: TransriptionRow(
+                    title: info[index]["title"],
+                    date: info[index]["date"],
+                    transcriptionLink: info[index]["transcriptionLink"],
+                    audioLink: info[index]["audioLink"],
+                    audioPlayer: _audioPlayer,
+                    changePlayerState: changePlayer,
+                    currentPlayingKey: _currentPlaying,
+                  ),
                 );
               },
             ),
@@ -228,13 +115,21 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
 class TransriptionRow extends StatelessWidget {
   final String title;
   final String date;
-  final String link;
+  final String transcriptionLink;
+  final String audioLink;
+  final AudioPlayer audioPlayer;
+  final Function changePlayerState;
+  final UniqueKey? currentPlayingKey;
 
   const TransriptionRow({
     super.key,
     required this.title,
     required this.date,
-    required this.link,
+    required this.transcriptionLink,
+    required this.audioLink,
+    required this.audioPlayer,
+    required this.changePlayerState,
+    required this.currentPlayingKey,
   });
 
   @override
@@ -242,23 +137,39 @@ class TransriptionRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title),
-        Text(date),
-        TextButton(
-          child: const Icon(Icons.file_copy),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SheetMusicViewerScreen(
-                  link: link,
-                  title: title,
-                ),
-              ),
-            );
-          },
+        Expanded(
+          flex: 5,
+          child: Text(title),
         ),
-        AudioPlayerButton(),
+        Expanded(
+          flex: 3,
+          child: Text(date),
+        ),
+        Expanded(
+          flex: 1,
+          child: TextButton(
+            child: const Icon(Icons.file_copy),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SheetMusicViewerScreen(
+                    link: transcriptionLink,
+                    title: title,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: NewAudioPlayerButton(
+            changePlayerState: changePlayerState,
+            audioLink: audioLink,
+            playingKey: currentPlayingKey,
+          ),
+        ),
       ],
     );
   }

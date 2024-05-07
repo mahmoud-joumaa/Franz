@@ -37,6 +37,7 @@ class Root extends StatelessWidget {
         "WelcomeScreen": (context) => const Welcome(),
         "HomeScreen": (context) => const MyHomePage(title: "title"),
       }
+
     );
   }
 }

@@ -42,7 +42,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(context: context, builder: (_) => const NewTransDialogue());
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const NewTransScreenP1(),
+            ),
+          );
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:franz/new_transcription_dialogue.dart';
+import 'package:franz/pages/new_transcription.dart';
 import 'package:franz/pages/about.dart';
 import 'package:franz/pages/contact.dart';
 import 'package:franz/pages/settings.dart';
@@ -61,17 +61,19 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      floatingActionButton: Visibility(
-        visible: currentPageIndex == 1,
-        maintainSize: false,
-        child: FloatingActionButton(
-          onPressed: () {
-            showDialog(
-                context: context, builder: (_) => const NewTransDialogue());
-          },
-          tooltip: 'Increment',
-          child: const Icon(Icons.add),
-        ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const NewTransScreenP1(),
+            ),
+          );
+        },
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+
       ),
       bottomNavigationBar: NavigationBar(
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,

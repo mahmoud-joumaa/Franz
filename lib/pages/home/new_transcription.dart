@@ -1,12 +1,8 @@
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/widgets.dart';
-
-import '../components/audio_recorder.dart';
-import '../main.dart';
+import 'package:franz/components/audio_recorder.dart';
+import 'package:franz/pages/home/home.dart';
 
 class NewTransScreenP1 extends StatefulWidget {
   const NewTransScreenP1({super.key});

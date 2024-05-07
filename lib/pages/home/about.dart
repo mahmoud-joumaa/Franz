@@ -24,7 +24,7 @@ class _AboutScreenState extends State<AboutScreen> {
         // FIXME: Change text and illustration images of each child
         children: [
           const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
+          Image.asset("../../../assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
           const Text("Text", textAlign: TextAlign.center,),
           const Text("Text", textAlign: TextAlign.center,),
         ]
@@ -36,7 +36,7 @@ class _AboutScreenState extends State<AboutScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
+          Image.asset("../../../assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
           const Text("Text", textAlign: TextAlign.center,),
           const Text("Text", textAlign: TextAlign.center,),
         ]
@@ -48,7 +48,7 @@ class _AboutScreenState extends State<AboutScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text("Balance your Craves", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
+          Image.asset("../../../assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
           const Text("Balanced Craves helps you track your diet by standards YOU set!", textAlign: TextAlign.center,),
           const Text("Your progress is private to you and you alone", textAlign: TextAlign.center,),
         ]
@@ -60,7 +60,7 @@ class _AboutScreenState extends State<AboutScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
+          Image.asset("../../../assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
           const Text("Text", textAlign: TextAlign.center,),
           const Text("Text", textAlign: TextAlign.center,),
         ]
@@ -72,7 +72,7 @@ class _AboutScreenState extends State<AboutScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
-          Image.asset("assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
+          Image.asset("../../../assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),
           const Text("Text", textAlign: TextAlign.center,),
           const Text("Text", textAlign: TextAlign.center,),
         ]

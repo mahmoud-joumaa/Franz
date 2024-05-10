@@ -13,7 +13,12 @@
     },
     "categories": {
       "auth": {
-        "franz": {}
+        "franz": {
+          "userPoolId": "eu-west-1_dzWhpzLgC",
+          "userPoolName": "Users",
+          "webClientId": "p3juppcq597a5ae9sn7q6lkm5",
+          "nativeClientId": "p3juppcq597a5ae9sn7q6lkm5"
+        }
       },
       "storage": {
         "Transcriptions": {

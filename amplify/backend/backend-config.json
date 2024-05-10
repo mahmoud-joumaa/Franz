@@ -7,5 +7,93 @@
       "service": "Cognito",
       "serviceType": "imported"
     }
+  },
+  "parameters": {
+    "AMPLIFY_storage_Transcriptions_arn": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Transcriptions"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Transcriptions_partitionKeyName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Transcriptions"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Transcriptions_partitionKeyType": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Transcriptions"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Transcriptions_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Transcriptions"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Transcriptions_sortKeyName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Transcriptions"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Transcriptions_sortKeyType": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Transcriptions"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Transcriptions_tableName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Transcriptions"
+        }
+      ]
+    },
+    "AMPLIFY_storage_franz2592b9f1_bucketName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "franz2592b9f1"
+        }
+      ]
+    },
+    "AMPLIFY_storage_franz2592b9f1_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "franz2592b9f1"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "Transcriptions": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB",
+      "serviceType": "imported"
+    },
+    "franz2592b9f1": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3",
+      "serviceType": "imported"
+    }
   }
 }

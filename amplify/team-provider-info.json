@@ -10,6 +10,26 @@
       "StackName": "amplify-franz-dev-027f5",
       "StackId": "arn:aws:cloudformation:eu-west-1:339712731502:stack/amplify-franz-dev-027f5/39e1cce0-0eba-11ef-8126-021eefbfb4c9",
       "AmplifyAppId": "d9wbaw2i5x6pm"
+    },
+    "categories": {
+      "auth": {
+        "franz": {}
+      },
+      "storage": {
+        "Transcriptions": {
+          "tableName": "Transcriptions",
+          "region": "eu-west-1",
+          "arn": "arn:aws:dynamodb:eu-west-1:339712731502:table/Transcriptions",
+          "partitionKeyName": "account_id",
+          "partitionKeyType": "S",
+          "sortKeyName": "transcription_id",
+          "sortKeyType": "S"
+        },
+        "franz2592b9f1": {
+          "bucketName": "audio-transcribed-1",
+          "region": "eu-west-1"
+        }
+      }
     }
   }
 }

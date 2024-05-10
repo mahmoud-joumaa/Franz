@@ -33,6 +33,10 @@
         "franz2592b9f1": {
           "bucketName": "audio-transcribed-1",
           "region": "eu-west-1"
+        },
+        "franz0ccd55f7": {
+          "bucketName": "audio-transcribed-1",
+          "region": "eu-west-1"
         }
       }
     }

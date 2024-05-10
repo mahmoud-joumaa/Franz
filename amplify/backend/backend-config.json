@@ -97,6 +97,22 @@
         }
       ]
     },
+    "AMPLIFY_storage_franz0ccd55f7_bucketName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "franz0ccd55f7"
+        }
+      ]
+    },
+    "AMPLIFY_storage_franz0ccd55f7_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "franz0ccd55f7"
+        }
+      ]
+    },
     "AMPLIFY_storage_franz2592b9f1_bucketName": {
       "usedBy": [
         {
@@ -112,6 +128,20 @@
           "resourceName": "franz2592b9f1"
         }
       ]
+    }
+  },
+  "storage": {
+    "Transcriptions": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB",
+      "serviceType": "imported"
+    },
+    "franz0ccd55f7": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3",
+      "serviceType": "imported"
     }
   }
 }

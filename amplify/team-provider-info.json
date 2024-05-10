@@ -21,15 +21,6 @@
         }
       },
       "storage": {
-        "Transcriptions": {
-          "tableName": "Transcriptions",
-          "region": "eu-west-1",
-          "arn": "arn:aws:dynamodb:eu-west-1:339712731502:table/Transcriptions",
-          "partitionKeyName": "account_id",
-          "partitionKeyType": "S",
-          "sortKeyName": "transcription_id",
-          "sortKeyType": "S"
-        },
         "franz2592b9f1": {
           "bucketName": "audio-transcribed-1",
           "region": "eu-west-1"

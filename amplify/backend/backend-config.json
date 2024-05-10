@@ -41,6 +41,62 @@
         }
       ]
     },
+    "AMPLIFY_storage_Account_arn": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Account"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Account_partitionKeyName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Account"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Account_partitionKeyType": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Account"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Account_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Account"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Account_sortKeyName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Account"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Account_sortKeyType": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Account"
+        }
+      ]
+    },
+    "AMPLIFY_storage_Account_tableName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "Account"
+        }
+      ]
+    },
     "AMPLIFY_storage_Transcriptions_arn": {
       "usedBy": [
         {
@@ -131,6 +187,12 @@
     }
   },
   "storage": {
+    "Account": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB",
+      "serviceType": "imported"
+    },
     "Transcriptions": {
       "dependsOn": [],
       "providerPlugin": "awscloudformation",

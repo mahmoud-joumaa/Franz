@@ -37,15 +37,6 @@
         "franz0ccd55f7": {
           "bucketName": "audio-transcribed-1",
           "region": "eu-west-1"
-        },
-        "Account": {
-          "tableName": "Account",
-          "region": "eu-west-1",
-          "arn": "arn:aws:dynamodb:eu-west-1:339712731502:table/Account",
-          "partitionKeyName": "accountID",
-          "partitionKeyType": "S",
-          "sortKeyName": "accountInfo",
-          "sortKeyType": "S"
         }
       }
     }

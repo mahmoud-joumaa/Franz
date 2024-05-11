@@ -39,7 +39,7 @@ class Root extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Detect system theme
+    // Apply system theme
     Provider.of<UserTheme>(context,listen: false).toggleTheme(UserTheme.isDark);
     // Build material app
     return MaterialApp(

@@ -274,8 +274,7 @@ class _SubmitButtonState extends State<SubmitButton> {
           if (!_WelcomeState.isLogin!) {
             // Validate password
             // TODO: Add validation logic
-            // Attempt to sign up user
-            signUpUser(username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: ""); // FIXME: Add preferredInstrument logic
+            signUpUser(username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: "");
             // No error
             // COMBAK: Add proper navigation logic
             // ignore: use_build_context_synchronously

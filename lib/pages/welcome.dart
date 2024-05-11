@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import 'package:franz/config.dart';
+import 'package:franz/global.dart';
 
 // COMBAK: Fix the color scheme of the page
 

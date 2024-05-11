@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
 import 'package:franz/global.dart';
+import 'package:franz/amplifyconfiguration.dart';
 
 // COMBAK: Fix the color scheme of the page
 
@@ -35,15 +38,43 @@ class _WelcomeState extends State<Welcome> {
 
   // Toggle between the two tabs (login & sign up)
   static bool? isLogin;
+  dynamic error;
 
   @override
-  void initState() { // TODO: Add authentication logic here
+  void initState() {
     super.initState();
-    isLogin = true;
+    _configureAmplify();
+    isLogin = true; // default the registration form to "login" instead of "signup"
+    error = false; // assume no error take place initially :)
+  }
+
+  // Configure Amplify w/ any plugins necessary
+  Future<void> _configureAmplify() async {
+    try {
+      final auth = AmplifyAuthCognito();
+      await Amplify.addPlugin(auth);
+
+      await Amplify.configure(amplifyconfig); // Initialize the configured categories' plugins in our app
+    }
+    catch (e) {
+      safePrint('An error occurred configuring Amplify: $e');
+      error = e;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+
+    if (error) { // TODO: Add "exit application" or "reload application" button
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("An error has occurred while initializing the application. Please try again later."),
+          content: Text(error),
+          backgroundColor: UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: UserTheme.isDark ? const Color(Palette.brown) : const Color(Palette.lightbrown),
@@ -242,7 +273,7 @@ class _SubmitButtonState extends State<SubmitButton> {
         if (type != "google") {
           // User Sign Up
           if (!_WelcomeState.isLogin!) {
-            // TODO: Add authentication logic
+
             // Validate password
             // TODO: Add validation logic
             // No error
@@ -278,7 +309,7 @@ class _SubmitButtonState extends State<SubmitButton> {
           Icon(type=="google"?MdiIcons.google:type=="login"?Icons.login:type=="signup"?Icons.login:null,
           ),
           Expanded(
-            child: isLoading ? Loading(color: Colors.black, backgroundColor: Colors.transparent, size: 20.0) : Text(text,
+            child: isLoading ? const Loading(color: Colors.black, backgroundColor: Colors.transparent, size: 20.0) : Text(text,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13.0,

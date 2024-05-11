@@ -73,13 +73,20 @@ class _WelcomeState extends State<Welcome> {
                   padding: const EdgeInsets.fromLTRB(10.0, 35.0, 10.0, 5.0),
                   child: Column(
                     children: [
-                      Image.asset("assets/Franz.jpg", height: 65.0, width: 65.0),
-                      const Text("Franz",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 40.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset("assets/Franz.jpg", height: 65.0, width: 65.0),
+                          SizedBox(width: 20.0),
+                          const Text("Franz",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 40.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                       const Text("Your personal Automatic Music Transcriber!",
                         style: TextStyle(

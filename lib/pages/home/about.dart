@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import "package:franz/config.dart";
+import "package:franz/global.dart";
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -16,12 +16,12 @@ class _AboutScreenState extends State<AboutScreen> {
   final PageController _controller = PageController(); // keep track of what page the user is on
   int i = 0; // current page
 
+  // FIXME: Change text and illustration images of each child
   final intros = [
     Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        // FIXME: Change text and illustration images of each child
         children: [
           const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
           Image.asset("../../../assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),

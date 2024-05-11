@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
-import 'package:franz/config.dart';
+import 'package:franz/amplifyconfiguration.dart';
+
+import 'package:franz/global.dart';
 import 'package:franz/pages/home/home.dart';
 import 'package:franz/pages/welcome.dart';
 
-void main() {
+void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Detect system theme
   UserTheme.isDark = (WidgetsBinding.instance.platformDispatcher.platformBrightness==Brightness.dark);
+
+  // Configure amplify
+  try {
+    final auth = AmplifyAuthCognito();
+    await Amplify.addPlugin(auth);
+    // Initialize the configured categories' plugins in our app
+    await Amplify.configure(amplifyconfig);
+  }
+  catch (e) {
+    safePrint(e);
+  }
 
   runApp(ChangeNotifierProvider<UserTheme>(
     create: (context) => UserTheme(),
@@ -23,7 +39,9 @@ class Root extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Apply system theme
     Provider.of<UserTheme>(context,listen: false).toggleTheme(UserTheme.isDark);
+    // Build material app
     return MaterialApp(
       title: "Franz",
       theme: ThemeData(

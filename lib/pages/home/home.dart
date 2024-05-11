@@ -1,4 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+
+import 'package:franz/global.dart';
+import 'package:franz/services/authn_service.dart';
 
 import 'package:franz/pages/home/about.dart';
 import 'package:franz/pages/home/contact.dart';
@@ -39,6 +44,32 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              dynamic result = await signOutCurrentUser();
+              if (result["success"]) {
+                Alert.show(
+                  context,
+                  result["message"],
+                  "",
+                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  "logout"
+                );
+              }
+              else {
+                Alert.show(
+                  context,
+                  "Error Logging Out",
+                  result["message"],
+                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  "dismiss"
+                );
+              }
+            },
+            icon: const Icon(Icons.logout)
+          )
+        ],
       ),
       floatingActionButton: Visibility(
         visible: currentPageIndex == 1,

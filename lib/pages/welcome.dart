@@ -1,25 +1,37 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import 'package:franz/config.dart';
+import 'package:franz/global.dart';
+import 'package:franz/services/authn_service.dart';
 
-// COMBAK: Fix the color scheme of the page
+// TODO: Fix the color scheme of the page
 
 // Form Inputs Start ==============================================================================
 
-final TextEditingController loginEmailController = TextEditingController();
+final TextEditingController loginUsernameController = TextEditingController();
 final TextEditingController loginPasswordController = TextEditingController();
 final TextEditingController signUpUsernameController = TextEditingController();
 final TextEditingController signUpEmailController = TextEditingController();
 final TextEditingController signUpPasswordController = TextEditingController();
 final TextEditingController signUpConfirmPasswordController = TextEditingController();
 
-final loginUsername = InputField(type: "username", controller: loginEmailController);
+final loginUsername = InputField(type: "username", controller: loginUsernameController);
 final loginPassword = InputField(type: "password", controller: loginPasswordController);
 final signupUsername = InputField(type: "username", controller: signUpUsernameController);
 final signupEmail = InputField(type: "email", controller: signUpEmailController);
 final signupPassword = InputField(type: "password", controller: signUpPasswordController);
 final signupConfirmPassword = InputField(type: "confirm password", controller: signUpConfirmPasswordController);
+
+void clearInputs() {
+  loginUsernameController.text = "";
+  loginPasswordController.text = "";
+  signUpUsernameController.text = "";
+  signUpEmailController.text = "";
+  signUpPasswordController.text = "";
+  signUpConfirmPasswordController.text = "";
+}
 
 // Form Inputs End ================================================================================
 
@@ -33,13 +45,12 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
 
-  // Toggle between the two tabs (login & sign up)
-  static bool? isLogin;
+  static bool? isLogin; // Toggle between the two tabs (login & sign up)
 
   @override
-  void initState() { // TODO: Add authentication logic here
+  void initState() {
     super.initState();
-    isLogin = true;
+    isLogin = true; // default the registration form to "login" instead of "signup"
   }
 
   @override
@@ -60,18 +71,17 @@ class _WelcomeState extends State<Welcome> {
                 right: 0,
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(10.0, 35.0, 10.0, 5.0),
-                  child: const Column(
+                  child: Column(
                     children: [
-                      // FIXME: add logo to pubspec.yml
-                      // Image.asset("assets/Franz.jpg", height: 65.0, width: 65.0),
-                      Text("Franz",
+                      Image.asset("assets/Franz.jpg", height: 65.0, width: 65.0),
+                      const Text("Franz",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 40.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text("Your personal Automatic Music Transcriber!",
+                      const Text("Your personal Automatic Music Transcriber!",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 15.0,
@@ -124,8 +134,8 @@ class _WelcomeState extends State<Welcome> {
                           ],
                         ),
                       ),
-                      SubmitButton(text: isLogin!?"Login with Email":"Sign Up with Email", type: isLogin!?"login":"signup"),
-                      const SubmitButton(text: "Connect with Google", type: "google"),
+                      SubmitButton(text: isLogin!?"Log In":"Sign Up", type: isLogin!?"login":"signup"),
+                      // const SubmitButton(text: "Connect with Google", type: "google"),
                     ],
                   ),
                 ),
@@ -238,36 +248,96 @@ class _SubmitButtonState extends State<SubmitButton> {
     return ElevatedButton(
       onPressed: () async {
         setState(() {isLoading = true;});
-        await Future.delayed(const Duration(seconds: 2), () {}); // COMBAK: DEBUGGING, remove later
-        if (type != "google") {
-          // User Sign Up
+        if (type != "google") { // i.e. sign up with AWS Cognito
+          // User Sign Up w/ email
           if (!_WelcomeState.isLogin!) {
-            // TODO: Add authentication logic
+            // Validate fields are not empty
+            if (signUpUsernameController.text.isEmpty || signUpEmailController.text.isEmpty || signUpPasswordController.text.isEmpty) {
+              Alert.show(
+                context,
+                "An error has occurred while registering ${signUpUsernameController.text}",
+                "All fields must be non-empty and valid. Please try again.",
+                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                "dismiss"
+              );
+            }
             // Validate password
-            // TODO: Add validation logic
-            // No error
-            // COMBAK: Add proper navigation logic
-            // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, "HomeScreen");
-            // Error
-            // TODO: Add catch error logic
+            else if (signUpPasswordController.text != signUpConfirmPasswordController.text) {
+              Alert.show(
+                context,
+                "An error has occurred while registering ${signUpUsernameController.text}",
+                "Passwords don't match",
+                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                "dismiss"
+              );
+            }
+            else {
+              dynamic result = await signUpUser(username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: "");
+              // Error
+              if (!result["success"]) {
+                Alert.show(
+                  context,
+                  "An error has occurred while registering ${signUpUsernameController.text}",
+                  result["message"],
+                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                  "dismiss"
+                );
+              }
+              // No Error
+              else {
+                Alert.show(
+                  context,
+                  "Successfully created ${signUpUsernameController.text}",
+                  result["message"],
+                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  "login"
+                );
+              }
+            }
           }
-          // User login
+          // User login w/ email
           else {
-            // TODO: Add authentication logic
-            // No error
-            // COMBAK: Add proper navigation logic
-            // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, "HomeScreen");
-            // Error
-            // TODO: Add catch error logic
+            // Validate fields are not empty
+            if (loginUsernameController.text.isEmpty || loginPasswordController.text.isEmpty) {
+              Alert.show(
+                context,
+                "An error has occurred while registering ${signUpUsernameController.text}",
+                "All fields must be non-empty and valid. Please try again.",
+                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                "dismiss"
+              );
+            }
+            else {
+              dynamic result = await signInUser(loginUsernameController.text, loginPasswordController.text);
+              // Error
+              if (!result["success"]) {
+                Alert.show(
+                  context,
+                  "An error has occurred while signing in as ${loginUsernameController.text}",
+                  result["message"],
+                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                  "dismiss"
+                );
+              }
+              // No Error
+              else {
+                Alert.show(
+                  context,
+                  "Successfully logged in as ${signUpUsernameController.text}",
+                  result["message"],
+                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  "login"
+                );
+              }
+            }
           }
         }
+        // Login w/ Google
         else {
-          // TODO: Sign in with Google
         }
+        await Future.delayed(const Duration(milliseconds: 500), () {}); // Have a slight buffer between changes
         setState(() {isLoading = false;});
-        // await Future.delayed(const Duration(milliseconds: 500), _WelcomeState.clearInputs); FIXME: Add proper clearInputs() logic
+        clearInputs();
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(const Color(Palette.yellow)),
@@ -278,7 +348,7 @@ class _SubmitButtonState extends State<SubmitButton> {
           Icon(type=="google"?MdiIcons.google:type=="login"?Icons.login:type=="signup"?Icons.login:null,
           ),
           Expanded(
-            child: isLoading ? Loading(color: Colors.black, backgroundColor: Colors.transparent, size: 20.0) : Text(text,
+            child: isLoading ? const Loading(color: Colors.black, backgroundColor: Colors.transparent, size: 20.0) : Text(text,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13.0,

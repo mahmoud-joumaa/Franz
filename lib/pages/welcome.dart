@@ -5,6 +5,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
 import 'package:franz/global.dart';
 import 'package:franz/amplifyconfiguration.dart';
+import 'package:franz/services/authn_service.dart';
 
 // COMBAK: Fix the color scheme of the page
 
@@ -38,14 +39,12 @@ class _WelcomeState extends State<Welcome> {
 
   // Toggle between the two tabs (login & sign up)
   static bool? isLogin;
-  dynamic error;
 
   @override
   void initState() {
     super.initState();
     _configureAmplify();
     isLogin = true; // default the registration form to "login" instead of "signup"
-    error = false; // assume no error take place initially :)
   }
 
   // Configure Amplify w/ any plugins necessary
@@ -58,19 +57,19 @@ class _WelcomeState extends State<Welcome> {
     }
     catch (e) {
       safePrint('An error occurred configuring Amplify: $e');
-      error = e;
+      Error.error = e;
     }
   }
 
   @override
   Widget build(BuildContext context) {
 
-    if (error) { // TODO: Add "exit application" or "reload application" button
+    if (Error.error) { // TODO: Add "exit application" or "reload application" button
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text("An error has occurred while initializing the application. Please try again later."),
-          content: Text(error),
+          content: Text(Error.error),
           backgroundColor: UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
         ),
       );
@@ -270,12 +269,13 @@ class _SubmitButtonState extends State<SubmitButton> {
       onPressed: () async {
         setState(() {isLoading = true;});
         await Future.delayed(const Duration(seconds: 2), () {}); // COMBAK: DEBUGGING, remove later
-        if (type != "google") {
+        if (type != "google") { // i.e. sign up with AWS Cognito
           // User Sign Up
           if (!_WelcomeState.isLogin!) {
-
             // Validate password
             // TODO: Add validation logic
+            // Attempt to sign up user
+            signUpUser(username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: ""); // FIXME: Add preferredInstrument logic
             // No error
             // COMBAK: Add proper navigation logic
             // ignore: use_build_context_synchronously

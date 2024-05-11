@@ -44,8 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         actions: [
           IconButton(
-            onPressed: () {
-              dynamic result = signOutCurrentUser();
+            onPressed: () async {
+              dynamic result = await signOutCurrentUser();
               if (result["success"]) {
                 Alert.show(
                   context,

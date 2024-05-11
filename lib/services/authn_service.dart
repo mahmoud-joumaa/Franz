@@ -79,6 +79,11 @@ _handleSignInResult(SignInResult result) async {
         "success": true,
         "message": "Sign In Successful"
       };
+    case AuthSignInStep.confirmSignUp:
+      return {
+        "success": true,
+        "message": "Sign In Successful\nRemember to verify your account on the profile page :)"
+      };
     default:
       return {
         "success": false,
@@ -111,4 +116,4 @@ signOutCurrentUser() async {
 MFA
 ================================================================================================ */
 
-// IDEA: Add optional MFA
+// COMBAK: Add optional MFA

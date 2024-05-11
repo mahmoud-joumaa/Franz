@@ -1,4 +1,5 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
 /* ================================================================================================
 User Sign Up
@@ -38,14 +39,6 @@ _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
     "success": true,
     "message": "A confirmation code has been sent to ${codeDeliveryDetails.destination}.\nPlease check your ${codeDeliveryDetails.deliveryMedium.name} for the code."
   };
-  // COMBAK: Copy this
-  // Alert.show(
-  //   context,
-  //   "A confirmation code has been sent to your inbox.",
-  //   "Please verify your email on the next page.",
-  //   UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
-  //   "ok"
-  // );
 }
 
 confirmUser({required String username, required String confirmationCode}) async {
@@ -59,17 +52,108 @@ confirmUser({required String username, required String confirmationCode}) async 
       "success": false,
       "message": e.message
     };
-    // COMBAK: Copy this
-    // Alert.show(
-    //   context,
-    //   "An error has occurred while verifying $username.",
-    //   e.message,
-    //   UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
-    //   "dismiss"
-    // );
   }
 }
 
 /* ================================================================================================
 User Sign In
 ================================================================================================ */
+
+signInUser(String username, String password) async {
+  try {
+    final result = await Amplify.Auth.signIn(username: username, password: password);
+    return await _handleSignInResult(result, username);
+  }
+  on AuthException catch (e) {
+    return {
+      "success": false,
+      "message": e.message
+    };
+  }
+}
+
+_handleSignInResult(SignInResult result, String username) async {
+  switch (result.nextStep.signInStep) {
+    case AuthSignInStep.confirmSignInWithSmsMfaCode:
+      final codeDeliveryDetails = result.nextStep.codeDeliveryDetails!;
+      _handleCodeDelivery(codeDeliveryDetails);
+      break;
+    case AuthSignInStep.confirmSignInWithNewPassword:
+      safePrint('Enter a new password to continue signing in');
+      break;
+    case AuthSignInStep.confirmSignInWithCustomChallenge:
+      final parameters = result.nextStep.additionalInfo;
+      final prompt = parameters['prompt']!;
+      safePrint(prompt);
+      break;
+    case AuthSignInStep.resetPassword:
+      final resetResult = await Amplify.Auth.resetPassword(
+        username: username,
+      );
+      await _handleResetPasswordResult(resetResult);
+      break;
+    case AuthSignInStep.confirmSignUp:
+      // Resend the sign up code to the registered device.
+      final resendResult = await Amplify.Auth.resendSignUpCode(
+        username: username,
+      );
+      _handleCodeDelivery(resendResult.codeDeliveryDetails);
+      break;
+    case AuthSignInStep.done:
+      safePrint('Sign in is complete');
+      break;
+  }
+}
+
+/* ================================================================================================
+User Sign Out
+================================================================================================ */
+
+Future<void> signOutCurrentUser() async {
+  final result = await Amplify.Auth.signOut();
+  if (result is CognitoCompleteSignOut) {
+    return {
+      "success": true,
+      "message": "Signed out successfully"
+    };
+  }
+  else if (result is CognitoFailedSignOut) {
+    return {
+      "success": false,
+      "message": result.exception.message
+    };
+  }
+}
+
+/* ================================================================================================
+MFA
+================================================================================================ */
+
+Future<void> setUpMFASignUp() async {
+  try {
+    final userAttributes = <AuthUserAttributeKey, String>{
+      AuthUserAttributeKey.email: 'email@domain.com',
+      // Note: phone_number requires country code
+      AuthUserAttributeKey.phoneNumber: '+15559101234',
+    };
+    final result = await Amplify.Auth.signUp(
+      username: 'myusername',
+      password: 'mysupersecurepassword',
+      options: SignUpOptions(userAttributes: userAttributes),
+    );
+    await _handleSignUpResult(result);
+  } on AuthException catch (e) {
+    safePrint('Error signing up: ${e.message}');
+  }
+}
+
+Future<void> confirmMFAUser() async {
+  try {
+    final result = await Amplify.Auth.confirmSignIn(
+      confirmationValue: '123456',
+    );
+    await _handleSignInResult(result);
+  } on AuthException catch (e) {
+    safePrint('Error confirming sign in: ${e.message}');
+  }
+}

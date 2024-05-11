@@ -16,12 +16,12 @@ class _AboutScreenState extends State<AboutScreen> {
   final PageController _controller = PageController(); // keep track of what page the user is on
   int i = 0; // current page
 
+  // FIXME: Change text and illustration images of each child
   final intros = [
     Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        // FIXME: Change text and illustration images of each child
         children: [
           const Text("Text", style: TextStyle(fontSize: 40.0), textAlign: TextAlign.center,),
           Image.asset("../../../assets/Franz.jpg", width: 400.0, fit: BoxFit.contain,),

@@ -1,0 +1,85 @@
+{
+  "auth": {
+    "franz": {
+      "customAuth": false,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "imported"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_franz_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "franz"
+        }
+      ]
+    },
+    "AMPLIFY_auth_franz_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "franz"
+        }
+      ]
+    },
+    "AMPLIFY_auth_franz_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "franz"
+        }
+      ]
+    },
+    "AMPLIFY_auth_franz_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "franz"
+        }
+      ]
+    },
+    "AMPLIFY_storage_franz0ccd55f7_bucketName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "franz0ccd55f7"
+        }
+      ]
+    },
+    "AMPLIFY_storage_franz0ccd55f7_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "franz0ccd55f7"
+        }
+      ]
+    },
+    "AMPLIFY_storage_franz2592b9f1_bucketName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "franz2592b9f1"
+        }
+      ]
+    },
+    "AMPLIFY_storage_franz2592b9f1_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "franz2592b9f1"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "franz0ccd55f7": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3",
+      "serviceType": "imported"
+    }
+  }
+}

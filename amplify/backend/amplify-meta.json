@@ -1,0 +1,69 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-franz-dev-027f5-authRole",
+      "UnauthRoleArn": "arn:aws:iam::339712731502:role/amplify-franz-dev-027f5-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::339712731502:role/amplify-franz-dev-027f5-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-franz-dev-027f5-deployment",
+      "UnauthRoleName": "amplify-franz-dev-027f5-unauthRole",
+      "StackName": "amplify-franz-dev-027f5",
+      "StackId": "arn:aws:cloudformation:eu-west-1:339712731502:stack/amplify-franz-dev-027f5/39e1cce0-0eba-11ef-8126-021eefbfb4c9",
+      "AmplifyAppId": "d9wbaw2i5x6pm"
+    }
+  },
+  "auth": {
+    "franz": {
+      "service": "Cognito",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "output": {
+        "UserPoolId": "eu-west-1_dzWhpzLgC",
+        "UserPoolName": "Users",
+        "AppClientID": "p3juppcq597a5ae9sn7q6lkm5",
+        "AppClientIDWeb": "p3juppcq597a5ae9sn7q6lkm5",
+        "HostedUIDomain": "franzusers"
+      },
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_UPPERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_SYMBOLS"
+          ]
+        },
+        "mfaConfiguration": "OPTIONAL",
+        "mfaTypes": [
+          "TOTP"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "lastPushTimeStamp": "2024-05-10T16:48:13.889Z"
+    }
+  },
+  "storage": {
+    "franz0ccd55f7": {
+      "service": "S3",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "output": {
+        "BucketName": "audio-transcribed-1",
+        "Region": "eu-west-1"
+      },
+      "lastPushTimeStamp": "2024-05-10T16:51:35.791Z"
+    }
+  },
+  "api": {}
+}

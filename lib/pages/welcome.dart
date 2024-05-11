@@ -2,11 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
 import 'package:franz/global.dart';
-import 'package:franz/amplifyconfiguration.dart';
 import 'package:franz/services/authn_service.dart';
 
 // TODO: Fix the color scheme of the page
@@ -49,41 +46,15 @@ class Welcome extends StatefulWidget {
 class _WelcomeState extends State<Welcome> {
 
   static bool? isLogin; // Toggle between the two tabs (login & sign up)
-  dynamic configureError;
 
   @override
   void initState() {
     super.initState();
-    _configureAmplify();
     isLogin = true; // default the registration form to "login" instead of "signup"
-    configureError = false; // assume no error by default :)
-  }
-
-  // Configure Amplify w/ any plugins necessary
-  Future<void> _configureAmplify() async {
-    try {
-      final auth = AmplifyAuthCognito();
-      await Amplify.addPlugin(auth);
-      // Initialize the configured categories' plugins in our app
-      await Amplify.configure(amplifyconfig);
-    }
-    catch (e) {
-      configureError = e;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-
-    if (configureError) {
-      Alert.show(
-        context,
-        "An error has occurred while initializing the application. Please try again later.",
-        configureError,
-        UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
-        "exit"
-      );
-    }
 
     return Scaffold(
       backgroundColor: UserTheme.isDark ? const Color(Palette.brown) : const Color(Palette.lightbrown),

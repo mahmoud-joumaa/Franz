@@ -11,7 +11,6 @@ Future<void> signUpUser({required String username, required String password, req
     // Define user attributes (email, username, and preferred instrument)
     final userAttributes = {
       AuthUserAttributeKey.email: email,
-      AuthUserAttributeKey.preferredUsername: username,
       const CognitoUserAttributeKey.custom('preferred_instrument'): preferredInstrument,
     };
     // Await the sign up result from Amplify

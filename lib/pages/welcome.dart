@@ -275,12 +275,19 @@ class _SubmitButtonState extends State<SubmitButton> {
             // Validate password
             // TODO: Add validation logic
             signUpUser(username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: "");
-            // No error
-            // COMBAK: Add proper navigation logic
-            // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, "HomeScreen");
             // Error
-            // TODO: Add catch error logic
+            if (Error.error) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text("An error has occurred while initializing the application. Please try again later."),
+                  content: Text(Error.error),
+                  backgroundColor: UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
+                ),
+              );
+            }
+            // No error
+            else Navigator.pushReplacementNamed(context, "HomeScreen");
           }
           // User login
           else {

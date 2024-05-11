@@ -37,7 +37,7 @@ _handleSignUpResult(SignUpResult result) async {
 _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
   return {
     "success": true,
-    "message": "A confirmation code has been sent to ${codeDeliveryDetails.destination}.\nPlease check your ${codeDeliveryDetails.deliveryMedium.name} for the code."
+    "message": "A confirmation code has been sent to ${codeDeliveryDetails.destination}.\nPlease check your ${codeDeliveryDetails.deliveryMedium.name} for the code to verify your account on the profile page."
   };
 }
 
@@ -62,7 +62,7 @@ User Sign In
 signInUser(String username, String password) async {
   try {
     final result = await Amplify.Auth.signIn(username: username, password: password);
-    return await _handleSignInResult(result, username);
+    return _handleSignInResult(result);
   }
   on AuthException catch (e) {
     return {
@@ -72,36 +72,18 @@ signInUser(String username, String password) async {
   }
 }
 
-_handleSignInResult(SignInResult result, String username) async {
+_handleSignInResult(SignInResult result) async {
   switch (result.nextStep.signInStep) {
-    case AuthSignInStep.confirmSignInWithSmsMfaCode:
-      final codeDeliveryDetails = result.nextStep.codeDeliveryDetails!;
-      _handleCodeDelivery(codeDeliveryDetails);
-      break;
-    case AuthSignInStep.confirmSignInWithNewPassword:
-      safePrint('Enter a new password to continue signing in');
-      break;
-    case AuthSignInStep.confirmSignInWithCustomChallenge:
-      final parameters = result.nextStep.additionalInfo;
-      final prompt = parameters['prompt']!;
-      safePrint(prompt);
-      break;
-    case AuthSignInStep.resetPassword:
-      final resetResult = await Amplify.Auth.resetPassword(
-        username: username,
-      );
-      await _handleResetPasswordResult(resetResult);
-      break;
-    case AuthSignInStep.confirmSignUp:
-      // Resend the sign up code to the registered device.
-      final resendResult = await Amplify.Auth.resendSignUpCode(
-        username: username,
-      );
-      _handleCodeDelivery(resendResult.codeDeliveryDetails);
-      break;
     case AuthSignInStep.done:
-      safePrint('Sign in is complete');
-      break;
+      return {
+        "success": true,
+        "message": "Sign In Successful"
+      };
+    default:
+      return {
+        "success": false,
+        "message": "This sign in method is not supported"
+      };
   }
 }
 
@@ -109,7 +91,7 @@ _handleSignInResult(SignInResult result, String username) async {
 User Sign Out
 ================================================================================================ */
 
-Future<void> signOutCurrentUser() async {
+signOutCurrentUser() async {
   final result = await Amplify.Auth.signOut();
   if (result is CognitoCompleteSignOut) {
     return {
@@ -129,31 +111,4 @@ Future<void> signOutCurrentUser() async {
 MFA
 ================================================================================================ */
 
-Future<void> setUpMFASignUp() async {
-  try {
-    final userAttributes = <AuthUserAttributeKey, String>{
-      AuthUserAttributeKey.email: 'email@domain.com',
-      // Note: phone_number requires country code
-      AuthUserAttributeKey.phoneNumber: '+15559101234',
-    };
-    final result = await Amplify.Auth.signUp(
-      username: 'myusername',
-      password: 'mysupersecurepassword',
-      options: SignUpOptions(userAttributes: userAttributes),
-    );
-    await _handleSignUpResult(result);
-  } on AuthException catch (e) {
-    safePrint('Error signing up: ${e.message}');
-  }
-}
-
-Future<void> confirmMFAUser() async {
-  try {
-    final result = await Amplify.Auth.confirmSignIn(
-      confirmationValue: '123456',
-    );
-    await _handleSignInResult(result);
-  } on AuthException catch (e) {
-    safePrint('Error confirming sign in: ${e.message}');
-  }
-}
+// IDEA: Add optional MFA

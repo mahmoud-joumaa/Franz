@@ -51,10 +51,11 @@ class Alert {
                   await SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
                   break;
                 case "login":
+                  Navigator.of(context).pop();
                   Navigator.pushReplacementNamed(context, "HomeScreen");
                   break;
                 case "logout":
-                  Navigator.pushReplacementNamed(context, "WelcomeScreen");
+                  Navigator.pushNamed(context, "WelcomeScreen");
                   break;
                 default:
                   Navigator.of(context).pop();

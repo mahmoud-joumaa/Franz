@@ -32,7 +32,7 @@ Dialog Pop Up
 ================================================================================================ */
 
 class Alert {
-  static show(context, String title, content, backgroundColor, String type) {
+  static show(context, String title, content, Color backgroundColor, String type) {
     type = type.toLowerCase(); // For comparison checks
     showDialog(
       context: context,
@@ -40,7 +40,7 @@ class Alert {
       builder: (BuildContext context) => AlertDialog(
         title: Text(title),
         content: Text(content),
-        backgroundColor: backgroundColor ?? UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100], // FIXME: Change based on default color scheme
+        backgroundColor: backgroundColor,
         actions: [
           TextButton(
             child: Text(type.toUpperCase()),
@@ -48,6 +48,9 @@ class Alert {
               switch (type) {
                 case "exit":
                   // TODO: Add exit application logic
+                  break;
+                case "login":
+                  Navigator.pushReplacementNamed(context, "HomeScreen");
                   break;
                 default:
                   Navigator.of(context).pop();

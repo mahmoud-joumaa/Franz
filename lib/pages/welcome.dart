@@ -40,13 +40,14 @@ class Welcome extends StatefulWidget {
 class _WelcomeState extends State<Welcome> {
 
   static bool? isLogin; // Toggle between the two tabs (login & sign up)
-  dynamic configureError; // Assume no errors by default :)
+  dynamic configureError;
 
   @override
   void initState() {
     super.initState();
     _configureAmplify();
     isLogin = true; // default the registration form to "login" instead of "signup"
+    configureError = false; // assume no error by default :)
   }
 
   // Configure Amplify w/ any plugins necessary
@@ -70,7 +71,7 @@ class _WelcomeState extends State<Welcome> {
         context,
         "An error has occurred while initializing the application. Please try again later.",
         configureError,
-        UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
+        UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
         "exit"
       );
     }
@@ -155,7 +156,7 @@ class _WelcomeState extends State<Welcome> {
                         ),
                       ),
                       SubmitButton(text: isLogin!?"Login with Email":"Sign Up with Email", type: isLogin!?"login":"signup"),
-                      const SubmitButton(text: "Connect with Google", type: "google"),
+                      // const SubmitButton(text: "Connect with Google", type: "google"),
                     ],
                   ),
                 ),
@@ -268,49 +269,56 @@ class _SubmitButtonState extends State<SubmitButton> {
     return ElevatedButton(
       onPressed: () async {
         setState(() {isLoading = true;});
-        try {
-          if (type != "google") { // i.e. sign up with AWS Cognito
-            // User Sign Up w/ email
-            if (!_WelcomeState.isLogin!) {
-              // Validate password
-              if (signUpPasswordController.text != signUpConfirmPasswordController.text) {
+        if (type != "google") { // i.e. sign up with AWS Cognito
+          // User Sign Up w/ email
+          if (!_WelcomeState.isLogin!) {
+            // Validate password
+            if (signUpPasswordController.text != signUpConfirmPasswordController.text) {
+              Alert.show(
+                context,
+                "An error has occurred while creating ${signUpUsernameController.text}",
+                "Passwords don't match",
+                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                "dismiss"
+              );
+            }
+            else {
+              dynamic result = await signUpUser(username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: "");
+              // Error
+              if (!result["success"]) {
                 Alert.show(
                   context,
-                  "An error has occurred while creating ${signUpUsernameController.text}.",
-                  "Passwords don't match",
-                  UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
+                  "An error has occurred while creating ${signUpUsernameController.text}",
+                  result["message"],
+                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
                   "dismiss"
                 );
               }
+              // No Error
               else {
-                await signUpUser(context, username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: "");
-                // No Error (error handled in try/catch block)
-                Navigator.pushReplacementNamed(context, "HomeScreen");
+                Alert.show(
+                  context,
+                  "Successfully created ${signUpUsernameController.text}",
+                  result["message"],
+                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  "login"
+                );
               }
             }
-            // User login w/ email
-            else {
-              // TODO: Add authentication logic
-              // No error
-              // COMBAK: Add proper navigation logic
-              Navigator.pushReplacementNamed(context, "HomeScreen");
-              // Error
-              // TODO: Add catch error logic
-            }
           }
-          // Login w/ Google
+          // User login w/ email
           else {
-            // IDEA: Sign in with Google
+            // TODO: Add authentication logic
+            // No error
+            // COMBAK: Add proper navigation logic
+            Navigator.pushReplacementNamed(context, "HomeScreen");
+            // Error
+            // TODO: Add catch error logic
           }
         }
-        catch (e) {
-          Alert.show(
-            context,
-            "An error has occurred.",
-            e,
-            UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
-            "dismiss"
-          );
+        // Login w/ Google
+        else {
+          // IDEA: Sign in with Google
         }
         await Future.delayed(const Duration(milliseconds: 500), () {}); // Have a slight buffer between changes
         setState(() {isLoading = false;});

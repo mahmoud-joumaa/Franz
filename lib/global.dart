@@ -55,7 +55,7 @@ class Alert {
                   Navigator.pushReplacementNamed(context, "HomeScreen");
                   break;
                 case "logout":
-                  Navigator.pushNamed(context, "WelcomeScreen");
+                  Navigator.pushReplacementNamed(context, "WelcomeScreen");
                   break;
                 default:
                   Navigator.of(context).pop();

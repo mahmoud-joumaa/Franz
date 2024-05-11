@@ -28,11 +28,36 @@ class Palette {
 }
 
 /* ================================================================================================
-Error handling
+Dialog Pop Up
 ================================================================================================ */
 
-class Error {
-  static dynamic error = false;
+class Alert {
+  static show(context, String title, content, backgroundColor, String type) {
+    type = type.toLowerCase(); // For comparison checks
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        backgroundColor: backgroundColor ?? UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100], // FIXME: Change based on default color scheme
+        actions: [
+          TextButton(
+            child: Text(type.toUpperCase()),
+            onPressed: () {
+              switch (type) {
+                case "exit":
+                  // TODO: Add exit application logic
+                  break;
+                default:
+                  Navigator.of(context).pop();
+              }
+            },
+          )
+        ],
+      ),
+    );
+  }
 }
 
 /* ================================================================================================

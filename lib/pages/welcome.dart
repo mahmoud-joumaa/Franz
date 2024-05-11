@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -37,8 +39,8 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
 
-  // Toggle between the two tabs (login & sign up)
-  static bool? isLogin;
+  static bool? isLogin; // Toggle between the two tabs (login & sign up)
+  dynamic configureError; // Assume no errors by default :)
 
   @override
   void initState() {
@@ -52,26 +54,24 @@ class _WelcomeState extends State<Welcome> {
     try {
       final auth = AmplifyAuthCognito();
       await Amplify.addPlugin(auth);
-
-      await Amplify.configure(amplifyconfig); // Initialize the configured categories' plugins in our app
+      // Initialize the configured categories' plugins in our app
+      await Amplify.configure(amplifyconfig);
     }
     catch (e) {
-      safePrint('An error occurred configuring Amplify: $e');
-      Error.error = e;
+      configureError = e;
     }
   }
 
   @override
   Widget build(BuildContext context) {
 
-    if (Error.error) { // TODO: Add "exit application" or "reload application" button
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("An error has occurred while initializing the application. Please try again later."),
-          content: Text(Error.error),
-          backgroundColor: UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
-        ),
+    if (configureError) {
+      Alert.show(
+        context,
+        "An error has occurred while initializing the application. Please try again later.",
+        configureError,
+        UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
+        "exit"
       );
     }
 
@@ -268,41 +268,51 @@ class _SubmitButtonState extends State<SubmitButton> {
     return ElevatedButton(
       onPressed: () async {
         setState(() {isLoading = true;});
-        await Future.delayed(const Duration(seconds: 2), () {}); // COMBAK: DEBUGGING, remove later
-        if (type != "google") { // i.e. sign up with AWS Cognito
-          // User Sign Up
-          if (!_WelcomeState.isLogin!) {
-            // Validate password
-            // TODO: Add validation logic
-            signUpUser(username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: "");
-            // Error
-            if (Error.error) {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  title: const Text("An error has occurred while initializing the application. Please try again later."),
-                  content: Text(Error.error),
-                  backgroundColor: UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
-                ),
-              );
+        try {
+          if (type != "google") { // i.e. sign up with AWS Cognito
+            // User Sign Up w/ email
+            if (!_WelcomeState.isLogin!) {
+              // Validate password
+              if (signUpPasswordController.text != signUpConfirmPasswordController.text) {
+                Alert.show(
+                  context,
+                  "An error has occurred while creating ${signUpUsernameController.text}.",
+                  "Passwords don't match",
+                  UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
+                  "dismiss"
+                );
+              }
+              else {
+                await signUpUser(context, username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: "");
+                // No Error (error handled in try/catch block)
+                Navigator.pushReplacementNamed(context, "HomeScreen");
+              }
             }
-            // No error
-            else Navigator.pushReplacementNamed(context, "HomeScreen");
+            // User login w/ email
+            else {
+              // TODO: Add authentication logic
+              // No error
+              // COMBAK: Add proper navigation logic
+              Navigator.pushReplacementNamed(context, "HomeScreen");
+              // Error
+              // TODO: Add catch error logic
+            }
           }
-          // User login
+          // Login w/ Google
           else {
-            // TODO: Add authentication logic
-            // No error
-            // COMBAK: Add proper navigation logic
-            // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, "HomeScreen");
-            // Error
-            // TODO: Add catch error logic
+            // IDEA: Sign in with Google
           }
         }
-        else {
-          // TODO: Sign in with Google
+        catch (e) {
+          Alert.show(
+            context,
+            "An error has occurred.",
+            e,
+            UserTheme.isDark ? Colors.redAccent[700] : Colors.redAccent[100],
+            "dismiss"
+          );
         }
+        await Future.delayed(const Duration(milliseconds: 500), () {}); // Have a slight buffer between changes
         setState(() {isLoading = false;});
         // await Future.delayed(const Duration(milliseconds: 500), _WelcomeState.clearInputs); FIXME: Add proper clearInputs() logic
       },

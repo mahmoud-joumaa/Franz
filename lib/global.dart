@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 /* ================================================================================================
@@ -44,10 +45,10 @@ class Alert {
         actions: [
           TextButton(
             child: Text(type.toUpperCase()),
-            onPressed: () {
+            onPressed: () async {
               switch (type) {
                 case "exit":
-                  // TODO: Add exit application logic
+                  await SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
                   break;
                 case "login":
                   Navigator.pushReplacementNamed(context, "HomeScreen");

@@ -11,6 +11,16 @@ import 'package:franz/pages/home/settings.dart';
 import 'package:franz/pages/home/transcribe.dart';
 import 'package:franz/pages/home/new_transcription.dart';
 
+/* ================================================================================================
+Currently logged in user start
+================================================================================================ */
+
+// TODO: Add user credentials from login screen
+
+/* ================================================================================================
+Currently logged in user end
+================================================================================================ */
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -47,6 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             onPressed: () async {
+              // FIXME: Fix after handling user credentials from login screen
+              /*
               dynamic result = await signOutCurrentUser();
               if (result["success"]) {
                 Alert.show(
@@ -66,6 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   "dismiss"
                 );
               }
+              */
             },
             icon: const Icon(Icons.logout)
           )

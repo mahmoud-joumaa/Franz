@@ -309,7 +309,7 @@ class _SubmitButtonState extends State<SubmitButton> {
               );
             }
             else {
-              dynamic result = await signInUser(User(current: CognitoUser(signUpUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: signUpUsernameController.text, password: signUpPasswordController.text)));
+              dynamic result = await signInUser(User(current: CognitoUser(loginUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: loginUsernameController.text, password: loginPasswordController.text)));
               // Error
               if (!result["success"]) {
                 Alert.show(

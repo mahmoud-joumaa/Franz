@@ -30,12 +30,20 @@ signUpUser({required username, required email, required password}) async {
       const AttributeArg(name: "profile", value: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb5ay974Ak1bGFIDStEQaYK7qK60bzbbmczDft-ao-Xw&s"),
       const AttributeArg(name: "custom:preferred_instrument", value: "None")
     ];
-    var data = await Cognito.userPool.signUp(username, password, userAttributes: userAttributes);
-    authenticateUser(User(current: CognitoUser(username, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: username, password: password)));
-    return {
-      "success": true,
-      "message": data
-    };
+    await Cognito.userPool.signUp(username, password, userAttributes: userAttributes);
+    final result = await authenticateUser(User(current: CognitoUser(username, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: username, password: password)));
+    if (result["success"]) {
+      return {
+        "success": true,
+        "message": "Successfully registered as $username"
+      };
+    }
+    else {
+      return {
+        "success": false,
+        "message": result["message"]
+      };
+    }
   }
   on CognitoClientException catch (e) {
     return {
@@ -51,7 +59,19 @@ User Sign In
 
 signInUser(User user) async {
   try {
-    authenticateUser(user);
+    final result = await authenticateUser(user);
+    if (result["success"]) {
+      return {
+        "success": true,
+        "message": result["message"]
+      };
+    }
+    else {
+      return {
+        "success": false,
+        "message": result["message"]
+      };
+    }
   }
   on CognitoClientException catch (e) {
     return {
@@ -83,6 +103,7 @@ authenticateUser(User user) async {
     final session = await user.current.authenticateUser(user.authDetails);
     return {
       "success": true,
+      "message": "Logged in successfully as ${user.authDetails.username}",
       "token": session!.getAccessToken().getJwtToken()
     };
   }
@@ -136,6 +157,13 @@ authenticateUser(User user) async {
     };
   }
   on CognitoClientException catch (e) {
+    // handle user is not confirmed error
+    if (e.message == "User is not confirmed.") {
+      return {
+        "success": true,
+        "message": "Logged in successfully as ${user.authDetails.username}\n\n${e.message}\nRemember to confirm your account on the settings screen :)"
+      };
+    }
     // handle Wrong Username and Password and Cognito Client
     return {
       "success": false,

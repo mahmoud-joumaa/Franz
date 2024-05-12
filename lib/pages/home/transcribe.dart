@@ -82,6 +82,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    info = [];
     return GraphQLProvider(
       client: DynamoGraphQL.initialize(),
       child: Query(

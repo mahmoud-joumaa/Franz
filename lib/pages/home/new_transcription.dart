@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:franz/components/audio_recorder.dart';
 import 'package:franz/pages/home/home.dart';
+import 'package:http/http.dart' as http;
 
 class NewTransScreen extends StatefulWidget {
   const NewTransScreen({super.key});
@@ -19,7 +21,7 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
   bool hasError = false;
   String? audioPath = "";
   final TextEditingController titleController = TextEditingController();
-  final TextEditingController authorController = TextEditingController();
+  bool _isTranscribing = false;
 
   @override
   void initState() {
@@ -36,7 +38,7 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
       // For example, to print the name of the first picked file
       print(result.files.first.name);
       setState(() {
-        _selectedFileName = result.files.first.name;
+        _selectedFileName = result.files.first.path!;
       });
     }
   }
@@ -63,7 +65,195 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
     });
   }
 
-  void Transcribe() {
+
+
+  void transcribe() async{
+    dynamic result;
+    setState(() {
+      _isTranscribing = true;
+    });
+    if (_ytlink.text == '' && _selectedFileName == '' && audioPath != ''){
+      List<int> file = await getFileBytes(audioPath!);
+      DateTime now = DateTime.now();
+      String url = 'https://audio-unprocessed-1.s3.amazonaws.com/';
+      result = await uploadToS3(
+          uploadUrl: url,
+          data: {"key": 'ahmadlb/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(audioPath!.split('/').last)}'},
+          fileAsBinary: file,
+          filename: audioPath!.split('/').last
+      );
+    } else if (_ytlink.text == '' && _selectedFileName != '' && audioPath == ''){
+      List<int> file = await getFileBytes(_selectedFileName);
+      DateTime now = DateTime.now();
+      String url = 'https://audio-unprocessed-1.s3.eu-west-1.amazonaws.com/';
+      String key = 'ahmadlb/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(_selectedFileName.split('/').last)}';
+      result = await uploadToS3(
+          uploadUrl: url,
+          data: {"key": key},
+          fileAsBinary: file,
+          filename: _selectedFileName.split('/').last
+      );
+    } else if(_ytlink.text != '' && _selectedFileName == '' && audioPath == ''){
+      result = await callYTDownload();
+      if(result != null && result.body != null && result.body != 'null' && result.statusCode == 200){
+        // Display success dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Upload Success'),
+              content: Text('File uploaded successfully'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();// Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        ).then((_) {
+          // Popping twice when the dialog is dismissed
+          Navigator.of(context).pop();
+        });
+      }
+      else{
+        // Display success dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Somthing Went Wrong'),
+              content: const Text('Unable to upload file'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();// Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        ).then((_) {
+          // Popping twice when the dialog is dismissed
+          Navigator.of(context).pop();
+        });
+      }
+      return;
+    }
+
+
+    if(result != null && result.runtimeType == bool && result){
+        // Display success dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Upload Success'),
+              content: Text('File uploaded successfully'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();// Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        ).then((_) {
+          // Popping twice when the dialog is dismissed
+          Navigator.of(context).pop();
+        });
+    }
+    else{
+      // Display success dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Somthing Went Wrong'),
+            content: const Text('Unable to upload file'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      ).then((value) => Navigator.pop(context));
+    }
+
+
+
+  }
+
+  Future<dynamic> callYTDownload() async {
+    final encodedYoutubeUrl = Uri.encodeComponent(_ytlink.text);
+    print(encodedYoutubeUrl);
+    final url = Uri.parse('https://cunmicltthdzba3akzwazo34q40xikyz.lambda-url.eu-west-1.on.aws?url=$encodedYoutubeUrl&username=${'ahmadlb'}&song_title=${titleController.text}');
+
+    print(url);
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      // Request successful, handle response
+      print('Lambda function invoked successfully');
+      print('Response: ${response.body}');
+    } else {
+      // Request failed, handle error
+      print('Failed to invoke Lambda function');
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+    return response;
+  }
+
+
+  String parseToUrlString(String input) {
+    String encoded = Uri.encodeComponent(input);
+
+    return encoded;
+  }
+
+  Future<List<int>> getFileBytesAndName(String path) async {
+    List<int> bytes;
+    bytes = await getFileBytes(path);
+    return bytes;
+  }
+
+  Future<List<int>> getFileBytes(String path) async {
+    File file = File(path!);
+    List<int> fileBytes = await file.readAsBytes();
+
+    return fileBytes;
+  }
+
+  Future<bool> uploadToS3({
+    required String uploadUrl,
+    required Map<String, String> data,
+    required List<int> fileAsBinary,
+    required String filename,
+  }) async {
+    var multiPartFile = http.MultipartFile.fromBytes('file', fileAsBinary, filename: filename);
+    var uri = Uri.parse(uploadUrl);
+    var request = http.MultipartRequest('POST', uri)
+      ..fields.addAll(data)
+      ..files.add(multiPartFile);
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 204) {
+      print('Uploaded!');
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -92,16 +282,6 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
                   ),
                                 ),
                 ),
-              Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 10),
-                child: TextField(
-                    controller: authorController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text("Author"),
-                    ),
-                  ),
-              ),
                 const Divider(),
                 RadioListTile(
                   title: const Text('Audio File'),
@@ -233,18 +413,17 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
                         onPressed: () => Navigator.pop(context),
                         child: const Text("Back")),
                     const Spacer(),
-                    TextButton(
+                    _isTranscribing? const CircularProgressIndicator() : TextButton(
                           onPressed: () {
                             if (((audioPath != '') || (_ytlink.text != '') || (_selectedFileName != '')) && (titleController.text != '')) {
-                              Transcribe();
-                              Navigator.pop(context);
+                              transcribe();
                             } else {
                               setState(() {
                                 hasError = true;
                               });
                             }
                         },
-                        child: const Text("Transcribe"))
+                        child:  const Text("Transcribe"))
                   ],
                 )
               ],

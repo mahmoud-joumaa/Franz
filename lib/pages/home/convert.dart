@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:franz/global.dart';
 import 'package:http/http.dart' as http;
+import 'package:xml/xml.dart';
 
 class ConvertScreen extends StatefulWidget {
   final String title;
@@ -22,6 +24,12 @@ class _ConvertScreenState extends State<ConvertScreen> {
   List<String> selectedCheckboxes = []; 
   String? selectedRadio;
   String username = "jelzein";
+  bool isConverting = false;
+
+  void initState(){
+    super.initState();
+    widget.items.remove('Custom');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +130,12 @@ class _ConvertScreenState extends State<ConvertScreen> {
 
             ),
             
-            Center(child: TextButton(onPressed: Convert, child: const Text("Convert")))
+            Center(
+                child: !isConverting ? TextButton(
+                    onPressed: Convert,
+                    child: const Text("Convert")
+                ) : const CircularProgressIndicator(),
+            ),
           ],
         ),
       ),
@@ -130,27 +143,73 @@ class _ConvertScreenState extends State<ConvertScreen> {
   }
 
   void Convert() async{
-    await callConvertLambda();
+    setState(() {
+      isConverting = true;
+    });
+    dynamic result = await callConvertLambda();
+    if (result != null && result.statusCode != null && result.statusCode == 200){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Conversion Success'),
+            content: Text('Conversion was successful'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      ).then((_) {
+        // Popping twice when the dialog is dismissed
+        Navigator.of(context).pop();
+      });
+    }
+    else{
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Conversion Failed'),
+            content: Text('Conversion has Failed'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      ).then((_) {
+        // Popping twice when the dialog is dismissed
+        Navigator.of(context).pop();
+      });
+    }
+
   }
 
   Future<dynamic> callConvertLambda() async {
     String title = parseToUrlString("beat it::123123123");
     Map<String, dynamic> requestBody = {
       'username': username,
-      'song_title': title,
+      'song_title': "beat it::123123123",
       'from_inst': selectedCheckboxes,
       'to_inst': selectedRadio,
     };
     String requestBodyJson = jsonEncode(requestBody);
-    print(requestBodyJson);
 
-    final url = Uri.parse('https://tyrog4xb4ilstrkkfvuu4scyte0hxami.lambda-url.eu-west-1.on.aws');
+    final url = Uri.parse('https://tyrog4xb4ilstrkkfvuu4scyte0hxami.lambda-url.eu-west-1.on.aws/');
 
-    print("HERE");
     final response = await http.post(
       url,
       body: requestBodyJson,
-      headers: {'Content-Type': 'application/json'}, // Specify JSON content type
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:franz/global.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -17,6 +18,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController passwordController = TextEditingController(text: "");
   final TextEditingController codeController = TextEditingController(text: "");
   bool _hidePassword = true;
+  String preferedInstrument = 'Piano';
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +57,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Card(
               child: Container(
                 padding: const EdgeInsets.all(16.0),
-                height: 450,
+                height: 610,
                 child: Column(
                   children: [
+                    Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        alignment: Alignment.centerLeft,
+                        child: const Text("General", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -110,6 +117,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     const SizedBox(
                       height: 20,
+                    ),
+                    Container(
+                      height: 100,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  SingleChildScrollView(
+                                    child: DropdownButtonFormField<String>(
+                                      decoration: const InputDecoration(
+                                        hintText: 'Select item',
+                                        border: OutlineInputBorder(),
+                                        labelText: "Prefered Instrument Class"
+                                      ),
+                                      value: preferedInstrument,
+                                      // Set the current selected item
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          preferedInstrument = value!;
+                                        });
+                                      },
+                                      items: Instruments.midiInstruments.keys.toList().map<DropdownMenuItem<String>>((
+                                          String item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(item),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     Expanded(
                       child: Card(
@@ -173,6 +220,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      Container(
+                          margin: const EdgeInsets.only(bottom: 15),
+                          alignment: Alignment.centerLeft,
+                          child: const Text("Verify Email", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
+                      ),
                       TextField(
                         controller: codeController,
                         decoration: const InputDecoration(

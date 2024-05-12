@@ -2,6 +2,28 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:franz/pages/home/notation.dart';
 import 'package:franz/components/audio_player.dart';
+import 'package:franz/services/api_service.dart';
+
+/* ================================================================================================
+DynamoDB API Start
+================================================================================================ */
+
+const username = "jelzein"; // Username to use for queries
+
+// Connection Initialization ======================================================================
+
+class DynamoAPI {
+  static const url = "https://6o5qxygbgbhtla6jocplyoskui.appsync-api.eu-west-1.amazonaws.com/graphql";
+  static const key = "da2-wri7ol4zujfwrbwrtexkupbq7q"; // COMBAK: Hide api key
+}
+
+// Queries ========================================================================================
+
+const getUserTranscriptions = 'query listTranscriptions { listTranscriptions(filter: {account_id: {eq: "$username"}}) { items { account_id transcription_id title transcription_date s3_bucket metadata } } }';
+
+/* ================================================================================================
+DynamoDB API End
+================================================================================================ */
 
 
 class TranscribeScreen extends StatefulWidget {
@@ -34,11 +56,6 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
   ];
 
   void changePlayer(UniqueKey key, String audioUrl) {
-    print(">> current id playing: $_currentPlaying");
-    print(">> requesting id: $key");
-    print(">> requesting url: $audioUrl");
-    print(">> current player state: ${_audioPlayer.state.toString()}");
-    print("\n");
 
     if (key == _currentPlaying) {
       if (_audioPlayer.state == PlayerState.playing) {
@@ -64,6 +81,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    GraphQL.query(getUserTranscriptions);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             );
           },
-          tooltip: 'Increment',
+          tooltip: 'Transcribe',
           child: const Icon(Icons.add),
         ),
       ),

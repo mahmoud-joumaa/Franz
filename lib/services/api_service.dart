@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -28,14 +27,15 @@ DynamoDB GraphQL API
 
 class DynamoGraphQL {
 
-  static initialize() {
+  static initializeClient() {
 
     // DynamoDB Endpoint
     final HttpLink httpLink = HttpLink(DynamoAPI.url, defaultHeaders: {"x-api-key": DynamoAPI.key});
     // Initialize Client
-    ValueNotifier<GraphQLClient> client = ValueNotifier(GraphQLClient(link: httpLink, cache: GraphQLCache(store: InMemoryStore())));
+    GraphQLClient client = GraphQLClient(link: httpLink, cache: GraphQLCache(store: InMemoryStore()));
 
     return client;
+
   }
 
 }

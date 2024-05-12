@@ -53,7 +53,7 @@ class Root extends StatelessWidget {
       routes: {
         // "SplashScreen": (context) => const Splash(),
         "WelcomeScreen": (context) => const Welcome(),
-        "HomeScreen": (context) => const MyHomePage(title: "title"),
+        "HomeScreen": (context) => const MyHomePage(title: "Franz"),
       }
 
     );

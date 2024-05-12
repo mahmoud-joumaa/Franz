@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+
+import 'package:franz/pages/home/transcribe.dart';
 
 // TODO: maybe support downloading local pdfs and loading them
 
@@ -16,4 +19,23 @@ class ApiService {
 
     return file.path;
   }
+}
+
+/* ================================================================================================
+DynamoDB GraphQL API
+================================================================================================ */
+
+class DynamoGraphQL {
+
+  static initializeClient() {
+
+    // DynamoDB Endpoint
+    final HttpLink httpLink = HttpLink(DynamoAPI.url, defaultHeaders: {"x-api-key": DynamoAPI.key});
+    // Initialize Client
+    GraphQLClient client = GraphQLClient(link: httpLink, cache: GraphQLCache(store: InMemoryStore()));
+
+    return client;
+
+  }
+
 }

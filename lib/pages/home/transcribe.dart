@@ -52,20 +52,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
   UniqueKey? _currentPlaying;
   String _searchValue = "";
 
-  List<Map<String, dynamic>> info = [
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
-      "audioLink": "https://filesamples.com/samples/audio/mp3/sample3.mp3"
-    },
-    {
-      "title": "nookie",
-      "date": "yesterday",
-      "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
-      "audioLink": "https://filesamples.com/samples/audio/mp3/sample2.mp3"
-    },
-  ];
+  List<Map<String, dynamic>> info = [];
 
   void changePlayer(UniqueKey key, String audioUrl) {
 
@@ -91,6 +78,8 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
     });
   }
 
+  int i = 0;
+
   @override
   Widget build(BuildContext context) {
     return GraphQLProvider(
@@ -98,7 +87,6 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
       child: Query(
         options: QueryOptions(document: gql(getUserTranscriptions)),
         builder: (result, {fetchMore, refetch}) {
-          print("\n\n${result.data}\n\n");
           if (result.isLoading) { // FIXME: Add custom loader
             return const Center(
               child: CircularProgressIndicator(),
@@ -109,6 +97,17 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
               child: Text("No data found!"),
             );
           }
+          // Success: Populate Info Page Start ====================================================
+          var responseItems = result.data?['listTranscriptions']?['items'];
+          for (final item in responseItems) { // title, date, transcriptionLink, audioLink
+            info.add({
+              "title": item["title"],
+              "date": item["transcription_date"],
+              "transcriptionLink": '${item["s3_bucket"]}/result.pdf',
+              "audioLink": '${item["s3_bucket"]}/result.mid',
+            });
+          }
+          // Success: Populate Info Page End ======================================================
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(

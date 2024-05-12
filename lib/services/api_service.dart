@@ -26,64 +26,14 @@ class ApiService {
 DynamoDB GraphQL API
 ================================================================================================ */
 
-// Custom link (to authenticate with API key) =====================================================
-
-typedef RequestTransformer = FutureOr<Request> Function(Request request);
-
-class CustomAuthLink extends _AsyncReqTransformLink {
-  CustomAuthLink({
-    required this.getHeaders,
-  }) : super(requestTransformer: transform(getHeaders));
-
-  final FutureOr<Map<String, String>>? Function() getHeaders;
-
-  static RequestTransformer transform(
-    FutureOr<Map<String, String>>? Function() getHeaders,
-  ) =>
-      (Request request) async {
-        final Map<String, String>? headers = await getHeaders();
-        return request.updateContextEntry<HttpLinkHeaders>(
-          // ignore: no_leading_underscores_for_local_identifiers
-          (_headers) => HttpLinkHeaders(
-            headers: headers!,
-          ),
-        );
-      };
-}
-
-class _AsyncReqTransformLink extends Link {
-  final RequestTransformer requestTransformer;
-
-  _AsyncReqTransformLink({
-    required this.requestTransformer,
-  });
-
-  @override
-  Stream<Response> request(
-    Request request, [
-    NextLink? forward,
-  ]) async* {
-    final req = await requestTransformer(request);
-
-    yield* forward!(req);
-  }
-}
-
-// Interactable class =============================================================================
-
 class DynamoGraphQL {
 
   static initialize() {
 
     // DynamoDB Endpoint
-    final HttpLink httpLink = HttpLink(DynamoAPI.url);
-    // Authenticate w/ API Key
-    CustomAuthLink authLink = CustomAuthLink(getHeaders: () => {"x-api-key": DynamoAPI.key});
-    // Concatenated Link
-    final Link link = authLink.concat(httpLink);
-
+    final HttpLink httpLink = HttpLink(DynamoAPI.url, defaultHeaders: {"x-api-key": DynamoAPI.key});
     // Initialize Client
-    ValueNotifier<GraphQLClient> client = ValueNotifier(GraphQLClient(link: link, cache: GraphQLCache(store: InMemoryStore())));
+    ValueNotifier<GraphQLClient> client = ValueNotifier(GraphQLClient(link: httpLink, cache: GraphQLCache(store: InMemoryStore())));
 
     return client;
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:franz/pages/home/notation.dart';
 import 'package:franz/components/audio_player.dart';
 import 'package:franz/services/api_service.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 /* ================================================================================================
 DynamoDB API Start
@@ -19,7 +20,18 @@ class DynamoAPI {
 
 // Queries ========================================================================================
 
-const getUserTranscriptions = 'query listTranscriptions { listTranscriptions(filter: {account_id: {eq: "$username"}}) { items { account_id transcription_id title transcription_date s3_bucket metadata } } }';
+const getUserTranscriptions = """query listTranscriptions {
+  listTranscriptions(filter: {account_id: {eq: "$username"}}) {
+    items {
+      account_id
+      transcription_id
+      title
+      transcription_date
+      s3_bucket
+      metadata
+    }
+  }
+}""";
 
 /* ================================================================================================
 DynamoDB API End
@@ -81,51 +93,69 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    GraphQL.query(getUserTranscriptions);
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: TextField(
-              decoration: InputDecoration(
-                suffixIcon:
-                    Icon(Icons.search, color: Theme.of(context).primaryColor),
-                border: const OutlineInputBorder(),
-                label: const Text("Search your transcriptions"),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchValue = value;
-                });
-              },
-            ),
-          ),
-          Expanded(
-            flex: 6,
-            child: ListView.separated(
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: info.length,
-              itemBuilder: (context, index) {
-                return Visibility(
-                  visible:
-                      info[index]["title"].toString().contains(_searchValue),
-                  maintainSize: false,
-                  child: TransriptionRow(
-                    title: info[index]["title"],
-                    date: info[index]["date"],
-                    transcriptionLink: info[index]["transcriptionLink"],
-                    audioLink: info[index]["audioLink"],
-                    audioPlayer: _audioPlayer,
-                    changePlayerState: changePlayer,
-                    currentPlayingKey: _currentPlaying,
+    return GraphQLProvider(
+      client: DynamoGraphQL.initialize(),
+      child: Query(
+        options: QueryOptions(document: gql(getUserTranscriptions)),
+        builder: (result, {fetchMore, refetch}) {
+          print("\n\n${result.data}\n\n");
+          if (result.isLoading) { // FIXME: Add custom loader
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (result.data == null) { // FIXME: Add custom "no data"
+            return const Center(
+              child: Text("No data found!"),
+            );
+          }
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      suffixIcon:
+                          Icon(Icons.search, color: Theme.of(context).primaryColor),
+                      border: const OutlineInputBorder(),
+                      label: const Text("Search your transcriptions"),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _searchValue = value;
+                      });
+                    },
                   ),
-                );
-              },
+                ),
+                Expanded(
+                  flex: 6,
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemCount: info.length,
+                    itemBuilder: (context, index) {
+                      return Visibility(
+                        visible:
+                            info[index]["title"].toString().contains(_searchValue),
+                        maintainSize: false,
+                        child: TransriptionRow(
+                          title: info[index]["title"],
+                          date: info[index]["date"],
+                          transcriptionLink: info[index]["transcriptionLink"],
+                          audioLink: info[index]["audioLink"],
+                          audioPlayer: _audioPlayer,
+                          changePlayerState: changePlayer,
+                          currentPlayingKey: _currentPlaying,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          );
+        }
       ),
     );
   }

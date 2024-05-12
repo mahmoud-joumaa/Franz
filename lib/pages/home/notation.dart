@@ -1,17 +1,10 @@
-import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:franz/components/audio_player.dart';
 import 'package:franz/services/api_service.dart';
 import 'package:franz/pages/home/convert.dart';
-import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'dart:convert';
 import 'package:xml/xml.dart';
 
 
@@ -39,6 +32,8 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
   AudioPlayer _audioPlayer = AudioPlayer();
   List<String> instruments = [];
   String selectedInstrument = '';
+  String username = "jelzein";
+  String title = 'beat it::123123123';
 
   @override
   void initState() {
@@ -61,7 +56,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
     print(selectedInstrument);
     String parsedInstrument = parseToUrlString(selectedInstrument!);
     _localFilePath = await ApiService().loadPDF(
-        "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/jelzein/beat+it%3A%3A123123123/$parsedInstrument/result.pdf");
+        "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/$parsedInstrument/result.pdf");
   }
 
   Future<void> listFoldersInFolder(String bucketName,
@@ -138,7 +133,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      ConvertScreen(title: widget.title,),
+                                      ConvertScreen(title: widget.title, items: instruments,),
                                 ),
                               ),
                           icon: const Icon(Icons.swap_horiz),

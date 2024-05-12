@@ -22,6 +22,7 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
   String? audioPath = "";
   final TextEditingController titleController = TextEditingController();
   bool _isTranscribing = false;
+  String username = "ahmadlb";
 
   @override
   void initState() {
@@ -78,7 +79,7 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
       String url = 'https://audio-unprocessed-1.s3.amazonaws.com/';
       result = await uploadToS3(
           uploadUrl: url,
-          data: {"key": 'ahmadlb/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(audioPath!.split('/').last)}'},
+          data: {"key": '${parseToUrlString(username)}/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(audioPath!.split('/').last)}'},
           fileAsBinary: file,
           filename: audioPath!.split('/').last
       );
@@ -86,7 +87,7 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
       List<int> file = await getFileBytes(_selectedFileName);
       DateTime now = DateTime.now();
       String url = 'https://audio-unprocessed-1.s3.eu-west-1.amazonaws.com/';
-      String key = 'ahmadlb/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(_selectedFileName.split('/').last)}';
+      String key = '${parseToUrlString(username)}/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(_selectedFileName.split('/').last)}';
       result = await uploadToS3(
           uploadUrl: url,
           data: {"key": key},
@@ -106,7 +107,6 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
                     Navigator.of(context).pop();// Close the dialog
                   },
                   child: const Text('OK'),
@@ -130,7 +130,6 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
                     Navigator.of(context).pop();// Close the dialog
                   },
                   child: const Text('OK'),
@@ -159,7 +158,6 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    Navigator.of(context).pop();// Close the dialog
                   },
                   child: const Text('OK'),
                 ),
@@ -199,7 +197,7 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
   Future<dynamic> callYTDownload() async {
     final encodedYoutubeUrl = Uri.encodeComponent(_ytlink.text);
     print(encodedYoutubeUrl);
-    final url = Uri.parse('https://cunmicltthdzba3akzwazo34q40xikyz.lambda-url.eu-west-1.on.aws?url=$encodedYoutubeUrl&username=${'ahmadlb'}&song_title=${titleController.text}');
+    final url = Uri.parse('https://cunmicltthdzba3akzwazo34q40xikyz.lambda-url.eu-west-1.on.aws?url=$encodedYoutubeUrl&username=${parseToUrlString(username)}&song_title=${parseToUrlString(titleController.text)}');
 
     print(url);
     final response = await http.get(url);

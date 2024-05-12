@@ -12,12 +12,11 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String language = "English";
   bool isDarkMode = false;
-  final TextEditingController usernameController =
-      TextEditingController(text: "USERNAME");
-  final TextEditingController emailController =
-  TextEditingController(text: "EMAIL");
-  final TextEditingController passwordController =
-  TextEditingController(text: "");
+  final TextEditingController usernameController = TextEditingController(text: "USERNAME");
+  final TextEditingController emailController = TextEditingController(text: "EMAIL");
+  final TextEditingController passwordController = TextEditingController(text: "");
+  final TextEditingController codeController = TextEditingController(text: "");
+  bool _hidePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Card(
               child: Container(
                 padding: const EdgeInsets.all(16.0),
-                height: 500,
+                height: 450,
                 child: Column(
                   children: [
                     Row(
@@ -135,11 +134,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ),
                               TextField(
-                                controller: usernameController,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  label: Text("Enter Password"),
+                                controller: passwordController,
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  label: const Text("Enter Password"),
+                                  suffixIcon: IconButton(icon: _hidePassword ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off), onPressed: () {setState(() {_hidePassword = !_hidePassword;});})
+
                                 ),
+                                obscureText: _hidePassword,
                               ),
                               Row(
                                 children: [
@@ -160,6 +162,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                   ],
+                ),
+              ),
+            ),
+            Card(
+              child: Container(
+                height: 200,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextField(
+                        controller: codeController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          label: Text("Enter Code"),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          TextButton(
+                            onPressed: resendCode,
+                            child: const Text("Resend Code")),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: verifyAccount,
+                            child: const Text("Verify Account")),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -261,5 +294,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             );
           });
         });
+  }
+
+  void verifyAccount() {
+    print("VERIFY ACCOUNT FUNCTION");
+  }
+
+  void resendCode() {
+    print("RESEND CODE FUNCTION");
   }
 }

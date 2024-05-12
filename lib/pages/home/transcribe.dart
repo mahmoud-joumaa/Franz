@@ -17,21 +17,20 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   UniqueKey? _currentPlaying;
   String _searchValue = "";
+  
+  
+  List<Map<String, dynamic>> info = [];
 
-  List<Map<String, dynamic>> info = [
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
-      "audioLink": "https://filesamples.com/samples/audio/mp3/sample3.mp3"
-    },
-    {
-      "title": "nookie",
-      "date": "yesterday",
-      "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
-      "audioLink": "https://filesamples.com/samples/audio/mp3/sample2.mp3"
-    },
-  ];
+  //s3://audio-transcribed-1/jelzein/beat it::123123123/Michael Jackson - Beat It (Guitar Solo Cover)-Robert Can't Play Bass.m4a
+  String getAudioLink(String username, String title, String time, String filename){
+    return "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/jelzein/${parseToUrlString(title)}::$time/$filename";
+  }
+
+  String parseToUrlString(String input) {
+    String encoded = Uri.encodeComponent(input);
+
+    return encoded;
+  }
 
   void changePlayer(UniqueKey key, String audioUrl) {
     print(">> current id playing: $_currentPlaying");
@@ -60,6 +59,24 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
     setState(() {
       _currentPlaying = key;
     });
+  }
+  
+  @override
+  void initState(){
+    super.initState();
+    String link = getAudioLink('jelzein', 'beat it', '123123123', parseToUrlString(""));
+    info = [{
+      "title": "weak and powerless",
+      "date": "today",
+      "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
+      "audioLink": link,
+    },
+    {
+    "title": "nookie",
+    "date": "yesterday",
+    "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
+    "audioLink": "https://filesamples.com/samples/audio/mp3/sample2.mp3"
+    }];
   }
 
   @override
@@ -132,6 +149,7 @@ class TransriptionRow extends StatelessWidget {
     required this.changePlayerState,
     required this.currentPlayingKey,
   });
+
 
   @override
   Widget build(BuildContext context) {

@@ -1,11 +1,16 @@
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import "package:amazon_cognito_identity_dart_2/cognito.dart";
+
+// Base Entities ==================================================================================
+
+class Cognito {
+  static final userPool = CognitoUserPool("eu-west-1_dzWhpzLgC", "p3juppcq597a5ae9sn7q6lkm5");
+}
 
 /* ================================================================================================
 User Sign Up
 ================================================================================================ */
 
-signUpUser({required String username, required String password, required String email, required String preferredInstrument}) async {
+signUpUser() async {
   try {
     // Define user attributes (email, and preferred instrument)
     final userAttributes = {
@@ -117,3 +122,28 @@ MFA
 ================================================================================================ */
 
 // COMBAK: Add optional MFA
+
+/* ================================================================================================
+Manage User Sessions
+================================================================================================ */
+
+Future<dynamic> isUserSignedIn() async {
+  final result = await Amplify.Auth.fetchAuthSession();
+  return result;
+}
+
+Future<AuthUser> getCurrentUser() async {
+  final user = await Amplify.Auth.getCurrentUser();
+  return user;
+}
+
+Future<void> fetchCurrentUserAttributes() async {
+  try {
+    final result = await Amplify.Auth.fetchUserAttributes();
+    for (final element in result) {
+      safePrint('key: ${element.userAttributeKey}; value: ${element.value}');
+    }
+  } on AuthException catch (e) {
+    safePrint('Error fetching user attributes: ${e.message}');
+  }
+}

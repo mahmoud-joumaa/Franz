@@ -11,12 +11,6 @@ import 'package:franz/pages/home/settings.dart';
 import 'package:franz/pages/home/transcribe.dart';
 import 'package:franz/pages/home/new_transcription.dart';
 
-// Logged in user start ===========================================================================
-class User {
-  abstract user;
-}
-// Logged in user end =============================================================================
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -27,6 +21,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   int currentPageIndex = 1;
 
   Widget _buildBody() {
@@ -127,4 +122,5 @@ class _MyHomePageState extends State<MyHomePage> {
       body: _buildBody(),
     );
   }
+
 }

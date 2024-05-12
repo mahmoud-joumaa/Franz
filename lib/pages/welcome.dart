@@ -78,7 +78,7 @@ class _WelcomeState extends State<Welcome> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Image.asset("assets/Franz.jpg", height: 65.0, width: 65.0),
-                          SizedBox(width: 20.0),
+                          const SizedBox(width: 20.0),
                           const Text("Franz",
                             style: TextStyle(
                               color: Colors.white,
@@ -328,6 +328,16 @@ class _SubmitButtonState extends State<SubmitButton> {
               }
               // No Error
               else {
+                // If a user is signed in, update the user data
+                await Future.delayed(const Duration(seconds: 1), () {print("Waited for 1 sec");});
+                print("\n\n\n${await isUserSignedIn()}\n\n\n");
+                if (await isUserSignedIn()) {
+                  User.current = await getCurrentUser();
+                  print("\n\n\nUser signed in: ${User.current}");
+                  await fetchCurrentUserAttributes();
+                  print("\n\n\n");
+                }
+                //
                 Alert.show(
                   context,
                   "Successfully logged in as ${signUpUsernameController.text}",
@@ -342,9 +352,10 @@ class _SubmitButtonState extends State<SubmitButton> {
         // Login w/ Google
         else {
         }
+        // Change states
         await Future.delayed(const Duration(milliseconds: 500), () {}); // Have a slight buffer between changes
         setState(() {isLoading = false;});
-        clearInputs();
+        await Future.delayed(const Duration(seconds: 1), () {clearInputs();});
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(const Color(Palette.yellow)),

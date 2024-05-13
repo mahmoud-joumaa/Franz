@@ -52,6 +52,7 @@ dependencies:
   amazon_cognito_identity_dart_2: ^3.6.5
   amplify_storage_s3: ^1.0.0
   xml: ^6.5.0
+  amazon_cognito_identity_dart_2: ^3.6.5
 
 dev_dependencies:
   flutter_test:

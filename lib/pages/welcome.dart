@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:amazon_cognito_identity_dart_2/cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -279,7 +280,7 @@ class _SubmitButtonState extends State<SubmitButton> {
               );
             }
             else {
-              dynamic result = await signUpUser(username: signUpUsernameController.text, password: signUpPasswordController.text, email: signUpEmailController.text, preferredInstrument: "");
+              dynamic result = await signUpUser(username: signUpUsernameController.text, email: signUpEmailController.text, password: signUpPasswordController.text);
               // Error
               if (!result["success"]) {
                 Alert.show(
@@ -315,7 +316,7 @@ class _SubmitButtonState extends State<SubmitButton> {
               );
             }
             else {
-              dynamic result = await signInUser(loginUsernameController.text, loginPasswordController.text);
+              dynamic result = await signInUser(User(current: CognitoUser(loginUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: loginUsernameController.text, password: loginPasswordController.text)));
               // Error
               if (!result["success"]) {
                 Alert.show(

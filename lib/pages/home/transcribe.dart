@@ -1,7 +1,46 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:franz/global.dart';
 import 'package:franz/pages/home/notation.dart';
 import 'package:franz/components/audio_player.dart';
+import 'package:franz/services/api_service.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+
+/* ================================================================================================
+DynamoDB API Start
+================================================================================================ */
+
+const username = "jelzein"; // Username to use for queries
+
+// Connection Initialization ======================================================================
+
+class DynamoAPI {
+  static const url = "https://6o5qxygbgbhtla6jocplyoskui.appsync-api.eu-west-1.amazonaws.com/graphql";
+  static const key = "da2-wri7ol4zujfwrbwrtexkupbq7q"; // COMBAK: Hide api key
+}
+
+// Queries ========================================================================================
+
+const getUserTranscriptions = """query listTranscriptions {
+  listTranscriptions(filter: {account_id: {eq: "$username"}}) {
+    items {
+      account_id
+      transcription_id
+      title
+      transcription_date
+      s3_bucket
+      metadata
+    }
+  }
+}""";
+
+// Initialize Client ==============================================================================
+
+GraphQLClient client = DynamoGraphQL.initializeClient();
+
+/* ================================================================================================
+DynamoDB API End
+================================================================================================ */
 
 
 class TranscribeScreen extends StatefulWidget {
@@ -13,32 +52,21 @@ class TranscribeScreen extends StatefulWidget {
   State<TranscribeScreen> createState() => _TranscribeScreenState();
 }
 
-class _TranscribeScreenState extends State<TranscribeScreen> {
+class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBindingObserver{
   final AudioPlayer _audioPlayer = AudioPlayer();
   UniqueKey? _currentPlaying;
   String _searchValue = "";
 
-  List<Map<String, dynamic>> info = [
-    {
-      "title": "weak and powerless",
-      "date": "today",
-      "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
-      "audioLink": "https://filesamples.com/samples/audio/mp3/sample3.mp3"
-    },
-    {
-      "title": "nookie",
-      "date": "yesterday",
-      "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
-      "audioLink": "https://filesamples.com/samples/audio/mp3/sample2.mp3"
-    },
-  ];
+  String parseToUrlString(String input) {
+    String encoded = Uri.encodeComponent(input);
+    return encoded;
+  }
+
+  String status = "loading"; // Check status of dynamo fetch
+
+  List<Map<String, dynamic>> info = [];
 
   void changePlayer(UniqueKey key, String audioUrl) {
-    print(">> current id playing: $_currentPlaying");
-    print(">> requesting id: $key");
-    print(">> requesting url: $audioUrl");
-    print(">> current player state: ${_audioPlayer.state.toString()}");
-    print("\n");
 
     if (key == _currentPlaying) {
       if (_audioPlayer.state == PlayerState.playing) {
@@ -62,11 +90,69 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
     });
   }
 
+  void stopAudio() async{
+    await _audioPlayer.stop();
+    setState(() {
+      _currentPlaying = null;
+    });
+  }
+
+  @override
+  void dispose() async{
+    stopAudio();
+    super.dispose();
+  }
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive || state == AppLifecycleState.detached) {
+      stopAudio();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // @Ahmad: Fix audio branch
+    WidgetsBinding.instance.addObserver(this);
+    String title = 'beat it::123123123';
+    String audioURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/result.mid";
+    // @Mahmoud: Render transriptions from dynamo
+    renderTranscriptions().then((result) {
+      if (result.isLoading) {
+        setState(() {status = "loading";});
+      }
+      else {
+        var responseItems = result.data?['listTranscriptions']?['items'];
+        if (responseItems.isEmpty) {
+          setState(() { status = "empty"; });
+        }
+        else {
+          for (final item in responseItems) { // title, date, transcriptionLink, audioLink
+            info.add({
+              "title": item["title"],
+              "date": item["transcription_date"],
+              "transcriptionLink": '${item["s3_bucket"]}/result.pdf',
+              "audioLink": '${item["s3_bucket"]}/result.mid',
+            });
+          }
+          setState(() { status = "done"; });
+        }
+      }
+    });
+  }
+
+  renderTranscriptions() async {
+    return await client.query(QueryOptions(document: gql(getUserTranscriptions)));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return status == "loading" ? const Loading(backgroundColor: Colors.white, color: Colors.deepPurple) : Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
+      child: status == "empty" ? const Center(child: Text("It appears you don't have any transcriptions yet!\nUse the plus button to start transcribing your favorite tunes!", textAlign: TextAlign.center)) : Column(
         children: [
           Expanded(
             flex: 1,
@@ -102,6 +188,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
                     audioPlayer: _audioPlayer,
                     changePlayerState: changePlayer,
                     currentPlayingKey: _currentPlaying,
+                    onButtonPressed: stopAudio,
                   ),
                 );
               },
@@ -121,6 +208,7 @@ class TransriptionRow extends StatelessWidget {
   final AudioPlayer audioPlayer;
   final Function changePlayerState;
   final UniqueKey? currentPlayingKey;
+  final VoidCallback onButtonPressed;
 
   const TransriptionRow({
     super.key,
@@ -131,7 +219,9 @@ class TransriptionRow extends StatelessWidget {
     required this.audioPlayer,
     required this.changePlayerState,
     required this.currentPlayingKey,
+    required this.onButtonPressed,
   });
+
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +241,7 @@ class TransriptionRow extends StatelessWidget {
           child: TextButton(
             child: const Icon(Icons.file_copy),
             onPressed: () {
+              onButtonPressed();
               Navigator.push(
                 context,
                 MaterialPageRoute(

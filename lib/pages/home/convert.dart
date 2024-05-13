@@ -1,11 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:franz/global.dart';
+import 'package:http/http.dart' as http;
+import 'package:xml/xml.dart';
 
 class ConvertScreen extends StatefulWidget {
   final String title;
+  final List<String> items;
 
   const ConvertScreen({
     Key? key,
     required this.title,
+    required this.items,
+
   }) : super(key: key);
 
   @override
@@ -13,9 +21,15 @@ class ConvertScreen extends StatefulWidget {
 }
 
 class _ConvertScreenState extends State<ConvertScreen> {
-  List<String> items = ["Item 1", "Item 2", "Item 3","Item 4", "Item 5", "Item 6","Item 7", "Item 8", "Item 9"]; // Sample list of items
   List<String> selectedCheckboxes = []; 
   String? selectedRadio;
+  String username = "jelzein";
+  bool isConverting = false;
+
+  void initState(){
+    super.initState();
+    widget.items.remove('Custom');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +53,12 @@ class _ConvertScreenState extends State<ConvertScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ListView.separated(
-                    separatorBuilder: (context, index) => Visibility(visible: selectedRadio != items[index],  child: const Divider()),
-                    itemCount: items.length,
+                    separatorBuilder: (context, index) => Visibility(visible: selectedRadio != widget.items[index],  child: const Divider()),
+                    itemCount: widget.items.length,
                     itemBuilder: (context, index) {
-                      final item = items[index];
+                      final item = widget.items[index];
                       return Visibility(
-                        visible: selectedRadio != items[index],
+                        visible: selectedRadio != widget.items[index],
                         child: SizedBox(
                           height: 40,
                           child: CheckboxListTile(
@@ -84,12 +98,12 @@ class _ConvertScreenState extends State<ConvertScreen> {
                   padding: const EdgeInsets.all(10.0),
                   child: ListView.separated(
 
-                    separatorBuilder: (context, index) => Visibility(visible: !selectedCheckboxes.contains(items[index]), child: const Divider()),
-                    itemCount: items.length,
+                    separatorBuilder: (context, index) => Visibility(visible: !selectedCheckboxes.contains(widget.items[index]), child: const Divider()),
+                    itemCount: widget.items.length,
                     itemBuilder: (context, index) {
-                      final item = items[index];
+                      final item = widget.items[index];
                       return Visibility(
-                        visible: !selectedCheckboxes.contains(items[index]),
+                        visible: !selectedCheckboxes.contains(widget.items[index]),
                         child: SizedBox(
                           height: 40,
                           child: RadioListTile<String>(
@@ -116,13 +130,104 @@ class _ConvertScreenState extends State<ConvertScreen> {
 
             ),
             
-            Center(child: TextButton(onPressed: Convert, child: const Text("Convert")))
+            Center(
+                child: !isConverting ? TextButton(
+                    onPressed: Convert,
+                    child: const Text("Convert")
+                ) : const CircularProgressIndicator(),
+            ),
           ],
         ),
       ),
     );
   }
 
-  void Convert() {
+  void Convert() async{
+    setState(() {
+      isConverting = true;
+    });
+    dynamic result = await callConvertLambda();
+    if (result != null && result.statusCode != null && result.statusCode == 200){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Conversion Success'),
+            content: Text('Conversion was successful'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      ).then((_) {
+        // Popping twice when the dialog is dismissed
+        Navigator.of(context).pop();
+      });
+    }
+    else{
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Conversion Failed'),
+            content: Text('Conversion has Failed'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      ).then((_) {
+        // Popping twice when the dialog is dismissed
+        Navigator.of(context).pop();
+      });
+    }
+
+  }
+
+  Future<dynamic> callConvertLambda() async {
+    String title = parseToUrlString("beat it::123123123");
+    Map<String, dynamic> requestBody = {
+      'username': username,
+      'song_title': "beat it::123123123",
+      'from_inst': selectedCheckboxes,
+      'to_inst': selectedRadio,
+    };
+    String requestBodyJson = jsonEncode(requestBody);
+
+    final url = Uri.parse('https://tyrog4xb4ilstrkkfvuu4scyte0hxami.lambda-url.eu-west-1.on.aws/');
+
+    final response = await http.post(
+      url,
+      body: requestBodyJson,
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      // Request successful, handle response
+      print('Lambda function invoked successfully');
+      print('Response: ${response.body}');
+    } else {
+      // Request failed, handle error
+      print('Failed to invoke Lambda function');
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+    return response;
+  }
+
+  String parseToUrlString(String input) {
+    String encoded = Uri.encodeComponent(input);
+
+    return encoded;
   }
 }

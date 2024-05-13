@@ -31,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   int currentPageIndex = 1;
 
   Widget _buildBody() {
@@ -96,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             );
           },
-          tooltip: 'Increment',
+          tooltip: 'Transcribe',
           child: const Icon(Icons.add),
         ),
       ),
@@ -134,4 +135,5 @@ class _MyHomePageState extends State<MyHomePage> {
       body: _buildBody(),
     );
   }
+
 }

@@ -23,6 +23,7 @@ class User {
 User Sign Up
 ================================================================================================ */
 
+
 signUpUser({required username, required email, required password}) async {
   try {
     final userAttributes = [

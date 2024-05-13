@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:franz/global.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -12,8 +13,12 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String language = "English";
   bool isDarkMode = false;
-  final TextEditingController usernameController =
-      TextEditingController(text: "USERNAME");
+  final TextEditingController usernameController = TextEditingController(text: "USERNAME");
+  final TextEditingController emailController = TextEditingController(text: "EMAIL");
+  final TextEditingController passwordController = TextEditingController(text: "");
+  final TextEditingController codeController = TextEditingController(text: "");
+  bool _hidePassword = true;
+  String preferedInstrument = 'Piano';
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +57,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Card(
               child: Container(
                 padding: const EdgeInsets.all(16.0),
-                height: 270,
+                height: 610,
                 child: Column(
                   children: [
+                    Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        alignment: Alignment.centerLeft,
+                        child: const Text("General", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -73,8 +83,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               },
                               items: <String>[
                                 'English',
-                                'Arabic',
-                                'Spanish'
                               ].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
@@ -108,12 +116,53 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(
                       height: 20,
                     ),
+                    Container(
+                      height: 100,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  SingleChildScrollView(
+                                    child: DropdownButtonFormField<String>(
+                                      decoration: const InputDecoration(
+                                        hintText: 'Select item',
+                                        border: OutlineInputBorder(),
+                                        labelText: "Prefered Instrument Class"
+                                      ),
+                                      value: preferedInstrument,
+                                      // Set the current selected item
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          preferedInstrument = value!;
+                                        });
+                                      },
+                                      items: Instruments.midiInstruments.keys.toList().map<DropdownMenuItem<String>>((
+                                          String item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(item),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: Card(
                         color: Colors.grey[200],
                         child: Container(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               TextField(
                                 controller: usernameController,
@@ -121,6 +170,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   border: OutlineInputBorder(),
                                   label: Text("Change Username"),
                                 ),
+                              ),
+                              TextField(
+                                controller: emailController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  label: Text("Change Email"),
+                                ),
+                              ),
+                              TextField(
+                                controller: passwordController,
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  label: const Text("Enter Password"),
+                                  suffixIcon: IconButton(icon: _hidePassword ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off), onPressed: () {setState(() {_hidePassword = !_hidePassword;});})
+
+                                ),
+                                obscureText: _hidePassword,
                               ),
                               Row(
                                 children: [
@@ -145,6 +211,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Card(
+              child: Container(
+                height: 200,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                          margin: const EdgeInsets.only(bottom: 15),
+                          alignment: Alignment.centerLeft,
+                          child: const Text("Verify Email", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
+                      ),
+                      TextField(
+                        controller: codeController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          label: Text("Enter Code"),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          TextButton(
+                            onPressed: resendCode,
+                            child: const Text("Resend Code")),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: verifyAccount,
+                            child: const Text("Verify Account")),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Card(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -164,17 +266,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ],
                         )),
-                    Row(
-                      children: [
-                        TextButton(
-                            onPressed: () => displayWarning(disableAccount),
-                            child: const Text("Disable Account")),
-                        const Spacer(),
-                        TextButton(
-                            onPressed: () => displayWarning(deleteAccount),
-                            child: const Text("Delete Account")),
-                      ],
-                    ),
+
+                        Center(
+                          child: TextButton(
+                              onPressed: () => displayWarning(deleteAccount),
+                              child: const Text("Delete Account")),
+                        ),
+
                   ],
                 ),
               ),
@@ -189,10 +287,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     print("CONFIRMUSERNAME FUNCTION");
   }
 
-  void disableAccount() {
-    print("DISABLE FUNCTION");
-    Navigator.pop(context);
-  }
 
   void deleteAccount() {
     print("DELETE FUNCTION");
@@ -250,5 +344,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             );
           });
         });
+  }
+
+  void verifyAccount() {
+    print("VERIFY ACCOUNT FUNCTION");
+  }
+
+  void resendCode() {
+    print("RESEND CODE FUNCTION");
   }
 }

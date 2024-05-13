@@ -33,7 +33,7 @@ class Palette {
 }
 
 /* ================================================================================================
-Dialog Pop Up
+Dialog Pop Ups
 ================================================================================================ */
 
 class Alert {
@@ -90,7 +90,9 @@ class Alert {
           TextButton(
             child: const Text("Resend Code"),
             onPressed: () async {
+              Alert.load(context);
               final result = await resendConfirmationCode(user);
+              Navigator.of(context).pop();
               if (result["success"]) {
                 Alert.show(
                   context,
@@ -114,7 +116,9 @@ class Alert {
           TextButton(
             child: const Text("Confirm Code"),
             onPressed: () async {
+              Alert.load(context);
               final result = await confirmUser(user, codeController.text);
+              Navigator.of(context).pop();
               if (result["success"]) {
                 final result = await signInUser(user);
                 if (result["success"]) {
@@ -139,6 +143,17 @@ class Alert {
             }
           ),
         ]
+      )
+    );
+  }
+
+  static load(context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => const AlertDialog(
+        backgroundColor: Colors.white,
+        content: Loading(backgroundColor: Colors.white, color: Colors.deepPurple),
       )
     );
   }

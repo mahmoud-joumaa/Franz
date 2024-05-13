@@ -297,7 +297,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                   Alert.confirmCode(
                     context,
                     "Please verify your account to proceed.",
-                    UserTheme.isDark ? Colors.deepPurple[700]! : Colors.deepPurple[100]!,
+                    UserTheme.isDark ? Colors.amber[700]! : Colors.amber[100]!,
                     User(current: CognitoUser(signUpUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: signUpUsernameController.text, password: signUpPasswordController.text))
                   );
                 }
@@ -343,7 +343,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                   Alert.confirmCode(
                     context,
                     "Please verify your account to proceed.",
-                    UserTheme.isDark ? Colors.deepPurple[700]! : Colors.deepPurple[100]!,
+                    UserTheme.isDark ? Colors.amber[700]! : Colors.amber[100]!,
                     User(current: CognitoUser(loginUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: loginUsernameController.text, password: loginPasswordController.text))
                   );
                 }

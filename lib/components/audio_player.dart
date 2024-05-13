@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:franz/services/api_service.dart';
 
 class AudioPlayerButton extends StatefulWidget {
   final String audioUrl;
@@ -99,6 +100,8 @@ class _NewAudioPlayerButtonState extends State<NewAudioPlayerButton>
   late AnimationController _animationController;
   late bool _isPlaying;
   final UniqueKey _key = UniqueKey();
+  String path = '';
+  bool _fetchingFile = false;
 
   @override
   void initState() {
@@ -124,16 +127,27 @@ class _NewAudioPlayerButtonState extends State<NewAudioPlayerButton>
     }
     return TextButton(
       key: _key,
-      onPressed: () {
+      onPressed: () async {
         if (_isPlaying) {
           _animationController.reverse();
         } else {
           _animationController.forward();
         }
         _isPlaying = !_isPlaying;
-        widget.changePlayerState(_key, widget.audioLink);
+        if(_isPlaying){
+          setState(() {
+            _fetchingFile = true;
+          });
+          path = await ApiService().loadAudio(widget.audioLink);
+          setState(() {
+            _fetchingFile = false;
+            widget.changePlayerState(_key, path);
+          });
+        }
+        widget.changePlayerState(_key, path);
       },
-      child: AnimatedIcon(
+      child: _fetchingFile ? const CircularProgressIndicator():
+      AnimatedIcon(
         icon: AnimatedIcons.play_pause,
         progress: _animationController,
       ),

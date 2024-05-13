@@ -210,43 +210,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Card(
-              // ignore: sized_box_for_whitespace
-              child: Container(
-                height: 200,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                          margin: const EdgeInsets.only(bottom: 15),
-                          alignment: Alignment.centerLeft,
-                          child: const Text("Verify Email", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
-                      ),
-                      TextField(
-                        controller: codeController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text("Enter Code"),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          TextButton(
-                            onPressed: resendCode,
-                            child: const Text("Resend Code")),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: verifyAccount,
-                            child: const Text("Verify Account")),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Card(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -343,9 +306,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
         });
   }
 
-  void verifyAccount() {
-  }
-
-  void resendCode() {
-  }
 }

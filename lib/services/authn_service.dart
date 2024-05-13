@@ -187,7 +187,7 @@ authenticateUser(User user) async {
     if (e.message == "User is not confirmed.") {
       return {
         "success": true,
-        "message": "Logged in successfully as ${user.authDetails.username}\n\n${e.message}\nRemember to confirm your account on the settings screen :)"
+        "message": "Welcome, ${user.authDetails.username}\n\n${e.message}\nYou have not confirmed your email yet. To do so, please enter the verification code sent to your email address on the following screen.\nIf you've lost the code, choose the \"resend code\" option.\nIf you've entered the wrong email address, kindly send an email to franz.transcriber@gmail.com with the subject line \"Change Email Address For Verification\". Be sure to include your username and the new email address in the email body.\nOnce you've entered the code, please wait patiently while the brief verification finalizes :)"
       };
     }
     // handle Wrong Username and Password and Cognito Client

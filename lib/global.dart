@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import 'package:franz/services/authn_service.dart';
+
 /* ================================================================================================
 User Theme
 ================================================================================================ */
@@ -35,7 +37,8 @@ Dialog Pop Up
 ================================================================================================ */
 
 class Alert {
-  static show(context, String title, content, Color backgroundColor, String type, [data]) {
+
+  static show(context, String title, content, Color backgroundColor, String type) {
     type = type.toLowerCase(); // For comparison checks
     showDialog(
       context: context,
@@ -68,6 +71,78 @@ class Alert {
       ),
     );
   }
+
+  static confirmCode(context, String title, Color backgroundColor, User user) {
+    TextEditingController codeController = TextEditingController();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title),
+        backgroundColor: backgroundColor,
+        content: TextField(
+          controller: codeController,
+          autocorrect: false,
+          enableSuggestions: false,
+          obscureText: false,
+        ),
+        actions: [
+          TextButton(
+            child: const Text("Resend Code"),
+            onPressed: () async {
+              final result = await resendConfirmationCode(user);
+              if (result["success"]) {
+                Alert.show(
+                  context,
+                  "Confirmation code successfully resent.\nPlease check your inbox and spam or junk.",
+                  result["message"],
+                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  "dismiss"
+                );
+              }
+              else {
+                Alert.show(
+                  context,
+                  "An error has occurred while resending the confirmation code.\nPlease try again later.",
+                  result["message"],
+                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                  "ok"
+                );
+              }
+            }
+          ),
+          TextButton(
+            child: const Text("Confirm Code"),
+            onPressed: () async {
+              final result = await confirmUser(user, codeController.text);
+              if (result["success"]) {
+                final result = await signInUser(user);
+                if (result["success"]) {
+                  Alert.show(
+                    context,
+                    "Successfully created ${user.authDetails.username}",
+                    result["message"],
+                    UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                    "login"
+                  );
+                }
+                else {
+                  Alert.show(
+                    context,
+                    "An error has occurred while verifying ${user.authDetails.username}\n\nPlease exit the application and try again.",
+                    result["message"],
+                    UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                    "exit"
+                  );
+                }
+              }
+            }
+          ),
+        ]
+      )
+    );
+  }
+
 }
 
 /* ================================================================================================

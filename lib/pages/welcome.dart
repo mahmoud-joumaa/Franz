@@ -293,13 +293,23 @@ class _SubmitButtonState extends State<SubmitButton> {
               }
               // No Error
               else {
-                Alert.show(
-                  context,
-                  "Successfully created ${signUpUsernameController.text}",
-                  result["message"],
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
-                  "login"
-                );
+                if (result["message"].contains("User is not confirmed.")) {
+                  Alert.confirmCode(
+                    context,
+                    "Please verify your account to proceed.",
+                    UserTheme.isDark ? Colors.deepPurple[700]! : Colors.deepPurple[100]!,
+                    User(current: CognitoUser(signUpUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: signUpUsernameController.text, password: signUpPasswordController.text))
+                  );
+                }
+                else {
+                  Alert.show(
+                    context,
+                    "Successfully created ${signUpUsernameController.text}",
+                    result["message"],
+                    UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                    "login"
+                  );
+                }
               }
             }
           }
@@ -329,13 +339,23 @@ class _SubmitButtonState extends State<SubmitButton> {
               }
               // No Error
               else {
-                Alert.show(
-                  context,
-                  "Successfully logged in as ${signUpUsernameController.text}",
-                  result["message"],
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
-                  "login"
-                );
+                if (result["message"].contains("User is not confirmed.")) {
+                  Alert.confirmCode(
+                    context,
+                    "Please verify your account to proceed.",
+                    UserTheme.isDark ? Colors.deepPurple[700]! : Colors.deepPurple[100]!,
+                    User(current: CognitoUser(loginUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: loginUsernameController.text, password: loginPasswordController.text))
+                  );
+                }
+                else {
+                  Alert.show(
+                    context,
+                    "Successfully logged in as ${signUpUsernameController.text}",
+                    result["message"],
+                    UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                    "login"
+                  );
+                }
               }
             }
           }

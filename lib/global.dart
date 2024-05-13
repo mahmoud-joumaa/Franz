@@ -35,7 +35,7 @@ Dialog Pop Up
 ================================================================================================ */
 
 class Alert {
-  static show(context, String title, content, Color backgroundColor, String type) {
+  static show(context, String title, content, Color backgroundColor, String type, [data]) {
     type = type.toLowerCase(); // For comparison checks
     showDialog(
       context: context,

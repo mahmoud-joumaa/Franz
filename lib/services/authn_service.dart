@@ -1,5 +1,7 @@
 import "package:amazon_cognito_identity_dart_2/cognito.dart";
 
+import "package:franz/pages/home/home.dart";
+
 // Base Entities ==================================================================================
 
 class Cognito {
@@ -10,19 +12,34 @@ class Cognito {
 
 class User {
 
+  bool isLoggedIn = false;
+
   CognitoUser current;
   bool registrationConfirmed;
   AuthenticationDetails authDetails;
   CognitoUserSession? session;
+  String? token;
 
   User({required this.current, required this.registrationConfirmed, required this.authDetails});
+
+}
+
+class UserData {
+
+  final bool isLoggedIn;
+  final CognitoUser current;
+  final bool registrationConfirmed;
+  final AuthenticationDetails authDetails;
+  final CognitoUserSession session;
+  final String token;
+
+  UserData(this.isLoggedIn, this.current, this.registrationConfirmed, this.authDetails, this.session, this.token);
 
 }
 
 /* ================================================================================================
 User Sign Up
 ================================================================================================ */
-
 
 signUpUser({required username, required email, required password}) async {
   try {
@@ -62,6 +79,12 @@ signInUser(User user) async {
   try {
     final result = await authenticateUser(user);
     if (result["success"]) {
+      // Inittialize the user object
+      MyHomePage.user = User(current: user.current, registrationConfirmed: user.registrationConfirmed, authDetails: user.authDetails);
+      MyHomePage.user!.isLoggedIn = true;
+      MyHomePage.user!.session = result["session"];
+      MyHomePage.user!.token = result["token"];
+      // Error handling
       return {
         "success": true,
         "message": result["message"]
@@ -89,6 +112,7 @@ User Sign Out
 signOutCurrentUser(User user) async {
   await user.current.signOut();
   await user.current.globalSignOut(); // invalidates all issued tokens
+  MyHomePage.user = null;
   return {
     "success": true,
     "message": "${user.authDetails.username} signed out successfully"
@@ -105,6 +129,7 @@ authenticateUser(User user) async {
     return {
       "success": true,
       "message": "Logged in successfully as ${user.authDetails.username}",
+      "session": session,
       "token": session!.getAccessToken().getJwtToken()
     };
   }

@@ -2,26 +2,22 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:franz/global.dart';
+import 'package:franz/services/authn_service.dart';
 import 'package:franz/pages/home/about.dart';
 import 'package:franz/pages/home/contact.dart';
 import 'package:franz/pages/home/settings.dart';
 import 'package:franz/pages/home/transcribe.dart';
 import 'package:franz/pages/home/new_transcription.dart';
 
-/* ================================================================================================
-Currently logged in user start
-================================================================================================ */
-
-// TODO: Add user credentials from login screen
-
-/* ================================================================================================
-Currently logged in user end
-================================================================================================ */
-
 class MyHomePage extends StatefulWidget {
+
   const MyHomePage({super.key, required this.title});
 
   final String title;
+
+  // Currently logged in user =====================================================================
+  static User? user;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -48,6 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    fetchUserAttributes(MyHomePage.user!).then((res) => print("\n\nChecking user attributes:\n$res\n\n"));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -55,9 +52,9 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             onPressed: () async {
-              // FIXME: Fix after handling user credentials from login screen
-              /*
-              dynamic result = await signOutCurrentUser();
+              print("\n\nBefore sign out: ${MyHomePage.user}\n\n");
+              dynamic result = await signOutCurrentUser(MyHomePage.user!);
+              print("\n\nAfter sign out: ${MyHomePage.user}\n\n");
               if (result["success"]) {
                 Alert.show(
                   context,
@@ -76,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   "dismiss"
                 );
               }
-              */
             },
             icon: const Icon(Icons.logout)
           )

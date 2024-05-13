@@ -53,7 +53,7 @@ signUpUser({required username, required email, required password}) async {
     if (result["success"]) {
       return {
         "success": true,
-        "message": "Successfully registered as $username"
+        "message": "Successfully registered as $username\n\n${result.message}"
       };
     }
     else {
@@ -78,24 +78,17 @@ User Sign In
 signInUser(User user) async {
   try {
     final result = await authenticateUser(user);
-    if (result["success"]) {
+    if (result["success"] == true) {
       // Inittialize the user object
       MyHomePage.user = User(current: user.current, registrationConfirmed: user.registrationConfirmed, authDetails: user.authDetails);
       MyHomePage.user!.isLoggedIn = true;
       MyHomePage.user!.session = result["session"];
       MyHomePage.user!.token = result["token"];
-      // Error handling
-      return {
-        "success": true,
-        "message": result["message"]
-      };
     }
-    else {
-      return {
-        "success": false,
-        "message": result["message"]
-      };
-    }
+    return {
+      "success": result["success"],
+      "message": result["message"]
+    };
   }
   on CognitoClientException catch (e) {
     return {
@@ -184,9 +177,9 @@ authenticateUser(User user) async {
   }
   on CognitoClientException catch (e) {
     // handle user is not confirmed error
-    if (e.message == "User is not confirmed.") {
+    if (e.message!.contains("User is not confirmed.")) {
       return {
-        "success": true,
+        "success": false,
         "message": "Welcome, ${user.authDetails.username}\n\n${e.message}\nYou have not confirmed your email yet. To do so, please enter the verification code sent to your email address on the following screen.\nIf you've lost the code, choose the \"resend code\" option.\nIf you've entered the wrong email address, kindly send an email to franz.transcriber@gmail.com with the subject line \"Change Email Address For Verification\". Be sure to include your username and the new email address in the email body.\nOnce you've entered the code, please wait patiently while the brief verification finalizes :)"
       };
     }
@@ -269,6 +262,10 @@ confirmUser(User user, String confirmationCode) async {
 resendConfirmationCode(User user) async {
   try {
     await user.current.resendConfirmationCode();
+    return {
+      "success": true,
+      "message": "Please check your spam and junk folders if the code is not present in your inbox."
+    };
   }
   on CognitoClientException catch (e) {
     return {

@@ -38,7 +38,7 @@ Dialog Pop Ups
 
 class Alert {
 
-  static show(context, String title, content, Color backgroundColor, String type) {
+  static show(context, String title, content, Color backgroundColor, String type, [User? user]) {
     type = type.toLowerCase(); // For comparison checks
     showDialog(
       context: context,
@@ -62,6 +62,9 @@ class Alert {
                 case "logout":
                   Navigator.pushReplacementNamed(context, "WelcomeScreen");
                   break;
+                case "verify":
+                  Navigator.of(context).pop();
+                  Alert.confirmCode(context, title, backgroundColor, user!);
                 default:
                   Navigator.of(context).pop();
               }
@@ -87,60 +90,77 @@ class Alert {
           obscureText: false,
         ),
         actions: [
-          TextButton(
-            child: const Text("Resend Code"),
-            onPressed: () async {
-              Alert.load(context);
-              final result = await resendConfirmationCode(user);
-              Navigator.of(context).pop();
-              if (result["success"]) {
-                Alert.show(
-                  context,
-                  "Confirmation code successfully resent.\nPlease check your inbox and spam or junk.",
-                  result["message"],
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
-                  "dismiss"
-                );
-              }
-              else {
-                Alert.show(
-                  context,
-                  "An error has occurred while resending the confirmation code.\nPlease try again later.",
-                  result["message"],
-                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
-                  "ok"
-                );
-              }
-            }
-          ),
-          TextButton(
-            child: const Text("Confirm Code"),
-            onPressed: () async {
-              Alert.load(context);
-              final result = await confirmUser(user, codeController.text);
-              Navigator.of(context).pop();
-              if (result["success"]) {
-                final result = await signInUser(user);
-                if (result["success"]) {
-                  Alert.show(
-                    context,
-                    "Successfully created ${user.authDetails.username}",
-                    result["message"],
-                    UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
-                    "login"
-                  );
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextButton(
+                child: const Text("Dismiss"),
+                onPressed: () {
+                  Navigator.of(context).pop();
                 }
-                else {
-                  Alert.show(
-                    context,
-                    "An error has occurred while verifying ${user.authDetails.username}\n\nPlease exit the application and try again.",
-                    result["message"],
-                    UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
-                    "exit"
-                  );
-                }
-              }
-            }
+              ),
+              Row(
+                children: [
+                  TextButton(
+                    child: const Text("Resend Code"),
+                    onPressed: () async {
+                      Alert.load(context);
+                      final result = await resendConfirmationCode(user);
+                      Navigator.of(context).pop();
+                      if (result["success"]) {
+                        Alert.show(
+                          context,
+                          "Confirmation code successfully resent.",
+                          result["message"],
+                          UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                          "dismiss"
+                        );
+                      }
+                      else {
+                        Alert.show(
+                          context,
+                          "An error has occurred while resending the confirmation code.\nPlease try again later.",
+                          result["message"],
+                          UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                          "ok"
+                        );
+                      }
+                    }
+                  ),
+                  TextButton(
+                    child: const Text("Confirm Code"),
+                    onPressed: () async {
+                      Alert.load(context);
+                      final confirmationResult = await confirmUser(user, codeController.text);
+                      if (confirmationResult["success"]) {
+                        final result = await signInUser(user);
+                        Navigator.of(context).pop();
+                        if (result["success"]) {
+                          Alert.show(
+                            context,
+                            "Successfully created ${user.authDetails.username}",
+                            result["message"],
+                            UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                            "login"
+                          );
+                        }
+                        else {
+                          Navigator.of(context).pop();
+                          Alert.show(
+                            context,
+                            "An error has occurred while verifying ${user.authDetails.username}\n\nPlease exit the application and try again.",
+                            result["message"],
+                            UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                            "exit"
+                          );
+                        }
+                      }
+                    }
+                  ),
+                ],
+              ),
+            ],
           ),
         ]
       )
@@ -152,8 +172,12 @@ class Alert {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => const AlertDialog(
-        backgroundColor: Colors.white,
-        content: Loading(backgroundColor: Colors.white, color: Colors.deepPurple),
+        backgroundColor: Colors.transparent,
+        content: SizedBox(
+          height: 50.0,
+          width: 50.0,
+          child: Loading(backgroundColor: Colors.white, color: Colors.deepPurple)
+        ),
       )
     );
   }

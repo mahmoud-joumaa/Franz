@@ -257,7 +257,7 @@ class _SubmitButtonState extends State<SubmitButton> {
       onPressed: () async {
         setState(() {isLoading = true;});
         if (type != "google") { // i.e. sign up with AWS Cognito
-          // User Sign Up w/ email
+          // User Sign Up w/ email ================================================================
           if (!_WelcomeState.isLogin!) {
             // Validate fields are not empty
             if (signUpUsernameController.text.isEmpty || signUpEmailController.text.isEmpty || signUpPasswordController.text.isEmpty) {
@@ -281,39 +281,18 @@ class _SubmitButtonState extends State<SubmitButton> {
             }
             else {
               dynamic result = await signUpUser(username: signUpUsernameController.text, email: signUpEmailController.text, password: signUpPasswordController.text);
-              // Error
-              if (!result["success"]) {
-                Alert.show(
-                  context,
-                  "An error has occurred while registering ${signUpUsernameController.text}",
-                  result["message"],
-                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
-                  "dismiss"
-                );
-              }
-              // No Error
-              else {
-                if (result["message"].contains("User is not confirmed.")) {
-                  Alert.confirmCode(
-                    context,
-                    "Please verify your account to proceed.",
-                    UserTheme.isDark ? Colors.amber[700]! : Colors.amber[100]!,
-                    User(current: CognitoUser(signUpUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: signUpUsernameController.text, password: signUpPasswordController.text))
-                  );
-                }
-                else {
-                  Alert.show(
-                    context,
-                    "Successfully created ${signUpUsernameController.text}",
-                    result["message"],
-                    UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
-                    "login"
-                  );
-                }
-              }
+              // Error (An error will definitely pop up since the user has not confirmed the account yet)
+              Alert.show(
+                context,
+                "An error has occurred while registering ${signUpUsernameController.text}",
+                result["message"],
+                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                result["message"].contains("User is not confirmed.") ? "verify" : "dismiss",
+                result["message"].contains("User is not confirmed.") ? User(current: CognitoUser(signUpUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: signUpUsernameController.text, password: signUpPasswordController.text)) : null
+              );
             }
           }
-          // User login w/ email
+          // User login w/ email ==================================================================
           else {
             // Validate fields are not empty
             if (loginUsernameController.text.isEmpty || loginPasswordController.text.isEmpty) {
@@ -333,34 +312,25 @@ class _SubmitButtonState extends State<SubmitButton> {
                   context,
                   "An error has occurred while signing in as ${loginUsernameController.text}",
                   result["message"],
-                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
-                  "dismiss"
+                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!, // TODO: Handle different color for confirmation dialog
+                  result["message"].contains("User is not confirmed.") ? "verify" : "dismiss",
+                  result["message"].contains("User is not confirmed.") ? User(current: CognitoUser(loginUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: loginUsernameController.text, password: loginPasswordController.text)) : null
                 );
               }
               // No Error
               else {
-                if (result["message"].contains("User is not confirmed.")) {
-                  Alert.confirmCode(
-                    context,
-                    "Please verify your account to proceed.",
-                    UserTheme.isDark ? Colors.amber[700]! : Colors.amber[100]!,
-                    User(current: CognitoUser(loginUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: loginUsernameController.text, password: loginPasswordController.text))
-                  );
-                }
-                else {
-                  Alert.show(
-                    context,
-                    "Successfully logged in as ${signUpUsernameController.text}",
-                    result["message"],
-                    UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
-                    "login"
-                  );
-                }
+                Alert.show(
+                  context,
+                  "Successfully logged in as ${signUpUsernameController.text}",
+                  result["message"],
+                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  "login"
+                );
               }
             }
           }
         }
-        // Login w/ Google
+        // Login w/ Google ========================================================================
         else {
         }
         // Change states

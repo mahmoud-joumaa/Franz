@@ -132,29 +132,25 @@ class Alert {
                     child: const Text("Confirm Code"),
                     onPressed: () async {
                       Alert.load(context);
-                      final confirmationResult = await confirmUser(user, codeController.text);
-                      if (confirmationResult["success"]) {
-                        final result = await signInUser(user);
-                        Navigator.of(context).pop();
-                        if (result["success"]) {
-                          Alert.show(
-                            context,
-                            "Successfully created ${user.authDetails.username}",
-                            result["message"],
-                            UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
-                            "login"
-                          );
-                        }
-                        else {
-                          Navigator.of(context).pop();
-                          Alert.show(
-                            context,
-                            "An error has occurred while verifying ${user.authDetails.username}\n\nPlease exit the application and try again.",
-                            result["message"],
-                            UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
-                            "exit"
-                          );
-                        }
+                      final result = await confirmUser(user, codeController.text);
+                      Navigator.of(context).pop();
+                      if (result["success"]) {
+                        Alert.show(
+                          context,
+                          "Successfully verified ${user.authDetails.username}",
+                          result["message"],
+                          UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                          "login"
+                        );
+                      }
+                      else {
+                        Alert.show(
+                          context,
+                          "An error has occurred while verifying ${user.authDetails.username}",
+                          result["message"],
+                          UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                          result["message"].contains("An account with the email already exists.") ? "try with a different email" : "dismiss"
+                        );
                       }
                     }
                   ),

@@ -248,13 +248,19 @@ confirmUser(User user, String confirmationCode) async {
     user.registrationConfirmed = await user.current.confirmRegistration(confirmationCode);
     return {
       "success": true,
-      "message": "Confirmation Successful!"
+      "message": "You can now log in to your account!"
     };
   }
   on CognitoClientException catch (e) {
     return {
       "success": false,
       "message": e.message
+    };
+  }
+  catch (e) {
+    return {
+      "success": false,
+      "message": e.toString()
     };
   }
 }

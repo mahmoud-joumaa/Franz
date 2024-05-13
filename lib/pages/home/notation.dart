@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:franz/components/audio_player.dart';
+import 'package:franz/global.dart';
 import 'package:franz/services/api_service.dart';
 import 'package:franz/pages/home/convert.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +31,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
   String errorMessage = '';
   String _localFilePath = "";
   String _localAudioPath = "";
-  AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   List<String> instruments = [];
   String selectedInstrument = '';
   String username = "jelzein";
@@ -53,16 +54,16 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
   }
 
 
-  Future<void> getRequriedData() async {
-    await listFoldersInFolder("audio-transcribed-1", "jelzein/beat+it%3A%3A123123123/");
-    String parsedInstrument = parseToUrlString(selectedInstrument!);
+  Future<void> getRequriedData(context) async {
+    await listFoldersInFolder(context, "audio-transcribed-1", "jelzein/beat+it%3A%3A123123123/");
+    String parsedInstrument = parseToUrlString(selectedInstrument);
     String pdfURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/$parsedInstrument/result.pdf";
     String audioURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/$parsedInstrument/result.mid";
     _localFilePath = await ApiService().loadPDF(pdfURL);
     _localAudioPath = await ApiService().loadAudio(audioURL);
   }
 
-  Future<void> listFoldersInFolder(String bucketName, String folderPrefix) async {
+  Future<void> listFoldersInFolder(context, String bucketName, String folderPrefix) async {
     final request = http.Request(
       'GET',
       Uri.parse(
@@ -83,7 +84,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
       element
           .findElements('Prefix')
           .first
-          .text)
+          .innerText)
           .toList();
 
       instruments = folderNames.map((f) =>
@@ -95,11 +96,16 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
         selectedInstrument = instruments.first;
       }
 
-      print('Folders in $folderPrefix:');
-      print(folderNames);
-    } else {
-      print('Failed to list folders. Status code: ${response.statusCode}');
     }
+    else {
+      Alert.show(
+        context,
+        "Failed to list instruments",
+        "Error code: ${response.statusCode}",
+        UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+        "dismiss");
+    }
+
   }
 
   void stopAudio() async{
@@ -134,7 +140,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
         ),
       ),
       body: FutureBuilder<void>(
-        future: getRequriedData(), // Replace with your method to get PDF URL
+        future: getRequriedData(context), // Replace with your method to get PDF URL
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:franz/global.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -30,7 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar(
+                CircleAvatar( // TODO: Get from cognito
                   radius: 50,
                   backgroundImage: NetworkImage(
                       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb5ay974Ak1bGFIDStEQaYK7qK60bzbbmczDft-ao-Xw&s'),
@@ -116,6 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(
                       height: 20,
                     ),
+                    // ignore: sized_box_for_whitespace
                     Container(
                       height: 100,
                       child: Padding(
@@ -211,6 +210,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Card(
+              // ignore: sized_box_for_whitespace
               child: Container(
                 height: 200,
                 child: Padding(
@@ -284,13 +284,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void confirmUsername() {
-    print("CONFIRMUSERNAME FUNCTION");
   }
 
 
   void deleteAccount() {
-    print("DELETE FUNCTION");
-    Navigator.pop(context);
   }
 
   void displayWarning(void Function() func) {
@@ -347,10 +344,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void verifyAccount() {
-    print("VERIFY ACCOUNT FUNCTION");
   }
 
   void resendCode() {
-    print("RESEND CODE FUNCTION");
   }
 }

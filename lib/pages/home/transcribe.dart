@@ -117,8 +117,9 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
     super.initState();
     // @Ahmad: Fix audio branch
     WidgetsBinding.instance.addObserver(this);
-    String title = 'beat it::123123123';
-    String audioURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/result.mid";
+    // TODO: Implement audioURL parsing
+    // String title = 'beat it::123123123';
+    // String audioURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/result.mid";
     // @Mahmoud: Render transriptions from dynamo
     renderTranscriptions().then((result) {
       if (result.isLoading) {
@@ -134,8 +135,8 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
             info.add({
               "title": item["title"],
               "date": item["transcription_date"],
-              "transcriptionLink": '${item["s3_bucket"]}/result.pdf',
-              "audioLink": '${item["s3_bucket"]}/result.mid',
+              "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
+              "audioLink": '${item["s3_bucket"]}/result.mid', // FIXME: Fix link addresses
             });
           }
           setState(() { status = "done"; });

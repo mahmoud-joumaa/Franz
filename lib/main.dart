@@ -11,7 +11,7 @@ void main() async {
 
   // Detect system theme
   UserTheme.isDark = (WidgetsBinding.instance.platformDispatcher.platformBrightness==Brightness.dark);
-
+  // Listen to changes
   runApp(ChangeNotifierProvider<UserTheme>(
     create: (context) => UserTheme(),
     child: const Root(),

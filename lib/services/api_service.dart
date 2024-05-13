@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:franz/pages/home/transcribe.dart';
 
-// TODO: maybe support downloading local pdfs and loading them
+// IDEA: maybe support downloading local pdfs and loading them
 
 class ApiService {
   Future<String> loadPDF(String pdfUrl) async {
@@ -16,7 +16,6 @@ class ApiService {
     File file = File("${dir.path}/pdfdata.pdf");
 
     file.writeAsBytes(response.bodyBytes, flush: true);
-    print(file.path);
     return file.path;
   }
 

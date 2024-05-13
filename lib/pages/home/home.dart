@@ -2,9 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:franz/global.dart';
-import 'package:franz/services/authn_service.dart';
-
 import 'package:franz/pages/home/about.dart';
 import 'package:franz/pages/home/contact.dart';
 import 'package:franz/pages/home/settings.dart';

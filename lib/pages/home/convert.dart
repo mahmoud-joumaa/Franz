@@ -1,9 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:franz/global.dart';
 import 'package:http/http.dart' as http;
-import 'package:xml/xml.dart';
 
 class ConvertScreen extends StatefulWidget {
   final String title;
@@ -21,11 +21,12 @@ class ConvertScreen extends StatefulWidget {
 }
 
 class _ConvertScreenState extends State<ConvertScreen> {
-  List<String> selectedCheckboxes = []; 
+  List<String> selectedCheckboxes = [];
   String? selectedRadio;
   String username = "jelzein";
   bool isConverting = false;
 
+  @override
   void initState(){
     super.initState();
     widget.items.remove('Custom');
@@ -49,7 +50,7 @@ class _ConvertScreenState extends State<ConvertScreen> {
             ),
             Expanded(
               child: Card(
-                margin: EdgeInsets.only(bottom: 20),
+                margin: const EdgeInsets.only(bottom: 20),
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ListView.separated(
@@ -93,7 +94,7 @@ class _ConvertScreenState extends State<ConvertScreen> {
             ),
             Expanded(
               child: Card(
-                margin: EdgeInsets.only(bottom: 20),
+                margin: const EdgeInsets.only(bottom: 20),
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ListView.separated(
@@ -129,10 +130,10 @@ class _ConvertScreenState extends State<ConvertScreen> {
               ),
 
             ),
-            
+
             Center(
                 child: !isConverting ? TextButton(
-                    onPressed: Convert,
+                    onPressed: convert,
                     child: const Text("Convert")
                 ) : const CircularProgressIndicator(),
             ),
@@ -142,7 +143,7 @@ class _ConvertScreenState extends State<ConvertScreen> {
     );
   }
 
-  void Convert() async{
+  void convert() async{
     setState(() {
       isConverting = true;
     });
@@ -152,8 +153,8 @@ class _ConvertScreenState extends State<ConvertScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Conversion Success'),
-            content: Text('Conversion was successful'),
+            title: const Text('Conversion Success'),
+            content: const Text('Conversion was successful'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -174,8 +175,8 @@ class _ConvertScreenState extends State<ConvertScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Conversion Failed'),
-            content: Text('Conversion has Failed'),
+            title: const Text('Conversion Failed'),
+            content: const Text('Conversion has Failed'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -195,10 +196,10 @@ class _ConvertScreenState extends State<ConvertScreen> {
   }
 
   Future<dynamic> callConvertLambda() async {
-    String title = parseToUrlString("beat it::123123123");
+    String title = parseToUrlString("beat it::123123123"); // TODO: Get from dynamo (input from navigator arguments when pushing)
     Map<String, dynamic> requestBody = {
       'username': username,
-      'song_title': "beat it::123123123",
+      'song_title': title,
       'from_inst': selectedCheckboxes,
       'to_inst': selectedRadio,
     };

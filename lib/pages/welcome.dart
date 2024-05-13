@@ -329,16 +329,6 @@ class _SubmitButtonState extends State<SubmitButton> {
               }
               // No Error
               else {
-                // If a user is signed in, update the user data
-                await Future.delayed(const Duration(seconds: 1), () {print("Waited for 1 sec");});
-                print("\n\n\n${await isUserSignedIn()}\n\n\n");
-                if (await isUserSignedIn()) {
-                  User.current = await getCurrentUser();
-                  print("\n\n\nUser signed in: ${User.current}");
-                  await fetchCurrentUserAttributes();
-                  print("\n\n\n");
-                }
-                //
                 Alert.show(
                   context,
                   "Successfully logged in as ${signUpUsernameController.text}",

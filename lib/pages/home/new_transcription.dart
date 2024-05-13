@@ -1,23 +1,22 @@
-import 'dart:convert';
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:franz/components/audio_recorder.dart';
-import 'package:franz/pages/home/home.dart';
 import 'package:http/http.dart' as http;
 
 class NewTransScreen extends StatefulWidget {
   const NewTransScreen({super.key});
 
   @override
-  State<NewTransScreen> createState() => _NewTransScreenP1State();
+  State<NewTransScreen> createState() => _NewTransScreenState();
 }
 
-class _NewTransScreenP1State extends State<NewTransScreen> {
+class _NewTransScreenState extends State<NewTransScreen> {
   String _mode = "Audio";
-  String _instrument = "Piano";
   String _selectedFileName = "";
-  TextEditingController _ytlink = TextEditingController();
+  final TextEditingController _ytlink = TextEditingController();
   bool hasError = false;
   String? audioPath = "";
   final TextEditingController titleController = TextEditingController();
@@ -54,8 +53,9 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
         // Delete the file
         await audioFile.delete();
       }
-    } catch (e) {
-      print('Error deleting file: $e');
+    }
+    catch (e) {
+      print(e);
     }
   }
 
@@ -102,8 +102,8 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Upload Success'),
-              content: Text('File uploaded successfully'),
+              title: const Text('Upload Success'),
+              content: const Text('File uploaded successfully'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -152,8 +152,8 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Upload Success'),
-              content: Text('File uploaded successfully'),
+              title: const Text('Upload Success'),
+              content: const Text('File uploaded successfully'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -196,10 +196,10 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
 
   Future<dynamic> callYTDownload() async {
     final encodedYoutubeUrl = Uri.encodeComponent(_ytlink.text);
-    print(encodedYoutubeUrl);
+    // print(encodedYoutubeUrl);
     final url = Uri.parse('https://cunmicltthdzba3akzwazo34q40xikyz.lambda-url.eu-west-1.on.aws?url=$encodedYoutubeUrl&username=${parseToUrlString(username)}&song_title=${parseToUrlString(titleController.text)}');
 
-    print(url);
+    // print(url);
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -229,7 +229,7 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
   }
 
   Future<List<int>> getFileBytes(String path) async {
-    File file = File(path!);
+    File file = File(path);
     List<int> fileBytes = await file.readAsBytes();
 
     return fileBytes;
@@ -403,7 +403,7 @@ class _NewTransScreenP1State extends State<NewTransScreen> {
                     ),
                   ),
                 ),
-                if (hasError) const Text("Error: You need to select an audio source and input a title", style: TextStyle(color: Colors.red),) else Text(''),
+                if (hasError) const Text("Error: You need to select an audio source and input a title", style: TextStyle(color: Colors.red),) else const Text(''),
                 const Spacer(),
                 Row(
                   children: [

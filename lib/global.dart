@@ -3,16 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-
-/* ================================================================================================
-Custom User Class
-================================================================================================ */
-
-class User {
-  static AuthUser? current;
-  static Map<AuthUserAttributeKey, dynamic>? attributes;
-}
 
 /* ================================================================================================
 User Theme
@@ -109,6 +99,9 @@ class Loading extends StatelessWidget {
   }
 }
 
+/* ================================================================================================
+Map Classes to Instruments
+================================================================================================ */
 
 class Instruments {
   static Map<String, List<String>> midiInstruments = {

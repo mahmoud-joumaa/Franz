@@ -32,7 +32,7 @@ signUpUser({required username, required email, required password}) async {
       const AttributeArg(name: "custom:preferred_instrument", value: "None")
     ];
     await Cognito.userPool.signUp(username, password, userAttributes: userAttributes);
-    final result = await authenticateUser(User(current: CognitoUser(username, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: username, password: password)));
+    final result = await signInUser(User(current: CognitoUser(username, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: username, password: password)));
     if (result["success"]) {
       return {
         "success": true,

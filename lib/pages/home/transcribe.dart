@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:franz/pages/home/notation.dart';
 import 'package:franz/components/audio_player.dart';
+import 'package:franz/services/api_service.dart';
 
 
 class TranscribeScreen extends StatefulWidget {
@@ -13,18 +14,15 @@ class TranscribeScreen extends StatefulWidget {
   State<TranscribeScreen> createState() => _TranscribeScreenState();
 }
 
-class _TranscribeScreenState extends State<TranscribeScreen> {
+class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBindingObserver{
   final AudioPlayer _audioPlayer = AudioPlayer();
   UniqueKey? _currentPlaying;
   String _searchValue = "";
+  String username = 'jelzein';
   
   
   List<Map<String, dynamic>> info = [];
 
-  //s3://audio-transcribed-1/jelzein/beat it::123123123/Michael Jackson - Beat It (Guitar Solo Cover)-Robert Can't Play Bass.m4a
-  String getAudioLink(String username, String title, String time, String filename){
-    return "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/jelzein/${parseToUrlString(title)}::$time/$filename";
-  }
 
   String parseToUrlString(String input) {
     String encoded = Uri.encodeComponent(input);
@@ -60,16 +58,40 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
       _currentPlaying = key;
     });
   }
+
+  void stopAudio() async{
+    await _audioPlayer.stop();
+    setState(() {
+      _currentPlaying = null;
+    });
+  }
+
+  @override
+  void dispose() async{
+    stopAudio();
+    super.dispose();
+  }
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive || state == AppLifecycleState.detached) {
+      stopAudio();
+    }
+  }
   
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    String link = getAudioLink('jelzein', 'beat it', '123123123', parseToUrlString(""));
+    WidgetsBinding.instance.addObserver(this);
+    String title = 'beat it::123123123';
+    String audioURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/result.mid";
     info = [{
       "title": "weak and powerless",
       "date": "today",
       "transcriptionLink": "https://arxiv.org/pdf/2111.03017v4.pdf",
-      "audioLink": link,
+      "audioLink": audioURL,
     },
     {
     "title": "nookie",
@@ -119,6 +141,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> {
                     audioPlayer: _audioPlayer,
                     changePlayerState: changePlayer,
                     currentPlayingKey: _currentPlaying,
+                    onButtonPressed: stopAudio,
                   ),
                 );
               },
@@ -138,6 +161,7 @@ class TransriptionRow extends StatelessWidget {
   final AudioPlayer audioPlayer;
   final Function changePlayerState;
   final UniqueKey? currentPlayingKey;
+  final VoidCallback onButtonPressed;
 
   const TransriptionRow({
     super.key,
@@ -148,6 +172,7 @@ class TransriptionRow extends StatelessWidget {
     required this.audioPlayer,
     required this.changePlayerState,
     required this.currentPlayingKey,
+    required this.onButtonPressed,
   });
 
 
@@ -169,6 +194,7 @@ class TransriptionRow extends StatelessWidget {
           child: TextButton(
             child: const Icon(Icons.file_copy),
             onPressed: () {
+              onButtonPressed();
               Navigator.push(
                 context,
                 MaterialPageRoute(

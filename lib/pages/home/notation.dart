@@ -23,12 +23,13 @@ class SheetMusicViewerScreen extends StatefulWidget {
   State<SheetMusicViewerScreen> createState() => _SheetMusicViewerScreenState();
 }
 
-class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
+class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with WidgetsBindingObserver{
   int pages = 0;
   int currentPage = 0;
   bool isReady = false;
   String errorMessage = '';
   String _localFilePath = "";
+  String _localAudioPath = "";
   AudioPlayer _audioPlayer = AudioPlayer();
   List<String> instruments = [];
   String selectedInstrument = '';
@@ -38,6 +39,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   String parseToUrlString(String input) {
@@ -51,16 +53,16 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
   }
 
 
-  Future<void> getPdfUrl() async {
+  Future<void> getRequriedData() async {
     await listFoldersInFolder("audio-transcribed-1", "jelzein/beat+it%3A%3A123123123/");
-    print(selectedInstrument);
     String parsedInstrument = parseToUrlString(selectedInstrument!);
-    _localFilePath = await ApiService().loadPDF(
-        "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/$parsedInstrument/result.pdf");
+    String pdfURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/$parsedInstrument/result.pdf";
+    String audioURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/$parsedInstrument/result.mid";
+    _localFilePath = await ApiService().loadPDF(pdfURL);
+    _localAudioPath = await ApiService().loadAudio(audioURL);
   }
 
-  Future<void> listFoldersInFolder(String bucketName,
-      String folderPrefix) async {
+  Future<void> listFoldersInFolder(String bucketName, String folderPrefix) async {
     final request = http.Request(
       'GET',
       Uri.parse(
@@ -100,6 +102,19 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
     }
   }
 
+  void stopAudio() async{
+    await _audioPlayer.stop();
+    setState((){});
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive || state == AppLifecycleState.detached) {
+      stopAudio();
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +125,16 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
             .colorScheme
             .inversePrimary,
         title: Text(widget.title),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () async{
+            stopAudio();
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: FutureBuilder<void>(
-        future: getPdfUrl(), // Replace with your method to get PDF URL
+        future: getRequriedData(), // Replace with your method to get PDF URL
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -128,14 +150,19 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          onPressed: () =>
+                          onPressed: () async{
+                              stopAudio();
+                              setState(() {
+
+                              });
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       ConvertScreen(title: widget.title, items: instruments,),
                                 ),
-                              ),
+                              );
+                          },
                           icon: const Icon(Icons.swap_horiz),
                         ),
                         Expanded(
@@ -149,6 +176,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
                               // Set the current selected item
                               onChanged: (String? value) {
                                 setState(() {
+                                  _audioPlayer.stop();
                                   selectedInstrument = value!;
                                 });
                               },
@@ -164,7 +192,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> {
                         ),
                         AudioPlayerButton(
                           audioPlayer: _audioPlayer,
-                          audioUrl: "https://filesamples.com/samples/audio/mp3/sample2.mp3",
+                          audioUrl: _localAudioPath,
                         ),
                       ],
                     ),

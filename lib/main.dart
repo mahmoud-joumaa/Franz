@@ -51,7 +51,7 @@ class Root extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: "WelcomeScreen",
+      initialRoute: "HomeScreen",
       routes: {
         // "SplashScreen": (context) => const Splash(),
         "WelcomeScreen": (context) => const Welcome(),

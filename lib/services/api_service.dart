@@ -10,7 +10,19 @@ class ApiService {
     var response = await http.get(Uri.parse(pdfUrl));
 
     var dir = await getTemporaryDirectory();
-    File file = File("${dir.path}/data.pdf");
+    File file = File("${dir.path}/pdfdata.pdf");
+
+    file.writeAsBytes(response.bodyBytes, flush: true);
+    print(file.path);
+    return file.path;
+  }
+
+
+  Future<String> loadAudio(String audioURL) async {
+    var response = await http.get(Uri.parse(audioURL));
+
+    var dir = await getTemporaryDirectory();
+    File file = File("${dir.path}/audiodata.mid");
 
     file.writeAsBytes(response.bodyBytes, flush: true);
 

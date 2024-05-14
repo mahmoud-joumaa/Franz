@@ -25,6 +25,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  @override
+  void initState() {
+    super.initState();
+    // Initialzie proper user attributes
+    fetchUserAttributes(MyHomePage.user!).then((res) {
+      for (final attribute in res["attributes"]) {
+        switch (attribute.getName()) {
+          case "email":
+            MyHomePage.user!.email = attribute.getValue();
+            break;
+          case "profile":
+            MyHomePage.user!.profileUrl = attribute.getValue();
+            break;
+          case "custom:preferred_instrument":
+            MyHomePage.user!.preferredInstrument = attribute.getValue();
+            break;
+        }
+      }
+    });
+  }
+
   int currentPageIndex = 1;
 
   Widget _buildBody() {
@@ -44,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    fetchUserAttributes(MyHomePage.user!).then((res) => print("\n\nChecking user attributes:\n$res\n\n"));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -52,9 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             onPressed: () async {
-              print("\n\nBefore sign out: ${MyHomePage.user}\n\n");
               dynamic result = await signOutCurrentUser(MyHomePage.user!);
-              print("\n\nAfter sign out: ${MyHomePage.user}\n\n");
               if (result["success"]) {
                 Alert.show(
                   context,

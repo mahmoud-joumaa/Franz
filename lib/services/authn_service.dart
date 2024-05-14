@@ -14,26 +14,26 @@ class User {
 
   bool isLoggedIn = false;
 
+  // Cognito Authentication
   CognitoUser current;
   bool registrationConfirmed;
   AuthenticationDetails authDetails;
   CognitoUserSession? session;
   String? token;
 
+  // Custom Attributes
+  String? email;
+  String? profileUrl;
+  String? preferredInstrument;
+
+  // Constructor
   User({required this.current, required this.registrationConfirmed, required this.authDetails});
 
-}
-
-class UserData {
-
-  final bool isLoggedIn;
-  final CognitoUser current;
-  final bool registrationConfirmed;
-  final AuthenticationDetails authDetails;
-  final CognitoUserSession session;
-  final String token;
-
-  UserData(this.isLoggedIn, this.current, this.registrationConfirmed, this.authDetails, this.session, this.token);
+  // toString() to print for debugging purposes
+  @override
+  String toString() {
+    return "[Username]: ${authDetails.username}\n\t[Email]: $email\n\t[Profile URL]: $profileUrl\n\t[Preferred Instrument]: $preferredInstrument";
+  }
 
 }
 
@@ -111,7 +111,7 @@ User Sign Out
 
 signOutCurrentUser(User user) async {
   await user.current.signOut();
-  await user.current.globalSignOut(); // invalidates all issued tokens
+  // await user.current.globalSignOut(); // IDEA: invalidates all issued tokens
   MyHomePage.user = null;
   return {
     "success": true,

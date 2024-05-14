@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:franz/global.dart';
+import 'package:franz/pages/home/home.dart';
+import 'package:franz/services/authn_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -232,7 +234,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                         Center(
                           child: TextButton(
-                              onPressed: () => displayWarning(deleteAccount),
+                              onPressed: () async {
+                                await deleteAccount(context);
+                              },
                               child: const Text("Delete Account")),
                         ),
 
@@ -250,7 +254,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
 
-  void deleteAccount() {
+  deleteAccount(context) async {
+    await deleteUser(MyHomePage.user!);
   }
 
   void displayWarning(void Function() func) {

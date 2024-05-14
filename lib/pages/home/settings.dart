@@ -255,7 +255,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
   deleteAccount(context) async {
-    await deleteUser(MyHomePage.user!);
+    final result = await deleteUser(MyHomePage.user!);
+    if (result["success"]) {
+      Alert.show(
+        context,
+        "User Deleted Successfully",
+        "",
+        UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+        "logout"
+      );
+    }
+    else {
+      Alert.show(
+        context,
+        "Error Logging Out",
+        result["message"],
+        UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+        "dismiss"
+      );
+    }
   }
 
   void displayWarning(void Function() func) {

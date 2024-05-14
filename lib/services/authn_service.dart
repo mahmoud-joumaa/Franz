@@ -69,6 +69,13 @@ signUpUser({required username, required email, required password}) async {
       "message": e.message
     };
   }
+  // Email already exists error (configured as a lambda pre-sign up trigger)
+  catch (e) {
+    return {
+      "success": false,
+      "message": e.toString()
+    };
+  }
 }
 
 /* ================================================================================================
@@ -255,12 +262,6 @@ confirmUser(User user, String confirmationCode) async {
     return {
       "success": false,
       "message": e.message
-    };
-  }
-  catch (e) {
-    return {
-      "success": false,
-      "message": e.toString()
     };
   }
 }

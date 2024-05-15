@@ -10,7 +10,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 DynamoDB API Start
 ================================================================================================ */
 
-const username = "test"; // Username to use for queries
+const username = "jelzein"; // Username to use for queries
 
 // Connection Initialization ======================================================================
 

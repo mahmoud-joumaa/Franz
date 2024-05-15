@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:franz/global.dart';
+import 'package:franz/pages/home/home.dart';
 import 'package:franz/pages/home/notation.dart';
 import 'package:franz/components/audio_player.dart';
 import 'package:franz/services/api_service.dart';
@@ -10,7 +11,8 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 DynamoDB API Start
 ================================================================================================ */
 
-const username = "jelzein"; // Username to use for queries
+//String? username = MyHomePage.user?.authDetails.username;
+String? username = MyHomePage.user?.authDetails.username;
 
 // Connection Initialization ======================================================================
 
@@ -21,7 +23,7 @@ class DynamoAPI {
 
 // Queries ========================================================================================
 
-const getUserTranscriptions = """query listTranscriptions {
+var getUserTranscriptions = """query listTranscriptions {
   listTranscriptions(filter: {account_id: {eq: "$username"}}) {
     items {
       account_id
@@ -133,16 +135,22 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
         else {
           for (final item in responseItems) { // title, date, transcriptionLink, audioLink
             info.add({
+              "id": item['transcription_id'],
               "title": item["title"],
               "date": item["transcription_date"],
               "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
-              "audioLink": '${item["s3_bucket"]}/result.mid', // FIXME: Fix link addresses
+              "audioLink": getUrl(item['title']), // FIXME: Fix link addresses
             });
           }
           setState(() { status = "done"; });
         }
       }
     });
+  }
+
+  //s3://audio-unprocessed-1/jelzein/PostmanTestActual-1715161105/
+  String getUrl(String title){
+    return "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(title)}/result.mid";
   }
 
   renderTranscriptions() async {
@@ -190,6 +198,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
                     changePlayerState: changePlayer,
                     currentPlayingKey: _currentPlaying,
                     onButtonPressed: stopAudio,
+                    id: info[index]['id'],
                   ),
                 );
               },
@@ -204,6 +213,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
 class TransriptionRow extends StatelessWidget {
   final String title;
   final String date;
+  final String id;
   final String transcriptionLink;
   final String audioLink;
   final AudioPlayer audioPlayer;
@@ -221,6 +231,7 @@ class TransriptionRow extends StatelessWidget {
     required this.changePlayerState,
     required this.currentPlayingKey,
     required this.onButtonPressed,
+    required this.id,
   });
 
 
@@ -229,6 +240,13 @@ class TransriptionRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        Expanded(
+          flex: 2,
+          child: TextButton(
+            child: Icon(Icons.delete),
+            onPressed: deleteTranscription,
+          ),
+        ),
         Expanded(
           flex: 5,
           child: Text(title),
@@ -249,6 +267,7 @@ class TransriptionRow extends StatelessWidget {
                   builder: (context) => SheetMusicViewerScreen(
                     link: transcriptionLink,
                     title: title,
+                    id: id,
                   ),
                 ),
               );
@@ -263,7 +282,11 @@ class TransriptionRow extends StatelessWidget {
             playingKey: currentPlayingKey,
           ),
         ),
+
       ],
     );
+  }
+
+  void deleteTranscription() {
   }
 }

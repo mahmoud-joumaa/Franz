@@ -8,11 +8,13 @@ import 'package:http/http.dart' as http;
 class ConvertScreen extends StatefulWidget {
   final String title;
   final List<String> items;
+  final String id;
 
   const ConvertScreen({
     Key? key,
     required this.title,
     required this.items,
+    required this.id
 
   }) : super(key: key);
 
@@ -23,7 +25,7 @@ class ConvertScreen extends StatefulWidget {
 class _ConvertScreenState extends State<ConvertScreen> {
   List<String> selectedCheckboxes = [];
   String? selectedRadio;
-  String username = "jelzein";
+  String username = 'jelzein';
   bool isConverting = false;
 
   @override
@@ -196,10 +198,9 @@ class _ConvertScreenState extends State<ConvertScreen> {
   }
 
   Future<dynamic> callConvertLambda() async {
-    String title = parseToUrlString("beat it::123123123"); // TODO: Get from dynamo (input from navigator arguments when pushing)
     Map<String, dynamic> requestBody = {
       'username': username,
-      'song_title': title,
+      'song_title': widget.id,
       'from_inst': selectedCheckboxes,
       'to_inst': selectedRadio,
     };

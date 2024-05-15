@@ -10,7 +10,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 DynamoDB API Start
 ================================================================================================ */
 
-const username = "test-user-5"; // Username to use for queries
+const username = "test"; // Username to use for queries
 
 // Connection Initialization ======================================================================
 
@@ -175,30 +175,26 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    info = [];
-                    renderTranscriptions().then((result) {
-                      if (result.isLoading) {
-                        setState(() {status = "loading";});
+                  onPressed: () async {
+                    setState(() {status = "loading";});
+                    await Future.delayed(const Duration(seconds: 1), () {});
+                    final result = await renderTranscriptions();
+                    var responseItems = result.data?['listTranscriptions']?['items'];
+                    if (responseItems.isEmpty) {
+                      setState(() { info = []; status = "empty"; });
+                    }
+                    else {
+                      List<Map<String, dynamic>> new_info = [];
+                      for (final item in responseItems) { // title, date, transcriptionLink, audioLink
+                        new_info.add({
+                          "title": item["title"],
+                          "date": item["transcription_date"],
+                          "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
+                          "audioLink": '${item["s3_bucket"]}/result.mid', // FIXME: Fix link addresses
+                        });
                       }
-                      else {
-                        var responseItems = result.data?['listTranscriptions']?['items'];
-                        if (responseItems.isEmpty) {
-                          setState(() { status = "empty"; });
-                        }
-                        else {
-                          for (final item in responseItems) { // title, date, transcriptionLink, audioLink
-                            info.add({
-                              "title": item["title"],
-                              "date": item["transcription_date"],
-                              "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
-                              "audioLink": '${item["s3_bucket"]}/result.mid', // FIXME: Fix link addresses
-                            });
-                          }
-                          setState(() { status = "done"; });
-                        }
-                      }
-                    });
+                      setState(() { info = new_info; status = "done"; });
+                    }
                   },
                   icon: const Icon(Icons.refresh)
                 ),

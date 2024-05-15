@@ -319,7 +319,6 @@ deleteUser(User user) async {
     };
   }
   catch (e) { // Errors triggered from the invoked lambda
-    print(e.toString());
     return {
       "success": false,
       "message": e.toString()

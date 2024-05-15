@@ -184,16 +184,16 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
                       setState(() { info = []; status = "empty"; });
                     }
                     else {
-                      List<Map<String, dynamic>> new_info = [];
+                      List<Map<String, dynamic>> newInfo = [];
                       for (final item in responseItems) { // title, date, transcriptionLink, audioLink
-                        new_info.add({
+                        newInfo.add({
                           "title": item["title"],
                           "date": item["transcription_date"],
                           "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
                           "audioLink": '${item["s3_bucket"]}/result.mid', // FIXME: Fix link addresses
                         });
                       }
-                      setState(() { info = new_info; status = "done"; });
+                      setState(() { info = newInfo; status = "done"; });
                     }
                   },
                   icon: const Icon(Icons.refresh)

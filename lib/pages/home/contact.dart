@@ -1,4 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:franz/global.dart';
+import 'package:open_mail_app/open_mail_app.dart';
 
 class ContactScreen extends StatefulWidget {
   const ContactScreen({super.key});
@@ -78,7 +82,7 @@ class _ContactScreenState extends State<ContactScreen> {
               ),
               const Spacer(),
               TextButton(
-                  onPressed: submit,
+                  onPressed: () async { await submit(context); },
                   child: const Text("Submit")
               ),
             ],
@@ -88,14 +92,39 @@ class _ContactScreenState extends State<ContactScreen> {
     );
   }
 
-  void submit() {
-
+  submit(context) async {
+    // Get number of stars based of rating
+    String ratingStars = "";
+    for (int i = 0; i < rating; i++) { ratingStars += '⭐'; }
+    // Generate email
+    EmailContent email = EmailContent(to: ['franz.transcriber@gmail.com'], subject: 'Franz $category', body: 'Rating: $ratingStars\n${messageController.text}');
+    // Choose email client
+    OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(nativePickerTitle: 'Select email app to compose', emailContent: email);
+    if (!result.didOpen && !result.canOpen) {
+      Alert.show(
+        context,
+        "Failed to Open Mail App",
+        "No installed mail apps were found",
+        UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+        "dismiss",
+      );
+    }
+    else if (!result.didOpen && result.canOpen) {
+      showDialog(
+        context: context,
+        builder: (_) => MailAppPickerDialog(
+          mailApps: result.options,
+          emailContent: email,
+        ),
+      );
+    }
   }
+
   void reset() {
     setState(() {
       messageController.text = '';
       rating = 0;
     });
   }
-}
 
+}

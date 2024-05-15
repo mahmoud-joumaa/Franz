@@ -97,7 +97,7 @@ class _ContactScreenState extends State<ContactScreen> {
     String ratingStars = "";
     for (int i = 0; i < rating; i++) { ratingStars += '⭐'; }
     // Generate email
-    EmailContent email = EmailContent(to: ['franz.transcriber@gmail.com'], subject: 'Franz $category', body: 'Rating: $ratingStars\n${messageController.text}');
+    EmailContent email = EmailContent(to: ['franz.transcriber@gmail.com'], subject: 'Franz $category', body: 'Rating: $ratingStars\n\n${messageController.text}');
     // Choose email client
     OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(nativePickerTitle: 'Select email app to compose', emailContent: email);
     if (!result.didOpen && !result.canOpen) {

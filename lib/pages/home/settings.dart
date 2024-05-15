@@ -13,12 +13,21 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String language = "English";
   bool isDarkMode = false;
-  final TextEditingController usernameController = TextEditingController(text: "USERNAME");
+  String? email = MyHomePage.user?.email;
+  String? username = MyHomePage.user?.authDetails.username;
+  final TextEditingController usernameController = TextEditingController(text: "");
   final TextEditingController emailController = TextEditingController(text: "EMAIL");
   final TextEditingController passwordController = TextEditingController(text: "");
   final TextEditingController codeController = TextEditingController(text: "");
   bool _hidePassword = true;
   String preferedInstrument = 'Piano';
+
+  void initState(){
+    super.initState();
+    usernameController.text = username!;
+    emailController.text = email!;
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,24 +36,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar( // TODO: Get from cognito
+                const CircleAvatar( // TODO: Get from cognito
                   radius: 50,
                   backgroundImage: NetworkImage(
                       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb5ay974Ak1bGFIDStEQaYK7qK60bzbbmczDft-ao-Xw&s'),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 30,
                 ),
                 Column(
                   children: [
-                    Text(
+                    const Text(
                       "Welcome,",
                     ),
                     Text(
-                      "Username",
+                      username!,
                       style: TextStyle(fontSize: 20),
                     ),
                   ],

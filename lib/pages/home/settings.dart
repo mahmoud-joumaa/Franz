@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:franz/global.dart';
 import 'package:franz/pages/home/home.dart';
+import 'package:franz/services/authn_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -242,7 +243,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                         Center(
                           child: TextButton(
-                              onPressed: () => displayWarning(deleteAccount),
+                              onPressed: () async {
+                                await deleteAccount(context);
+                              },
                               child: const Text("Delete Account")),
                         ),
 
@@ -260,7 +263,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
 
-  void deleteAccount() {
+  deleteAccount(context) async {
+    final result = await deleteUser(MyHomePage.user!);
+    if (result["success"]) {
+      Alert.show(
+        context,
+        "User Deleted Successfully",
+        "",
+        UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+        "logout"
+      );
+    }
+    else {
+      Alert.show(
+        context,
+        "Error Logging Out",
+        result["message"],
+        UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+        "dismiss"
+      );
+    }
   }
 
   void displayWarning(void Function() func) {

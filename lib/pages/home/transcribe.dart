@@ -161,27 +161,57 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
   Widget build(BuildContext context) {
     return status == "loading" ? const Loading(backgroundColor: Colors.white, color: Colors.deepPurple) : Padding(
       padding: const EdgeInsets.all(16.0),
-      child: status == "empty" ? const Center(child: Text("It appears you don't have any transcriptions yet!\nUse the plus button to start transcribing your favorite tunes!", textAlign: TextAlign.center)) : Column(
+      child: Column(
         children: [
           Expanded(
             flex: 1,
-            child: TextField(
-              decoration: InputDecoration(
-                suffixIcon:
-                    Icon(Icons.search, color: Theme.of(context).primaryColor),
-                border: const OutlineInputBorder(),
-                label: const Text("Search your transcriptions"),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchValue = value;
-                });
-              },
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      suffixIcon:
+                          Icon(Icons.search, color: Theme.of(context).primaryColor),
+                      border: const OutlineInputBorder(),
+                      label: const Text("Search your transcriptions"),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _searchValue = value;
+                      });
+                    },
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    setState(() {status = "loading";});
+                    await Future.delayed(const Duration(seconds: 1), () {});
+                    final result = await renderTranscriptions();
+                    var responseItems = result.data?['listTranscriptions']?['items'];
+                    if (responseItems.isEmpty) {
+                      setState(() { info = []; status = "empty"; });
+                    }
+                    else {
+                      List<Map<String, dynamic>> newInfo = [];
+                      for (final item in responseItems) { // title, date, transcriptionLink, audioLink
+                        newInfo.add({
+                          "title": item["title"],
+                          "date": item["transcription_date"],
+                          "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
+                          "audioLink": '${item["s3_bucket"]}/result.mid', // FIXME: Fix link addresses
+                        });
+                      }
+                      setState(() { info = newInfo; status = "done"; });
+                    }
+                  },
+                  icon: const Icon(Icons.refresh)
+                ),
+              ],
             ),
           ),
           Expanded(
             flex: 6,
-            child: ListView.separated(
+            child: status == "empty" ? const Center(child: Text("It appears you don't have any transcriptions yet!\nUse the plus button to start transcribing your favorite tunes!", textAlign: TextAlign.center)) : ListView.separated(
               separatorBuilder: (context, index) => const Divider(),
               itemCount: info.length,
               itemBuilder: (context, index) {

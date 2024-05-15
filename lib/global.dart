@@ -133,8 +133,9 @@ class Alert {
                     onPressed: () async {
                       Alert.load(context);
                       final result = await confirmUser(user, codeController.text);
-                      Navigator.of(context).pop();
                       if (result["success"]) {
+                        await signInUser(user);
+                        Navigator.of(context).pop();
                         Alert.show(
                           context,
                           "Successfully verified ${user.authDetails.username}",
@@ -144,6 +145,7 @@ class Alert {
                         );
                       }
                       else {
+                        Navigator.of(context).pop();
                         Alert.show(
                           context,
                           "An error has occurred while verifying ${user.authDetails.username}",

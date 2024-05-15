@@ -1,6 +1,9 @@
 import "package:amazon_cognito_identity_dart_2/cognito.dart";
+import "package:graphql_flutter/graphql_flutter.dart";
+import 'package:http/http.dart' as http;
 
 import "package:franz/pages/home/home.dart";
+import "package:franz/services/api_service.dart";
 
 // Base Entities ==================================================================================
 
@@ -286,8 +289,24 @@ resendConfirmationCode(User user) async {
 
 deleteUser(User user) async {
   try {
+    // Delete user data on dynamo and s3 (make sure to get the most recent list of transcriptions first)
+    GraphQLClient client = DynamoGraphQL.initializeClient();
+    final getUserTranscriptions = """query listTranscriptions {
+      listTranscriptions(filter: {account_id: {eq: "${MyHomePage.user!.authDetails.username}"}}) {
+        items {
+          account_id
+          transcription_id
+        }
+      }
+    }""";
+    final queryResult = await client.query(QueryOptions(document: gql(getUserTranscriptions)));
+    final transcriptions = queryResult.data!['listTranscriptions']?['items'];
+    for (final transcription in transcriptions) {
+      final url = Uri.parse('https://lhflvireis7hjn2rrqq45l37wi0ajcbp.lambda-url.eu-west-1.on.aws/?account_id=${Uri.encodeComponent(transcription["account_id"])}&transcription_id=${Uri.encodeComponent(transcription["transcription_id"])}');
+      http.get(url);
+    }
+    // Delete user account on cognito
     await user.current.deleteUser();
-    // TODO: invoke delete lambda here
     return {
       "success": true,
       "message": "${user.authDetails.username} deleted successfully"
@@ -297,6 +316,12 @@ deleteUser(User user) async {
     return {
       "success": false,
       "message": e.message
+    };
+  }
+  catch (e) { // Errors triggered from the invoked lambda
+    return {
+      "success": false,
+      "message": e.toString()
     };
   }
 }

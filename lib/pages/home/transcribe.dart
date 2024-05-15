@@ -12,7 +12,7 @@ DynamoDB API Start
 ================================================================================================ */
 
 //String? username = MyHomePage.user?.authDetails.username;
-String? username = MyHomePage.user?.authDetails.username;
+String? username = 'jelzein';
 
 // Connection Initialization ======================================================================
 
@@ -139,7 +139,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
               "title": item["title"],
               "date": item["transcription_date"],
               "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
-              "audioLink": getUrl(item['title']), // FIXME: Fix link addresses
+              "audioLink": "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(item['transcription_id'])}/result.mid", // FIXME: Fix link addresses
             });
           }
           setState(() { status = "done"; });

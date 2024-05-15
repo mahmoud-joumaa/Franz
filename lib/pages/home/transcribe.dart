@@ -11,8 +11,8 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 DynamoDB API Start
 ================================================================================================ */
 
-//String? username = MyHomePage.user?.authDetails.username;
-String? username = 'jelzein';
+String? username = MyHomePage.user?.authDetails.username;
+// String? username = 'jelzein';
 
 // Connection Initialization ======================================================================
 

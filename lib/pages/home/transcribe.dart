@@ -330,7 +330,7 @@ class TransriptionRow extends StatelessWidget {
       context,
       "Your transcription has been deleted.",
       "Please refresh to see the changes.",
-      UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+      UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
       "ok"
     );
     Navigator.of(context).pop();

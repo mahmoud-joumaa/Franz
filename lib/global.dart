@@ -44,12 +44,12 @@ class Alert {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
+        title: Text(title, style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
+        content: Text(content, style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
         backgroundColor: backgroundColor,
         actions: [
           TextButton(
-            child: Text(type.toUpperCase()),
+            child: Text(type.toUpperCase(), style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
             onPressed: () async {
               switch (type) {
                 case "exit":
@@ -81,7 +81,7 @@ class Alert {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => AlertDialog(
-        title: Text(title),
+        title: Text(title, style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
         backgroundColor: backgroundColor,
         content: TextField(
           controller: codeController,
@@ -97,7 +97,7 @@ class Alert {
               Row(
                 children: [
                   TextButton(
-                    child: const Text("Resend Code"),
+                    child: Text("Resend Code", style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
                     onPressed: () async {
                       Alert.load(context);
                       final result = await resendConfirmationCode(user);
@@ -107,7 +107,7 @@ class Alert {
                           context,
                           "Confirmation code successfully resent.",
                           result["message"],
-                          UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                          UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
                           "dismiss"
                         );
                       }
@@ -116,14 +116,14 @@ class Alert {
                           context,
                           "An error has occurred while resending the confirmation code.\nPlease try again later.",
                           result["message"],
-                          UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                          UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
                           "ok"
                         );
                       }
                     }
                   ),
                   TextButton(
-                    child: const Text("Confirm Code"),
+                    child: Text("Confirm Code", style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
                     onPressed: () async {
                       Alert.load(context);
                       final result = await confirmUser(user, codeController.text);
@@ -134,7 +134,7 @@ class Alert {
                           context,
                           "Successfully verified ${user.authDetails.username}",
                           result["message"],
-                          UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                          UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
                           "login"
                         );
                       }
@@ -144,7 +144,7 @@ class Alert {
                           context,
                           "An error has occurred while verifying ${user.authDetails.username}",
                           result["message"],
-                          UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                          UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
                           result["message"].contains("An account with the email already exists.") ? "try with a different email" : "dismiss"
                         );
                       }
@@ -153,7 +153,7 @@ class Alert {
                 ],
               ),
               TextButton(
-                  child: const Text("Dismiss"),
+                  child: Text("Dismiss", style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
                   onPressed: () {
                     Navigator.of(context).pop();
                   }

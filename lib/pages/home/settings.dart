@@ -20,13 +20,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController passwordController = TextEditingController(text: "");
   final TextEditingController codeController = TextEditingController(text: "");
   bool _hidePassword = true;
-  String preferedInstrument = 'Piano';
+  late String preferredInstrument;
 
   void initState(){
     super.initState();
     usernameController.text = username!;
     emailController.text = email!;
-
+    if(MyHomePage.user?.preferredInstrument != null ){
+      preferredInstrument = MyHomePage.user!.preferredInstrument!;
+    }
+    else{
+      preferredInstrument = Instruments.midiInstruments.keys.toList().first;
+    }
   }
 
   @override
@@ -141,13 +146,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       decoration: const InputDecoration(
                                         hintText: 'Select item',
                                         border: OutlineInputBorder(),
-                                        labelText: "Prefered Instrument Class"
+                                        labelText: "Preferred Instrument Class"
                                       ),
-                                      value: preferedInstrument,
+                                      value: preferredInstrument,
                                       // Set the current selected item
                                       onChanged: (String? value) {
                                         setState(() {
-                                          preferedInstrument = value!;
+                                          preferredInstrument = value!;
+                                          MyHomePage.user?.preferredInstrument = preferredInstrument;
                                         });
                                       },
                                       items: Instruments.midiInstruments.keys.toList().map<DropdownMenuItem<String>>((

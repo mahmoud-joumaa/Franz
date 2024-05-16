@@ -58,7 +58,7 @@ class _WelcomeState extends State<Welcome> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: UserTheme.isDark ? Colors.deepPurple[800] : Colors.deepPurple[200],
+      backgroundColor: Colors.deepPurple[700],
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
@@ -82,7 +82,7 @@ class _WelcomeState extends State<Welcome> {
                           const SizedBox(width: 20.0),
                           Text("Franz",
                             style: TextStyle(
-                              color: UserTheme.isDark ? Colors.white : Colors.black,
+                              color: Colors.white,
                               fontSize: 40.0,
                               fontWeight: FontWeight.bold,
                             ),
@@ -91,7 +91,7 @@ class _WelcomeState extends State<Welcome> {
                       ),
                       Text("Your personal Automatic Music Transcriber!",
                         style: TextStyle(
-                          color: UserTheme.isDark ? Colors.white : Colors.black,
+                          color: Colors.white,
                           fontSize: 15.0,
                         ),
                       ),
@@ -119,7 +119,7 @@ class _WelcomeState extends State<Welcome> {
                 child: Container(
                   padding: const EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple[500],
+                    color: Colors.deepPurple[200],
                     borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
                   child: Column(
@@ -165,7 +165,7 @@ class _WelcomeState extends State<Welcome> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
           decoration: BoxDecoration(
-            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? Colors.deepPurple[500] : Colors.transparent,
+            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? Colors.deepPurple[200] : Colors.transparent,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
           ),
           child: Text(
@@ -341,7 +341,7 @@ class _SubmitButtonState extends State<SubmitButton> {
         await Future.delayed(const Duration(seconds: 1), () {clearInputs();});
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(const Color(Palette.yellow)),
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple[300]!),
         foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
       ),
       child: Row(

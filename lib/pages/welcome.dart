@@ -214,6 +214,8 @@ class _InputFieldState extends State<InputField> {
                     type=="password" || type=="confirm password" ? const Icon(Icons.lock_outlined) :
                     null,
         suffixIcon: type=="password" || type=="confirm password" ? IconButton(icon: _hidePassword ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off), onPressed: () {setState(() {_hidePassword = !_hidePassword;});}) : null,
+        prefixIconColor: Colors.black,
+        suffixIconColor: Colors.black,
         labelText: type!.substring(0,1).toUpperCase()+type.substring(1),
         labelStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
         enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),

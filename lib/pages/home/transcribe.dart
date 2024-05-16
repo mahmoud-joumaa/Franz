@@ -138,8 +138,8 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
               "id": item['transcription_id'],
               "title": item["title"],
               "date": item["transcription_date"],
-              "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
-              "audioLink": "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(item['transcription_id'])}/result.mid", // FIXME: Fix link addresses
+              "transcriptionLink": '${item["s3_bucket"]}/result.pdf',
+              "audioLink": "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(item['transcription_id'])}/result.mid",
             });
           }
           setState(() { status = "done"; });
@@ -195,10 +195,11 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
                       List<Map<String, dynamic>> newInfo = [];
                       for (final item in responseItems) { // title, date, transcriptionLink, audioLink
                         newInfo.add({
+                          "id": item['transcription_id'],
                           "title": item["title"],
                           "date": item["transcription_date"],
-                          "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
-                          "audioLink": '${item["s3_bucket"]}/result.mid', // FIXME: Fix link addresses
+                          "transcriptionLink": '${item["s3_bucket"]}/result.pdf',
+                          "audioLink": "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(item['transcription_id'])}/result.mid",
                         });
                       }
                       setState(() { info = newInfo; status = "done"; });

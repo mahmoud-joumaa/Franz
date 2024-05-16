@@ -6,6 +6,7 @@ import 'package:franz/pages/home/notation.dart';
 import 'package:franz/components/audio_player.dart';
 import 'package:franz/services/api_service.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart' as http;
 
 /* ================================================================================================
 DynamoDB API Start
@@ -274,8 +275,10 @@ class TransriptionRow extends StatelessWidget {
         Expanded(
           flex: 2,
           child: TextButton(
-            child: Icon(Icons.delete),
-            onPressed: deleteTranscription,
+            onPressed: () async {
+              await deleteTranscription(context, id);
+            },
+            child: const Icon(Icons.delete),
           ),
         ),
         Expanded(
@@ -318,6 +321,18 @@ class TransriptionRow extends StatelessWidget {
     );
   }
 
-  void deleteTranscription() {
+  deleteTranscription(context, transcriptionId) async {
+    Alert.load(context);
+    final url = Uri.parse('https://lhflvireis7hjn2rrqq45l37wi0ajcbp.lambda-url.eu-west-1.on.aws/?account_id=${Uri.encodeComponent(MyHomePage.user!.authDetails.username!)}&transcription_id=${Uri.encodeComponent(transcriptionId)}');
+    await http.get(url);
+    Alert.show(
+      context,
+      "Your transcription has been deleted.",
+      "Please refresh to see the changes.",
+      UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+      "ok"
+    );
+    Navigator.of(context).pop();
   }
+
 }

@@ -260,8 +260,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Row(
                                 children: [
                                   TextButton(
-                                      onPressed: () =>
-                                          usernameController.text = "USERNAME",
+                                      onPressed: () {},
+                                          // usernameController.text = "USERNAME",
                                       child: const Text("Cancel")),
                                   const Spacer(),
                                   TextButton(

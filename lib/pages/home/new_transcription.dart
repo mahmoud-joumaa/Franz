@@ -195,7 +195,7 @@ class _NewTransScreenState extends State<NewTransScreen> {
   }
 
   Future<dynamic> callYTDownload() async {
-    final encodedYoutubeUrl = Uri.encodeComponent(_ytlink.text);
+    final encodedYoutubeUrl = Uri.encodeQueryComponent(_ytlink.text);
     // print(encodedYoutubeUrl);
     final url = Uri.parse('https://cunmicltthdzba3akzwazo34q40xikyz.lambda-url.eu-west-1.on.aws?url=$encodedYoutubeUrl&username=${parseToUrlString(username)}&song_title=${parseToUrlString(titleController.text)}');
 

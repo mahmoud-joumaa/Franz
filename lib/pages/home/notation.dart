@@ -91,24 +91,23 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
           f.split('/').elementAt(f
               .split('/')
               .length - 2)).toList();
-      print(instruments);
-      print(preferredInstrument);
-      selectedInstrument = instruments.first;
-      if(preferredInstrument == null || preferredInstrument == 'None'){
-        preferredInstrument = instruments.first;
-      }
-      else{
-        for(String instrument in instruments){
-          for(var entry in Instruments.midiInstruments.entries){
-            if(entry.value.contains(instrument)){
-              selectedInstrument = instrument;
-              break;
+
+      if(selectedInstrument == '') {
+        if (preferredInstrument == null || preferredInstrument == 'None') {
+          selectedInstrument = instruments.first;
+        }
+        else {
+          for (String instrument in instruments) {
+            for (var entry in Instruments.midiInstruments.entries) {
+              if (entry.value.contains(instrument)) {
+                selectedInstrument = instrument;
+                break;
+              }
             }
+            if (selectedInstrument != '') break;
           }
-          if (selectedInstrument != '') break;
         }
       }
-
     }
     else {
       Alert.show(

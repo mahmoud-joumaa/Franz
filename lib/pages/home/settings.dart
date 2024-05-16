@@ -26,12 +26,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     usernameController.text = username!;
     emailController.text = email!;
+
     if(MyHomePage.user?.preferredInstrument != null ){
       preferredInstrument = MyHomePage.user!.preferredInstrument!;
     }
     else{
       preferredInstrument = Instruments.midiInstruments.keys.toList().first;
     }
+
   }
 
   @override
@@ -147,6 +149,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         hintText: 'Select item',
                                         border: OutlineInputBorder(),
                                         labelText: "Preferred Instrument Class"
+
                                       ),
                                       value: preferredInstrument,
                                       // Set the current selected item
@@ -186,6 +189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   border: OutlineInputBorder(),
                                   label: Text("Change Username"),
                                 ),
+                                enabled: false,
                               ),
                               TextField(
                                 controller: emailController,
@@ -193,6 +197,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   border: OutlineInputBorder(),
                                   label: Text("Change Email"),
                                 ),
+                                enabled: false,
                               ),
                               TextField(
                                 controller: passwordController,
@@ -203,6 +208,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                                 ),
                                 obscureText: _hidePassword,
+                                enabled: false,
                               ),
                               Row(
                                 children: [

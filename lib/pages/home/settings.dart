@@ -162,7 +162,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       children: [
                                         Icon(UserTheme.isDark?Icons.dark_mode:Icons.light_mode),
                                         const SizedBox(width: 10.0),
-                                        Text("Applied ${UserTheme.isDark?'Dark':'Light'} Theme"),
+                                        Text("Applied ${UserTheme.isDark?'Dark':'Light'} Theme", style: const TextStyle(fontSize: 10.0)),
                                       ]
                                     ),
                                   );
@@ -323,7 +323,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
   deleteAccount(context) async {
+    Alert.load(context);
     final result = await deleteUser(MyHomePage.user!);
+    Navigator.of(context).pop();
     if (result["success"]) {
       Alert.show(
         context,

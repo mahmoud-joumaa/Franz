@@ -59,7 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        TextEditingController controller = TextEditingController();
+                        TextEditingController controller = TextEditingController(text: MyHomePage.user!.profileUrl);
                         return AlertDialog(
                           title: const Text("Enter URL of new image"),
                           content: TextField(
@@ -81,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(MyHomePage.user!.profileUrl!),
+                    backgroundImage: NetworkImage(MyHomePage.user!.profileUrl ?? "https://i.pinimg.com/736x/cb/2c/53/cb2c538ff848a8b6f9162d20cc0e32d0.jpg"),
                   ),
                 ),
                 const SizedBox(

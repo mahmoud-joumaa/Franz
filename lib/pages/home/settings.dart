@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:franz/global.dart';
 import 'package:franz/pages/home/home.dart';
 import 'package:franz/services/authn_service.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -14,7 +15,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String language = "English";
-  bool isDarkMode = false;
+  bool isDarkMode = UserTheme.isDark;
   String? email = MyHomePage.user?.email;
   String? username = MyHomePage.user?.authDetails.username;
   final TextEditingController usernameController = TextEditingController(text: "");
@@ -151,7 +152,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           value: isDarkMode,
                           onChanged: (value) {
                             setState(() {
-                              isDarkMode = value;
+                              Provider.of<UserTheme>(context, listen: false).toggleTheme(value);
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Row(
+                                      children: [
+                                        Icon(UserTheme.isDark?Icons.dark_mode:Icons.light_mode),
+                                        const SizedBox(width: 10.0),
+                                        Text("Applied ${UserTheme.isDark?'Dark':'Light'} Theme"),
+                                      ]
+                                    ),
+                                  );
+                                },
+                              );
                             });
                           },
                         ),

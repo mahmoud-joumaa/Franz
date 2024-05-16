@@ -325,6 +325,7 @@ class TransriptionRow extends StatelessWidget {
     Alert.load(context);
     final url = Uri.parse('https://lhflvireis7hjn2rrqq45l37wi0ajcbp.lambda-url.eu-west-1.on.aws/?account_id=${Uri.encodeComponent(MyHomePage.user!.authDetails.username!)}&transcription_id=${Uri.encodeComponent(transcriptionId)}');
     await http.get(url);
+    Navigator.of(context).pop();
     Alert.show(
       context,
       "Your transcription has been deleted.",

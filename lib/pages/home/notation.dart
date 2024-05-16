@@ -38,6 +38,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
   List<String> instruments = [];
   String selectedInstrument = '';
   String? username = MyHomePage.user?.authDetails.username;
+  String? preferredInstrument = MyHomePage.user?.preferredInstrument;
 
   @override
   void initState() {
@@ -90,8 +91,20 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
               .split('/')
               .length - 2)).toList();
       print(instruments);
-      if (selectedInstrument == '') {
-        selectedInstrument = instruments.first;
+
+      if(preferredInstrument == null){
+        preferredInstrument = Instruments.midiInstruments.keys.toList().first;
+      }
+      else{
+        for(String instrument in instruments){
+          for(var entry in Instruments.midiInstruments.entries){
+            if(entry.value.contains(instrument)){
+              selectedInstrument = instrument;
+              break;
+            }
+          }
+          if (selectedInstrument != '') break;
+        }
       }
 
     }

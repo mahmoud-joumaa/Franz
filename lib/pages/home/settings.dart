@@ -26,7 +26,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     usernameController.text = username!;
     emailController.text = email!;
-
   }
 
   @override
@@ -141,7 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       decoration: const InputDecoration(
                                         hintText: 'Select item',
                                         border: OutlineInputBorder(),
-                                        labelText: "Prefered Instrument Class"
+                                        labelText: "Preferred Instrument Class",
                                       ),
                                       value: preferedInstrument,
                                       // Set the current selected item
@@ -180,6 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   border: OutlineInputBorder(),
                                   label: Text("Change Username"),
                                 ),
+                                enabled: false,
                               ),
                               TextField(
                                 controller: emailController,
@@ -187,6 +187,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   border: OutlineInputBorder(),
                                   label: Text("Change Email"),
                                 ),
+                                enabled: false,
                               ),
                               TextField(
                                 controller: passwordController,
@@ -197,6 +198,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                                 ),
                                 obscureText: _hidePassword,
+                                enabled: false,
                               ),
                               Row(
                                 children: [

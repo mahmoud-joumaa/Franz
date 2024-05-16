@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:franz/global.dart';
 import 'package:franz/pages/home/home.dart';
@@ -21,9 +23,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController codeController = TextEditingController(text: "");
   bool _hidePassword = true;
   late String preferredInstrument;
+  // ignore: non_constant_identifier_names
   List<String> instrument_classes = Instruments.midiInstruments.keys.toList();
-  
 
+
+  @override
   void initState(){
     super.initState();
     usernameController.text = username!;
@@ -35,7 +39,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     else{
       preferredInstrument = Instruments.midiInstruments.keys.toList().first;
-      print(preferredInstrument);
     }
 
   }
@@ -50,10 +53,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const CircleAvatar( // TODO: Get from cognito
-                  radius: 50,
-                  backgroundImage: NetworkImage(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb5ay974Ak1bGFIDStEQaYK7qK60bzbbmczDft-ao-Xw&s'),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        TextEditingController controller = TextEditingController();
+                        return AlertDialog(
+                          title: const Text("Enter URL of new image"),
+                          content: TextField(
+                            controller: controller,
+                          ),
+                          actions: [
+                            IconButton(
+                              onPressed: () async {
+                                await updateUserAttribute(MyHomePage.user!, "profile", controller.text);
+                                setState(() { MyHomePage.user!.profileUrl = controller.text; });
+                                Navigator.of(context).pop();
+                              },
+                              icon: const Icon(Icons.check)
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: NetworkImage(MyHomePage.user!.profileUrl!),
+                  ),
                 ),
                 const SizedBox(
                   width: 30,
@@ -65,7 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     Text(
                       username!,
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                     ),
                   ],
                 )

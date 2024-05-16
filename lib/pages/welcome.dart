@@ -7,8 +7,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:franz/global.dart';
 import 'package:franz/services/authn_service.dart';
 
-// TODO: Fix the color scheme of the page
-
 // Form Inputs Start ==============================================================================
 
 final TextEditingController loginUsernameController = TextEditingController();
@@ -314,7 +312,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                   context,
                   "An error has occurred while signing in as ${loginUsernameController.text}",
                   result["message"],
-                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!, // TODO: Handle different color for confirmation dialog
+                  result["message"].contains("User is not confirmed.") ? UserTheme.isDark ? Colors.deepPurple[700]! : Colors.deepPurple[300]! : UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
                   result["message"].contains("User is not confirmed.") ? "verify" : "dismiss",
                   result["message"].contains("User is not confirmed.") ? User(current: CognitoUser(loginUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: loginUsernameController.text, password: loginPasswordController.text)) : null
                 );

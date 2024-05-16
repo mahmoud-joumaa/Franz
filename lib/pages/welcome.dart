@@ -78,7 +78,7 @@ class _WelcomeState extends State<Welcome> {
                         children: [
                           Image.asset("assets/Franz.jpg", height: 65.0, width: 65.0),
                           const SizedBox(width: 20.0),
-                          Text("Franz",
+                          const Text("Franz",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 40.0,
@@ -87,7 +87,7 @@ class _WelcomeState extends State<Welcome> {
                           ),
                         ],
                       ),
-                      Text("Your personal Automatic Music Transcriber!",
+                      const Text("Your personal Automatic Music Transcriber!",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 15.0,

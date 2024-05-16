@@ -202,8 +202,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       value: preferredInstrument,
                                       // Set the current selected item
                                       onChanged: (String? value) {
-                                        setState(() {
-                                          preferredInstrument = value!;
+                                        setState(() async {
+                                          await updateUserAttribute(MyHomePage.user!, "custom:preferred_instrument", value!);
+                                          preferredInstrument = value;
                                           MyHomePage.user?.preferredInstrument = preferredInstrument;
                                         });
                                       },

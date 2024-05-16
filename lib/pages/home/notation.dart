@@ -92,7 +92,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
               .length - 2)).toList();
       print(instruments);
 
-      if(preferredInstrument == null){
+      if(preferredInstrument == 'None'){
         preferredInstrument = Instruments.midiInstruments.keys.toList().first;
       }
       else{

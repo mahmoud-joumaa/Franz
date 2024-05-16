@@ -21,17 +21,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController codeController = TextEditingController(text: "");
   bool _hidePassword = true;
   late String preferredInstrument;
+  List<String> instrument_classes = Instruments.midiInstruments.keys.toList();
+  
 
   void initState(){
     super.initState();
     usernameController.text = username!;
     emailController.text = email!;
+    instrument_classes.add('None');
 
-    if(MyHomePage.user?.preferredInstrument != null ){
+    if(MyHomePage.user?.preferredInstrument != 'None'){
       preferredInstrument = MyHomePage.user!.preferredInstrument!;
     }
     else{
       preferredInstrument = Instruments.midiInstruments.keys.toList().first;
+      print(preferredInstrument);
     }
 
   }
@@ -159,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           MyHomePage.user?.preferredInstrument = preferredInstrument;
                                         });
                                       },
-                                      items: Instruments.midiInstruments.keys.toList().map<DropdownMenuItem<String>>((
+                                      items: instrument_classes.map<DropdownMenuItem<String>>((
                                           String item) {
                                         return DropdownMenuItem<String>(
                                           value: item,

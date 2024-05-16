@@ -160,7 +160,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
 
   @override
   Widget build(BuildContext context) {
-    return status == "loading" ? const Loading(backgroundColor: Colors.white, color: Colors.deepPurple) : Padding(
+    return status == "loading" ? const Loading() : Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [

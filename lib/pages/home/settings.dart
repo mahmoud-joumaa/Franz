@@ -224,7 +224,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     Expanded(
                       child: Card(
-                        color: Colors.grey[200],
                         child: Container(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(

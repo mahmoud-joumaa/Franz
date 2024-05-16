@@ -5,9 +5,9 @@ import 'package:franz/global.dart';
 import 'package:franz/pages/home/home.dart';
 import 'package:franz/pages/welcome.dart';
 
-void main() async {
+void main() {
 
-  await WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
   // Detect system theme
   UserTheme.isDark = (WidgetsBinding.instance.platformDispatcher.platformBrightness==Brightness.dark);

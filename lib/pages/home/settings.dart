@@ -171,9 +171,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             });
                           },
                         ),
-                        const Icon(
+                        Icon(
                           Icons.nights_stay,
-                          color: Colors.black,
+                          color: UserTheme.isDark ? Colors.black : Colors.white,
                         ),
                       ],
                     ),

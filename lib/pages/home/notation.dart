@@ -83,6 +83,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
       element
           .findElements('Prefix')
           .first
+          // ignore: deprecated_member_use
           .text)
           .toList();
       print(folderNames);
@@ -155,7 +156,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
         future: getRequriedData(context), // Replace with your method to get PDF URL
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: Loading());
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
@@ -219,13 +220,13 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
                     future: getRequriedData(context), // Replace with your method to get PDF URL
                     builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: Loading());
                     } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                     } else {
                     return Expanded(
                       child: _localFilePath == ""
-                          ? const Center(child: CircularProgressIndicator())
+                          ? const Center(child: Loading())
                           : PDFView(
                         filePath: _localFilePath,
                       ),

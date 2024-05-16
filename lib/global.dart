@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -90,16 +91,10 @@ class Alert {
           obscureText: false,
         ),
         actions: [
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TextButton(
-                child: const Text("Dismiss"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                }
-              ),
               Row(
                 children: [
                   TextButton(
@@ -157,6 +152,12 @@ class Alert {
                     }
                   ),
                 ],
+              ),
+              TextButton(
+                  child: const Text("Dismiss"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }
               ),
             ],
           ),

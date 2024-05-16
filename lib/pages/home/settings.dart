@@ -125,11 +125,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 border: OutlineInputBorder(),
                                 label: Text("Select Language"),
                               ),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  language = newValue!;
-                                });
-                              },
+                              // onChanged: (String? newValue) {
+                              //   setState(() {
+                              //     language = newValue!;
+                              //   });
+                              // },
+                              onChanged: null,
                               items: <String>[
                                 'English',
                               ].map<DropdownMenuItem<String>>((String value) {

@@ -15,7 +15,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String language = "English";
-  bool isDarkMode = UserTheme.isDark;
   String? email = MyHomePage.user?.email;
   String? username = MyHomePage.user?.authDetails.username;
   final TextEditingController usernameController = TextEditingController(text: "");
@@ -46,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = UserTheme.isDark;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(

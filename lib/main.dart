@@ -7,7 +7,7 @@ import 'package:franz/pages/welcome.dart';
 
 void main() async {
 
-  WidgetsFlutterBinding.ensureInitialized();
+  await WidgetsFlutterBinding.ensureInitialized();
 
   // Detect system theme
   UserTheme.isDark = (WidgetsBinding.instance.platformDispatcher.platformBrightness==Brightness.dark);
@@ -36,7 +36,6 @@ class Root extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         brightness: Brightness.dark,
       ),
       themeMode: Provider.of<UserTheme>(context).isDarkNotify ? ThemeMode.dark : ThemeMode.light,

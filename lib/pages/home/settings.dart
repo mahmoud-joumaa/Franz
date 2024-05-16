@@ -173,7 +173,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Icon(
                           Icons.nights_stay,
-                          color: UserTheme.isDark ? Colors.black : Colors.white,
+                          color: !UserTheme.isDark ? Colors.black : Colors.white,
                         ),
                       ],
                     ),

@@ -306,7 +306,7 @@ class TransriptionRow extends StatelessWidget {
           ),
         ),
         Expanded(
-          flex: 1,
+          flex: 2,
           child: NewAudioPlayerButton(
             changePlayerState: changePlayerState,
             audioLink: audioLink,

@@ -147,7 +147,7 @@ class _NewAudioPlayerButtonState extends State<NewAudioPlayerButton>
         }
         widget.changePlayerState(_key, path);
       },
-      child: _fetchingFile ? const Loading() :
+      child: _fetchingFile ? const Loading(size: 25,) :
       AnimatedIcon(
         icon: AnimatedIcons.play_pause,
         progress: _animationController,

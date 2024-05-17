@@ -323,7 +323,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                   context,
                   "Successfully logged in as ${signUpUsernameController.text}",
                   result["message"],
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
+                  UserTheme.isDark ? Colors.green[700]! : Colors.greenAccent[300]!,
                   "login"
                 );
               }

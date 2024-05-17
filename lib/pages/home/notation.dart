@@ -114,7 +114,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
         context,
         "Failed to list instruments",
         "Error code: ${response.statusCode}",
-        UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
+        UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
         "dismiss");
     }
 

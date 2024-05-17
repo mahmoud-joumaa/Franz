@@ -332,7 +332,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         context,
         "User Deleted Successfully",
         "",
-        UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
+        UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
         "logout"
       );
     }
@@ -341,7 +341,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         context,
         "Error Logging Out",
         result["message"],
-        UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
+        UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
         "dismiss"
       );
     }

@@ -107,7 +107,7 @@ class Alert {
                           context,
                           "Confirmation code successfully resent.",
                           result["message"],
-                          UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
+                          UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
                           "dismiss"
                         );
                       }
@@ -116,7 +116,7 @@ class Alert {
                           context,
                           "An error has occurred while resending the confirmation code.\nPlease try again later.",
                           result["message"],
-                          UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
+                          UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                           "ok"
                         );
                       }
@@ -134,7 +134,7 @@ class Alert {
                           context,
                           "Successfully verified ${user.authDetails.username}",
                           result["message"],
-                          UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
+                          UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
                           "login"
                         );
                       }
@@ -144,7 +144,7 @@ class Alert {
                           context,
                           "An error has occurred while verifying ${user.authDetails.username}",
                           result["message"],
-                          UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
+                          UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                           result["message"].contains("An account with the email already exists.") ? "try with a different email" : "dismiss"
                         );
                       }

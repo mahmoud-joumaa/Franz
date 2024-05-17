@@ -105,7 +105,7 @@ class _ContactScreenState extends State<ContactScreen> {
         context,
         "Failed to Open Mail App",
         "No installed mail apps were found",
-        UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
+        UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
         "dismiss",
       );
     }

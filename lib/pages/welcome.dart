@@ -265,7 +265,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                 context,
                 "An error has occurred while registering ${signUpUsernameController.text}",
                 "All fields must be non-empty and valid. Please try again.",
-                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
+                UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                 "dismiss"
               );
             }
@@ -275,7 +275,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                 context,
                 "An error has occurred while registering ${signUpUsernameController.text}",
                 "Passwords don't match",
-                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
+                UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                 "dismiss"
               );
             }
@@ -286,7 +286,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                 context,
                 "An error has occurred while registering ${signUpUsernameController.text}",
                 result["message"],
-                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
+                UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                 result["message"].contains("User is not confirmed.") ? "verify" : "dismiss",
                 result["message"].contains("User is not confirmed.") ? User(current: CognitoUser(signUpUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: signUpUsernameController.text, password: signUpPasswordController.text)) : null
               );
@@ -300,7 +300,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                 context,
                 "An error has occurred while registering ${signUpUsernameController.text}",
                 "All fields must be non-empty and valid. Please try again.",
-                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
+                UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                 "dismiss"
               );
             }
@@ -312,7 +312,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                   context,
                   "An error has occurred while signing in as ${loginUsernameController.text}",
                   result["message"],
-                  result["message"].contains("User is not confirmed.") ? UserTheme.isDark ? Colors.deepPurple[700]! : Colors.deepPurple[300]! : UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[300]!,
+                  result["message"].contains("User is not confirmed.") ? UserTheme.isDark ? Colors.deepPurple[700]! : Colors.deepPurple[300]! : UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                   result["message"].contains("User is not confirmed.") ? "verify" : "dismiss",
                   result["message"].contains("User is not confirmed.") ? User(current: CognitoUser(loginUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: loginUsernameController.text, password: loginPasswordController.text)) : null
                 );

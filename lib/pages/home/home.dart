@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   context,
                   result["message"],
                   "",
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
+                  UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
                   "logout"
                 );
               }
@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   context,
                   "Error Logging Out",
                   result["message"],
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[300]!,
+                  UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
                   "dismiss"
                 );
               }

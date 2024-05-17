@@ -76,7 +76,7 @@ class _WelcomeState extends State<Welcome> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset("assets/Franz.jpg", height: 65.0, width: 65.0),
+                          Image.asset("assets/logo.jpg", height: 65.0, width: 65.0),
                           const SizedBox(width: 20.0),
                           const Text("Franz",
                             style: TextStyle(

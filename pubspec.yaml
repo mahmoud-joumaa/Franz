@@ -50,6 +50,7 @@ dependencies:
   amazon_cognito_identity_dart_2: ^3.6.5
   xml: ^6.5.0
   open_mail_app: ^0.4.5
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:

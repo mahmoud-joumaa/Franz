@@ -19,7 +19,7 @@ String? username = MyHomePage.user?.authDetails.username;
 
 class DynamoAPI {
   static const url = "https://6o5qxygbgbhtla6jocplyoskui.appsync-api.eu-west-1.amazonaws.com/graphql";
-  static const key = "da2-wri7ol4zujfwrbwrtexkupbq7q"; // COMBAK: Hide api key
+  static const key = "da2-46impsumtffuveokab6aq64h4y"; // COMBAK: Hide api key
 }
 
 // Queries ========================================================================================

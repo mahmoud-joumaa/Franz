@@ -7,8 +7,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:franz/global.dart';
 import 'package:franz/services/authn_service.dart';
 
-// TODO: Fix the color scheme of the page
-
 // Form Inputs Start ==============================================================================
 
 final TextEditingController loginUsernameController = TextEditingController();
@@ -58,7 +56,7 @@ class _WelcomeState extends State<Welcome> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: UserTheme.isDark ? const Color(Palette.brown) : const Color(Palette.lightbrown),
+      backgroundColor: Colors.deepPurple[700],
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
@@ -78,7 +76,7 @@ class _WelcomeState extends State<Welcome> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset("assets/Franz.jpg", height: 65.0, width: 65.0),
+                          Image.asset("assets/logo.jpg", height: 65.0, width: 65.0),
                           const SizedBox(width: 20.0),
                           const Text("Franz",
                             style: TextStyle(
@@ -118,9 +116,9 @@ class _WelcomeState extends State<Welcome> {
                 right: 0,
                 child: Container(
                   padding: const EdgeInsets.all(10.0),
-                  decoration: const BoxDecoration(
-                    color: Color(Palette.orange),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple[200],
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -165,7 +163,7 @@ class _WelcomeState extends State<Welcome> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
           decoration: BoxDecoration(
-            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? const Color(Palette.orange) : Colors.transparent,
+            color: (isLogin! && title=="login") || (!isLogin! && title=="sign up") ? Colors.deepPurple[200] : Colors.transparent,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
           ),
           child: Text(
@@ -214,6 +212,8 @@ class _InputFieldState extends State<InputField> {
                     type=="password" || type=="confirm password" ? const Icon(Icons.lock_outlined) :
                     null,
         suffixIcon: type=="password" || type=="confirm password" ? IconButton(icon: _hidePassword ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off), onPressed: () {setState(() {_hidePassword = !_hidePassword;});}) : null,
+        prefixIconColor: Colors.black,
+        suffixIconColor: Colors.black,
         labelText: type!.substring(0,1).toUpperCase()+type.substring(1),
         labelStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
         enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
@@ -257,7 +257,7 @@ class _SubmitButtonState extends State<SubmitButton> {
       onPressed: () async {
         setState(() {isLoading = true;});
         if (type != "google") { // i.e. sign up with AWS Cognito
-          // User Sign Up w/ email
+          // User Sign Up w/ email ================================================================
           if (!_WelcomeState.isLogin!) {
             // Validate fields are not empty
             if (signUpUsernameController.text.isEmpty || signUpEmailController.text.isEmpty || signUpPasswordController.text.isEmpty) {
@@ -265,7 +265,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                 context,
                 "An error has occurred while registering ${signUpUsernameController.text}",
                 "All fields must be non-empty and valid. Please try again.",
-                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                 "dismiss"
               );
             }
@@ -275,35 +275,24 @@ class _SubmitButtonState extends State<SubmitButton> {
                 context,
                 "An error has occurred while registering ${signUpUsernameController.text}",
                 "Passwords don't match",
-                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                 "dismiss"
               );
             }
             else {
               dynamic result = await signUpUser(username: signUpUsernameController.text, email: signUpEmailController.text, password: signUpPasswordController.text);
-              // Error
-              if (!result["success"]) {
-                Alert.show(
-                  context,
-                  "An error has occurred while registering ${signUpUsernameController.text}",
-                  result["message"],
-                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
-                  "dismiss"
-                );
-              }
-              // No Error
-              else {
-                Alert.show(
-                  context,
-                  "Successfully created ${signUpUsernameController.text}",
-                  result["message"],
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
-                  "login"
-                );
-              }
+              // Error (An error will definitely pop up since the user has not confirmed the account yet)
+              Alert.show(
+                context,
+                "An error has occurred while registering ${signUpUsernameController.text}",
+                result["message"],
+                UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
+                result["message"].contains("User is not confirmed.") ? "verify" : "dismiss",
+                result["message"].contains("User is not confirmed.") ? User(current: CognitoUser(signUpUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: signUpUsernameController.text, password: signUpPasswordController.text)) : null
+              );
             }
           }
-          // User login w/ email
+          // User login w/ email ==================================================================
           else {
             // Validate fields are not empty
             if (loginUsernameController.text.isEmpty || loginPasswordController.text.isEmpty) {
@@ -311,7 +300,7 @@ class _SubmitButtonState extends State<SubmitButton> {
                 context,
                 "An error has occurred while registering ${signUpUsernameController.text}",
                 "All fields must be non-empty and valid. Please try again.",
-                UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+                UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
                 "dismiss"
               );
             }
@@ -323,8 +312,9 @@ class _SubmitButtonState extends State<SubmitButton> {
                   context,
                   "An error has occurred while signing in as ${loginUsernameController.text}",
                   result["message"],
-                  UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
-                  "dismiss"
+                  result["message"].contains("User is not confirmed.") ? UserTheme.isDark ? Colors.deepPurple[700]! : Colors.deepPurple[300]! : UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
+                  result["message"].contains("User is not confirmed.") ? "verify" : "dismiss",
+                  result["message"].contains("User is not confirmed.") ? User(current: CognitoUser(loginUsernameController.text, Cognito.userPool), registrationConfirmed: false, authDetails: AuthenticationDetails(username: loginUsernameController.text, password: loginPasswordController.text)) : null
                 );
               }
               // No Error
@@ -333,14 +323,14 @@ class _SubmitButtonState extends State<SubmitButton> {
                   context,
                   "Successfully logged in as ${signUpUsernameController.text}",
                   result["message"],
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
                   "login"
                 );
               }
             }
           }
         }
-        // Login w/ Google
+        // Login w/ Google ========================================================================
         else {
         }
         // Change states
@@ -349,7 +339,7 @@ class _SubmitButtonState extends State<SubmitButton> {
         await Future.delayed(const Duration(seconds: 1), () {clearInputs();});
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(const Color(Palette.yellow)),
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple[300]!),
         foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
       ),
       child: Row(

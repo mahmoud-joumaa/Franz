@@ -2,32 +2,49 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:franz/global.dart';
+import 'package:franz/services/authn_service.dart';
 import 'package:franz/pages/home/about.dart';
 import 'package:franz/pages/home/contact.dart';
 import 'package:franz/pages/home/settings.dart';
 import 'package:franz/pages/home/transcribe.dart';
 import 'package:franz/pages/home/new_transcription.dart';
 
-/* ================================================================================================
-Currently logged in user start
-================================================================================================ */
-
-// TODO: Add user credentials from login screen
-
-/* ================================================================================================
-Currently logged in user end
-================================================================================================ */
-
 class MyHomePage extends StatefulWidget {
+
   const MyHomePage({super.key, required this.title});
 
   final String title;
+
+  // Currently logged in user =====================================================================
+  static User? user;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialzie proper user attributes
+    fetchUserAttributes(MyHomePage.user!).then((res) {
+      for (final attribute in res["attributes"]) {
+        switch (attribute.getName()) {
+          case "email":
+            MyHomePage.user!.email = attribute.getValue();
+            break;
+          case "profile":
+            MyHomePage.user!.profileUrl = attribute.getValue();
+            break;
+          case "custom:preferred_instrument":
+            MyHomePage.user!.preferredInstrument = attribute.getValue();
+            break;
+        }
+      }
+    });
+  }
 
   int currentPageIndex = 1;
 
@@ -55,15 +72,13 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             onPressed: () async {
-              // FIXME: Fix after handling user credentials from login screen
-              /*
-              dynamic result = await signOutCurrentUser();
+              dynamic result = await signOutCurrentUser(MyHomePage.user!);
               if (result["success"]) {
                 Alert.show(
                   context,
                   result["message"],
                   "",
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
                   "logout"
                 );
               }
@@ -72,11 +87,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   context,
                   "Error Logging Out",
                   result["message"],
-                  UserTheme.isDark ? Colors.greenAccent[700]! : Colors.greenAccent[100]!,
+                  UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
                   "dismiss"
                 );
               }
-              */
             },
             icon: const Icon(Icons.logout)
           )

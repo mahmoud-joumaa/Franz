@@ -1,5 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:franz/global.dart';
+import 'package:franz/pages/home/home.dart';
+import 'package:franz/services/authn_service.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -10,40 +15,86 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String language = "English";
-  bool isDarkMode = false;
-  final TextEditingController usernameController = TextEditingController(text: "USERNAME");
+  String? email = MyHomePage.user?.email;
+  String? username = MyHomePage.user?.authDetails.username;
+  final TextEditingController usernameController = TextEditingController(text: "");
   final TextEditingController emailController = TextEditingController(text: "EMAIL");
   final TextEditingController passwordController = TextEditingController(text: "");
   final TextEditingController codeController = TextEditingController(text: "");
   bool _hidePassword = true;
-  String preferedInstrument = 'Piano';
+  late String preferredInstrument;
+  // ignore: non_constant_identifier_names
+  List<String> instrument_classes = Instruments.midiInstruments.keys.toList();
+
+
+  @override
+  void initState(){
+    super.initState();
+    usernameController.text = username!;
+    emailController.text = email!;
+    instrument_classes.add('None');
+
+    if(MyHomePage.user?.preferredInstrument != 'None'){
+      preferredInstrument = MyHomePage.user!.preferredInstrument!;
+    }
+    else{
+      preferredInstrument = Instruments.midiInstruments.keys.toList().first;
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = UserTheme.isDark;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar( // TODO: Get from cognito
-                  radius: 50,
-                  backgroundImage: NetworkImage(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb5ay974Ak1bGFIDStEQaYK7qK60bzbbmczDft-ao-Xw&s'),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        TextEditingController controller = TextEditingController(text: MyHomePage.user!.profileUrl);
+                        return AlertDialog(
+                          title: const Text("Enter URL of new image"),
+                          content: TextField(
+                            controller: controller,
+                          ),
+                          actions: [
+                            IconButton(
+                              onPressed: () async {
+                                await updateUserAttribute(MyHomePage.user!, "profile", controller.text);
+                                setState(() { MyHomePage.user!.profileUrl = controller.text; });
+                                Navigator.of(context).pop();
+                              },
+                              icon: const Icon(Icons.check)
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: NetworkImage(MyHomePage.user!.profileUrl ?? "https://i.pinimg.com/736x/cb/2c/53/cb2c538ff848a8b6f9162d20cc0e32d0.jpg"),
+                  ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 30,
                 ),
                 Column(
                   children: [
-                    Text(
+                    const Text(
                       "Welcome,",
                     ),
                     Text(
-                      "Username",
-                      style: TextStyle(fontSize: 20),
+                      username!,
+                      style: const TextStyle(fontSize: 20),
                     ),
                   ],
                 )
@@ -74,11 +125,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 border: OutlineInputBorder(),
                                 label: Text("Select Language"),
                               ),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  language = newValue!;
-                                });
-                              },
+                              // onChanged: (String? newValue) {
+                              //   setState(() {
+                              //     language = newValue!;
+                              //   });
+                              // },
+                              onChanged: null,
                               items: <String>[
                                 'English',
                               ].map<DropdownMenuItem<String>>((String value) {
@@ -101,13 +153,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           value: isDarkMode,
                           onChanged: (value) {
                             setState(() {
-                              isDarkMode = value;
+                              Provider.of<UserTheme>(context, listen: false).toggleTheme(value);
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Row(
+                                      children: [
+                                        Icon(UserTheme.isDark?Icons.dark_mode:Icons.light_mode),
+                                        const SizedBox(width: 10.0),
+                                        Text("Applied ${UserTheme.isDark?'Dark':'Light'} Theme", style: const TextStyle(fontSize: 15.0)),
+                                      ]
+                                    ),
+                                  );
+                                },
+                              );
                             });
                           },
                         ),
-                        const Icon(
+                        Icon(
                           Icons.nights_stay,
-                          color: Colors.black,
+                          color: !UserTheme.isDark ? Colors.black : Colors.white,
                         ),
                       ],
                     ),
@@ -130,16 +196,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       decoration: const InputDecoration(
                                         hintText: 'Select item',
                                         border: OutlineInputBorder(),
-                                        labelText: "Prefered Instrument Class"
+                                        labelText: "Preferred Instrument Class"
+
                                       ),
-                                      value: preferedInstrument,
+                                      value: preferredInstrument,
                                       // Set the current selected item
                                       onChanged: (String? value) {
-                                        setState(() {
-                                          preferedInstrument = value!;
+                                        setState(() async {
+                                          await updateUserAttribute(MyHomePage.user!, "custom:preferred_instrument", value!);
+                                          preferredInstrument = value;
+                                          MyHomePage.user?.preferredInstrument = preferredInstrument;
                                         });
                                       },
-                                      items: Instruments.midiInstruments.keys.toList().map<DropdownMenuItem<String>>((
+                                      items: instrument_classes.map<DropdownMenuItem<String>>((
                                           String item) {
                                         return DropdownMenuItem<String>(
                                           value: item,
@@ -157,7 +226,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     Expanded(
                       child: Card(
-                        color: Colors.grey[200],
                         child: Container(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
@@ -169,6 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   border: OutlineInputBorder(),
                                   label: Text("Change Username"),
                                 ),
+                                enabled: false,
                               ),
                               TextField(
                                 controller: emailController,
@@ -176,6 +245,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   border: OutlineInputBorder(),
                                   label: Text("Change Email"),
                                 ),
+                                enabled: false,
                               ),
                               TextField(
                                 controller: passwordController,
@@ -186,12 +256,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                                 ),
                                 obscureText: _hidePassword,
+                                enabled: false,
                               ),
                               Row(
                                 children: [
                                   TextButton(
-                                      onPressed: () =>
-                                          usernameController.text = "USERNAME",
+                                      onPressed: () {},
+                                          // usernameController.text = "USERNAME",
                                       child: const Text("Cancel")),
                                   const Spacer(),
                                   TextButton(
@@ -206,43 +277,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                   ],
-                ),
-              ),
-            ),
-            Card(
-              // ignore: sized_box_for_whitespace
-              child: Container(
-                height: 200,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                          margin: const EdgeInsets.only(bottom: 15),
-                          alignment: Alignment.centerLeft,
-                          child: const Text("Verify Email", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
-                      ),
-                      TextField(
-                        controller: codeController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text("Enter Code"),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          TextButton(
-                            onPressed: resendCode,
-                            child: const Text("Resend Code")),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: verifyAccount,
-                            child: const Text("Verify Account")),
-                        ],
-                      )
-                    ],
-                  ),
                 ),
               ),
             ),
@@ -269,7 +303,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                         Center(
                           child: TextButton(
-                              onPressed: () => displayWarning(deleteAccount),
+                              onPressed: () async {
+                                await deleteAccount(context);
+                              },
                               child: const Text("Delete Account")),
                         ),
 
@@ -287,7 +323,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
 
-  void deleteAccount() {
+  deleteAccount(context) async {
+    Alert.load(context);
+    final result = await deleteUser(MyHomePage.user!);
+    Navigator.of(context).pop();
+    if (result["success"]) {
+      Alert.show(
+        context,
+        "User Deleted Successfully",
+        "",
+        UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
+        "logout"
+      );
+    }
+    else {
+      Alert.show(
+        context,
+        "Error Logging Out",
+        result["message"],
+        UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
+        "dismiss"
+      );
+    }
   }
 
   void displayWarning(void Function() func) {
@@ -343,9 +400,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
         });
   }
 
-  void verifyAccount() {
-  }
-
-  void resendCode() {
-  }
 }

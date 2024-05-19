@@ -1,4 +1,9 @@
 import "package:amazon_cognito_identity_dart_2/cognito.dart";
+import "package:graphql_flutter/graphql_flutter.dart";
+import 'package:http/http.dart' as http;
+
+import "package:franz/pages/home/home.dart";
+import "package:franz/services/api_service.dart";
 
 // Base Entities ==================================================================================
 
@@ -10,19 +15,34 @@ class Cognito {
 
 class User {
 
+  bool isLoggedIn = false;
+
+  // Cognito Authentication
   CognitoUser current;
   bool registrationConfirmed;
   AuthenticationDetails authDetails;
   CognitoUserSession? session;
+  String? token;
 
+  // Custom Attributes
+  String? email;
+  String? profileUrl;
+  String? preferredInstrument;
+
+  // Constructor
   User({required this.current, required this.registrationConfirmed, required this.authDetails});
+
+  // toString() to print for debugging purposes
+  @override
+  String toString() {
+    return "[Username]: ${authDetails.username}\n\t[Email]: $email\n\t[Profile URL]: $profileUrl\n\t[Preferred Instrument]: $preferredInstrument";
+  }
 
 }
 
 /* ================================================================================================
 User Sign Up
 ================================================================================================ */
-
 
 signUpUser({required username, required email, required password}) async {
   try {
@@ -36,7 +56,7 @@ signUpUser({required username, required email, required password}) async {
     if (result["success"]) {
       return {
         "success": true,
-        "message": "Successfully registered as $username"
+        "message": "Successfully registered as $username\n\n${result.message}"
       };
     }
     else {
@@ -52,6 +72,13 @@ signUpUser({required username, required email, required password}) async {
       "message": e.message
     };
   }
+  // Email already exists error (configured as a lambda pre-sign up trigger)
+  catch (e) {
+    return {
+      "success": false,
+      "message": e.toString()
+    };
+  }
 }
 
 /* ================================================================================================
@@ -61,18 +88,17 @@ User Sign In
 signInUser(User user) async {
   try {
     final result = await authenticateUser(user);
-    if (result["success"]) {
-      return {
-        "success": true,
-        "message": result["message"]
-      };
+    if (result["success"] == true) {
+      // Inittialize the user object
+      MyHomePage.user = User(current: user.current, registrationConfirmed: user.registrationConfirmed, authDetails: user.authDetails);
+      MyHomePage.user!.isLoggedIn = true;
+      MyHomePage.user!.session = result["session"];
+      MyHomePage.user!.token = result["token"];
     }
-    else {
-      return {
-        "success": false,
-        "message": result["message"]
-      };
-    }
+    return {
+      "success": result["success"],
+      "message": result["message"]
+    };
   }
   on CognitoClientException catch (e) {
     return {
@@ -88,7 +114,8 @@ User Sign Out
 
 signOutCurrentUser(User user) async {
   await user.current.signOut();
-  await user.current.globalSignOut(); // invalidates all issued tokens
+  // await user.current.globalSignOut(); // IDEA: invalidates all issued tokens
+  MyHomePage.user = null;
   return {
     "success": true,
     "message": "${user.authDetails.username} signed out successfully"
@@ -105,6 +132,7 @@ authenticateUser(User user) async {
     return {
       "success": true,
       "message": "Logged in successfully as ${user.authDetails.username}",
+      "session": session,
       "token": session!.getAccessToken().getJwtToken()
     };
   }
@@ -159,10 +187,10 @@ authenticateUser(User user) async {
   }
   on CognitoClientException catch (e) {
     // handle user is not confirmed error
-    if (e.message == "User is not confirmed.") {
+    if (e.message!.contains("User is not confirmed.")) {
       return {
-        "success": true,
-        "message": "Logged in successfully as ${user.authDetails.username}\n\n${e.message}\nRemember to confirm your account on the settings screen :)"
+        "success": false,
+        "message": "Welcome, ${user.authDetails.username}\n\n${e.message}\nYou have not confirmed your email yet. To do so, please enter the verification code sent to your email address on the following screen.\nIf you've lost the code, choose the \"resend code\" option.\nIf you've entered the wrong email address, kindly send an email to franz.transcriber@gmail.com with the subject line \"Change Email Address For Verification\". Be sure to include your username and the new email address in the email body.\nOnce you've entered the code, please wait patiently while the brief verification finalizes :)"
       };
     }
     // handle Wrong Username and Password and Cognito Client
@@ -230,7 +258,7 @@ confirmUser(User user, String confirmationCode) async {
     user.registrationConfirmed = await user.current.confirmRegistration(confirmationCode);
     return {
       "success": true,
-      "message": "Confirmation Successful!"
+      "message": "You can now log in to your account!"
     };
   }
   on CognitoClientException catch (e) {
@@ -244,6 +272,10 @@ confirmUser(User user, String confirmationCode) async {
 resendConfirmationCode(User user) async {
   try {
     await user.current.resendConfirmationCode();
+    return {
+      "success": true,
+      "message": "Please check your spam and junk folders if the code is not present in your inbox."
+    };
   }
   on CognitoClientException catch (e) {
     return {
@@ -257,8 +289,24 @@ resendConfirmationCode(User user) async {
 
 deleteUser(User user) async {
   try {
+    // Delete user data on dynamo and s3 (make sure to get the most recent list of transcriptions first)
+    GraphQLClient client = DynamoGraphQL.initializeClient();
+    final getUserTranscriptions = """query listTranscriptions {
+      listTranscriptions(filter: {account_id: {eq: "${MyHomePage.user!.authDetails.username}"}}) {
+        items {
+          account_id
+          transcription_id
+        }
+      }
+    }""";
+    final queryResult = await client.query(QueryOptions(document: gql(getUserTranscriptions)));
+    final transcriptions = queryResult.data!['listTranscriptions']?['items'];
+    for (final transcription in transcriptions) {
+      final url = Uri.parse('https://lhflvireis7hjn2rrqq45l37wi0ajcbp.lambda-url.eu-west-1.on.aws/?account_id=${Uri.encodeComponent(transcription["account_id"])}&transcription_id=${Uri.encodeComponent(transcription["transcription_id"])}');
+      http.get(url);
+    }
+    // Delete user account on cognito
     await user.current.deleteUser();
-    // TODO: invoke delete lambda here
     return {
       "success": true,
       "message": "${user.authDetails.username} deleted successfully"
@@ -268,6 +316,12 @@ deleteUser(User user) async {
     return {
       "success": false,
       "message": e.message
+    };
+  }
+  catch (e) { // Errors triggered from the invoked lambda
+    return {
+      "success": false,
+      "message": e.toString()
     };
   }
 }

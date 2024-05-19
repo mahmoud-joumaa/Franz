@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:franz/components/audio_recorder.dart';
+import 'package:franz/pages/home/home.dart';
 import 'package:http/http.dart' as http;
 
 class NewTransScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _NewTransScreenState extends State<NewTransScreen> {
   String? audioPath = "";
   final TextEditingController titleController = TextEditingController();
   bool _isTranscribing = false;
-  String username = "ahmadlb";
+  String? username = MyHomePage.user?.authDetails.username;
 
   @override
   void initState() {
@@ -79,7 +80,7 @@ class _NewTransScreenState extends State<NewTransScreen> {
       String url = 'https://audio-unprocessed-1.s3.amazonaws.com/';
       result = await uploadToS3(
           uploadUrl: url,
-          data: {"key": '${parseToUrlString(username)}/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(audioPath!.split('/').last)}'},
+          data: {"key": '${parseToUrlString(username!)}/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(audioPath!.split('/').last)}'},
           fileAsBinary: file,
           filename: audioPath!.split('/').last
       );
@@ -87,7 +88,7 @@ class _NewTransScreenState extends State<NewTransScreen> {
       List<int> file = await getFileBytes(_selectedFileName);
       DateTime now = DateTime.now();
       String url = 'https://audio-unprocessed-1.s3.eu-west-1.amazonaws.com/';
-      String key = '${parseToUrlString(username)}/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(_selectedFileName.split('/').last)}';
+      String key = '${parseToUrlString(username!)}/${parseToUrlString(titleController.text)}::${now.millisecondsSinceEpoch ~/ 1000}/${parseToUrlString(_selectedFileName.split('/').last)}';
       result = await uploadToS3(
           uploadUrl: url,
           data: {"key": key},
@@ -195,9 +196,9 @@ class _NewTransScreenState extends State<NewTransScreen> {
   }
 
   Future<dynamic> callYTDownload() async {
-    final encodedYoutubeUrl = Uri.encodeComponent(_ytlink.text);
+    final encodedYoutubeUrl = Uri.encodeQueryComponent(_ytlink.text);
     // print(encodedYoutubeUrl);
-    final url = Uri.parse('https://cunmicltthdzba3akzwazo34q40xikyz.lambda-url.eu-west-1.on.aws?url=$encodedYoutubeUrl&username=${parseToUrlString(username)}&song_title=${parseToUrlString(titleController.text)}');
+    final url = Uri.parse('https://cunmicltthdzba3akzwazo34q40xikyz.lambda-url.eu-west-1.on.aws?url=$encodedYoutubeUrl&username=${parseToUrlString(username!)}&song_title=${parseToUrlString(titleController.text)}');
 
     // print(url);
     final response = await http.get(url);

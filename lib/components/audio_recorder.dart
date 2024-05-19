@@ -8,7 +8,6 @@ import 'package:record/record.dart';
 import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:record/record.dart';
 
 
 mixin AudioRecorderMixin {
@@ -101,7 +100,7 @@ class _RecorderState extends State<Recorder> with AudioRecorderMixin {
         final devs = await _audioRecorder.listInputDevices();
         debugPrint(devs.toString());
 
-        const config = RecordConfig(encoder: encoder, numChannels: 1);
+        const config = RecordConfig(encoder: encoder, numChannels: 1, bitRate: 256000);
         // Record to file
         // await recordFile(_audioRecorder, config);
 

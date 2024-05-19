@@ -1,27 +1,30 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:franz/global.dart';
+import 'package:franz/pages/home/home.dart';
 import 'package:franz/pages/home/notation.dart';
 import 'package:franz/components/audio_player.dart';
 import 'package:franz/services/api_service.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart' as http;
 
 /* ================================================================================================
 DynamoDB API Start
 ================================================================================================ */
 
-const username = "jelzein"; // Username to use for queries
+String? username = MyHomePage.user?.authDetails.username;
+// String? username = 'jelzein';
 
 // Connection Initialization ======================================================================
 
 class DynamoAPI {
   static const url = "https://6o5qxygbgbhtla6jocplyoskui.appsync-api.eu-west-1.amazonaws.com/graphql";
-  static const key = "da2-wri7ol4zujfwrbwrtexkupbq7q"; // COMBAK: Hide api key
+  static const key = "da2-46impsumtffuveokab6aq64h4y"; // COMBAK: Hide api key
 }
 
 // Queries ========================================================================================
 
-const getUserTranscriptions = """query listTranscriptions {
+var getUserTranscriptions = """query listTranscriptions {
   listTranscriptions(filter: {account_id: {eq: "$username"}}) {
     items {
       account_id
@@ -133,10 +136,11 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
         else {
           for (final item in responseItems) { // title, date, transcriptionLink, audioLink
             info.add({
+              "id": item['transcription_id'],
               "title": item["title"],
               "date": item["transcription_date"],
-              "transcriptionLink": '${item["s3_bucket"]}/result.pdf', // FIXME: Fix link addresses
-              "audioLink": '${item["s3_bucket"]}/result.mid', // FIXME: Fix link addresses
+              "transcriptionLink": '${item["s3_bucket"]}/result.pdf',
+              "audioLink": "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(item['transcription_id'])}/result.mid",
             });
           }
           setState(() { status = "done"; });
@@ -145,35 +149,71 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
     });
   }
 
+  //s3://audio-unprocessed-1/jelzein/PostmanTestActual-1715161105/
+  String getUrl(String title){
+    return "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(title)}/result.mid";
+  }
+
   renderTranscriptions() async {
     return await client.query(QueryOptions(document: gql(getUserTranscriptions)));
   }
 
   @override
   Widget build(BuildContext context) {
-    return status == "loading" ? const Loading(backgroundColor: Colors.white, color: Colors.deepPurple) : Padding(
+    return status == "loading" ? const Loading() : Padding(
       padding: const EdgeInsets.all(16.0),
-      child: status == "empty" ? const Center(child: Text("It appears you don't have any transcriptions yet!\nUse the plus button to start transcribing your favorite tunes!", textAlign: TextAlign.center)) : Column(
+      child: Column(
         children: [
           Expanded(
             flex: 1,
-            child: TextField(
-              decoration: InputDecoration(
-                suffixIcon:
-                    Icon(Icons.search, color: Theme.of(context).primaryColor),
-                border: const OutlineInputBorder(),
-                label: const Text("Search your transcriptions"),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchValue = value;
-                });
-              },
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      suffixIcon:
+                          Icon(Icons.search, color: Theme.of(context).primaryColor),
+                      border: const OutlineInputBorder(),
+                      label: const Text("Search your transcriptions"),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _searchValue = value;
+                      });
+                    },
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    setState(() {status = "loading";});
+                    await Future.delayed(const Duration(seconds: 1), () {});
+                    final result = await renderTranscriptions();
+                    var responseItems = result.data?['listTranscriptions']?['items'];
+                    if (responseItems.isEmpty) {
+                      setState(() { info = []; status = "empty"; });
+                    }
+                    else {
+                      List<Map<String, dynamic>> newInfo = [];
+                      for (final item in responseItems) { // title, date, transcriptionLink, audioLink
+                        newInfo.add({
+                          "id": item['transcription_id'],
+                          "title": item["title"],
+                          "date": item["transcription_date"],
+                          "transcriptionLink": '${item["s3_bucket"]}/result.pdf',
+                          "audioLink": "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(item['transcription_id'])}/result.mid",
+                        });
+                      }
+                      setState(() { info = newInfo; status = "done"; });
+                    }
+                  },
+                  icon: const Icon(Icons.refresh)
+                ),
+              ],
             ),
           ),
           Expanded(
             flex: 6,
-            child: ListView.separated(
+            child: status == "empty" ? const Center(child: Text("It appears you don't have any transcriptions yet!\nUse the plus button to start transcribing your favorite tunes!", textAlign: TextAlign.center)) : ListView.separated(
               separatorBuilder: (context, index) => const Divider(),
               itemCount: info.length,
               itemBuilder: (context, index) {
@@ -190,6 +230,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
                     changePlayerState: changePlayer,
                     currentPlayingKey: _currentPlaying,
                     onButtonPressed: stopAudio,
+                    id: info[index]['id'],
                   ),
                 );
               },
@@ -204,6 +245,7 @@ class _TranscribeScreenState extends State<TranscribeScreen> with WidgetsBinding
 class TransriptionRow extends StatelessWidget {
   final String title;
   final String date;
+  final String id;
   final String transcriptionLink;
   final String audioLink;
   final AudioPlayer audioPlayer;
@@ -221,6 +263,7 @@ class TransriptionRow extends StatelessWidget {
     required this.changePlayerState,
     required this.currentPlayingKey,
     required this.onButtonPressed,
+    required this.id,
   });
 
 
@@ -229,6 +272,15 @@ class TransriptionRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        Expanded(
+          flex: 2,
+          child: TextButton(
+            onPressed: () async {
+              await deleteTranscription(context, id);
+            },
+            child: const Icon(Icons.delete),
+          ),
+        ),
         Expanded(
           flex: 5,
           child: Text(title),
@@ -249,6 +301,7 @@ class TransriptionRow extends StatelessWidget {
                   builder: (context) => SheetMusicViewerScreen(
                     link: transcriptionLink,
                     title: title,
+                    id: id,
                   ),
                 ),
               );
@@ -256,14 +309,31 @@ class TransriptionRow extends StatelessWidget {
           ),
         ),
         Expanded(
-          flex: 1,
+          flex: 2,
           child: NewAudioPlayerButton(
             changePlayerState: changePlayerState,
             audioLink: audioLink,
             playingKey: currentPlayingKey,
           ),
         ),
+
       ],
     );
   }
+
+  deleteTranscription(context, transcriptionId) async {
+    Alert.load(context);
+    final url = Uri.parse('https://lhflvireis7hjn2rrqq45l37wi0ajcbp.lambda-url.eu-west-1.on.aws/?account_id=${Uri.encodeComponent(MyHomePage.user!.authDetails.username!)}&transcription_id=${Uri.encodeComponent(transcriptionId)}');
+    await http.get(url);
+    Navigator.of(context).pop();
+    Alert.show(
+      context,
+      "Your transcription has been deleted.",
+      "Please refresh to see the changes.",
+      UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
+      "ok"
+    );
+    Navigator.of(context).pop();
+  }
+
 }

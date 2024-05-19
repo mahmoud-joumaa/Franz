@@ -43,7 +43,8 @@ class DynamoGraphQL {
     // DynamoDB Endpoint
     final HttpLink httpLink = HttpLink(DynamoAPI.url, defaultHeaders: {"x-api-key": DynamoAPI.key});
     // Initialize Client
-    GraphQLClient client = GraphQLClient(link: httpLink, cache: GraphQLCache(store: InMemoryStore()));
+    final policies = Policies(fetch: FetchPolicy.networkOnly);
+    GraphQLClient client = GraphQLClient(link: httpLink, cache: GraphQLCache(store: InMemoryStore()), defaultPolicies: DefaultPolicies(watchQuery: policies, query: policies, mutate: policies));
 
     return client;
 

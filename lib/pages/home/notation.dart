@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:franz/components/audio_player.dart';
 import 'package:franz/global.dart';
+import 'package:franz/pages/home/home.dart';
 import 'package:franz/services/api_service.dart';
 import 'package:franz/pages/home/convert.dart';
 import 'package:http/http.dart' as http;
@@ -13,11 +14,13 @@ import 'package:xml/xml.dart';
 class SheetMusicViewerScreen extends StatefulWidget {
   final String link;
   final String title;
+  final String id;
 
   const SheetMusicViewerScreen({
     super.key,
     required this.link,
     required this.title,
+    required this.id,
   });
 
   @override
@@ -34,8 +37,8 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
   final AudioPlayer _audioPlayer = AudioPlayer();
   List<String> instruments = [];
   String selectedInstrument = '';
-  String username = "jelzein";
-  String title = 'beat it::123123123';
+  String? username = MyHomePage.user?.authDetails.username;
+  String? preferredInstrument = MyHomePage.user?.preferredInstrument;
 
   @override
   void initState() {
@@ -44,21 +47,17 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
   }
 
   String parseToUrlString(String input) {
-    // Replace spaces with plus signs
-    String urlEncoded = input.replaceAll(' ', '+');
-
-    // Encode special characters
-    String urlEncodedSpecial = Uri.encodeFull(urlEncoded);
-
-    return urlEncodedSpecial;
+    String encoded = Uri.encodeComponent(input);
+    return encoded;
   }
 
 
   Future<void> getRequriedData(context) async {
-    await listFoldersInFolder(context, "audio-transcribed-1", "jelzein/beat+it%3A%3A123123123/");
     String parsedInstrument = parseToUrlString(selectedInstrument);
-    String pdfURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/$parsedInstrument/result.pdf";
-    String audioURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username)}/${parseToUrlString(title)}/$parsedInstrument/result.mid";
+
+    String pdfURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(widget.id)}/${parsedInstrument.replaceAll(' ', '+')}/result.pdf";
+    String audioURL = "https://audio-transcribed-1.s3.eu-west-1.amazonaws.com/${parseToUrlString(username!)}/${parseToUrlString(widget.id)}/${parsedInstrument.replaceAll(' ', '+')}/result.mid";
+    await listFoldersInFolder(context, "audio-transcribed-1", parseToUrlString("${username!}/${widget.id}/"));
     _localFilePath = await ApiService().loadPDF(pdfURL);
     _localAudioPath = await ApiService().loadAudio(audioURL);
   }
@@ -84,25 +83,38 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
       element
           .findElements('Prefix')
           .first
-          .innerText)
+          // ignore: deprecated_member_use
+          .text)
           .toList();
-
+      print(folderNames);
       instruments = folderNames.map((f) =>
           f.split('/').elementAt(f
               .split('/')
               .length - 2)).toList();
 
-      if (selectedInstrument == '') {
-        selectedInstrument = instruments.first;
+      if(selectedInstrument == '') {
+        if (preferredInstrument == null || preferredInstrument == 'None') {
+          selectedInstrument = instruments.first;
+        }
+        else {
+          for (String instrument in instruments) {
+            for (var entry in Instruments.midiInstruments.entries) {
+              if (entry.value.contains(instrument)) {
+                selectedInstrument = instrument;
+                break;
+              }
+            }
+            if (selectedInstrument != '') break;
+          }
+        }
       }
-
     }
     else {
       Alert.show(
         context,
         "Failed to list instruments",
         "Error code: ${response.statusCode}",
-        UserTheme.isDark ? Colors.redAccent[700]! : Colors.redAccent[100]!,
+        UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
         "dismiss");
     }
 
@@ -143,7 +155,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
         future: getRequriedData(context), // Replace with your method to get PDF URL
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: Loading());
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
@@ -165,7 +177,7 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      ConvertScreen(title: widget.title, items: instruments,),
+                                      ConvertScreen(title: widget.title, items: instruments, id: widget.id),
                                 ),
                               );
                           },
@@ -203,12 +215,24 @@ class _SheetMusicViewerScreenState extends State<SheetMusicViewerScreen> with Wi
                       ],
                     ),
                     Text(errorMessage),
-                    Expanded(
+                    FutureBuilder<void>(
+                    future: getRequriedData(context), // Replace with your method to get PDF URL
+                    builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: Loading());
+                    } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                    } else {
+                    return Expanded(
                       child: _localFilePath == ""
-                          ? const Center(child: CircularProgressIndicator())
+                          ? const Center(child: Loading())
                           : PDFView(
                         filePath: _localFilePath,
                       ),
+                    );
+
+                    }
+                    }
                     ),
                   ],
                 ),

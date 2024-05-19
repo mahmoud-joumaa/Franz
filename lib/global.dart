@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import 'package:franz/services/authn_service.dart';
+
 /* ================================================================================================
 User Theme
 ================================================================================================ */
@@ -31,22 +33,23 @@ class Palette {
 }
 
 /* ================================================================================================
-Dialog Pop Up
+Dialog Pop Ups
 ================================================================================================ */
 
 class Alert {
-  static show(context, String title, content, Color backgroundColor, String type) {
+
+  static show(context, String title, content, Color backgroundColor, String type, [User? user]) {
     type = type.toLowerCase(); // For comparison checks
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
+        title: Text(title, style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
+        content: Text(content, style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
         backgroundColor: backgroundColor,
         actions: [
           TextButton(
-            child: Text(type.toUpperCase()),
+            child: Text(type.toUpperCase(), style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
             onPressed: () async {
               switch (type) {
                 case "exit":
@@ -59,6 +62,9 @@ class Alert {
                 case "logout":
                   Navigator.pushReplacementNamed(context, "WelcomeScreen");
                   break;
+                case "verify":
+                  Navigator.of(context).pop();
+                  Alert.confirmCode(context, title, backgroundColor, user!);
                 default:
                   Navigator.of(context).pop();
               }
@@ -68,6 +74,112 @@ class Alert {
       ),
     );
   }
+
+  static confirmCode(context, String title, Color backgroundColor, User user) {
+    TextEditingController codeController = TextEditingController();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title, style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
+        backgroundColor: backgroundColor,
+        content: TextField(
+          controller: codeController,
+          autocorrect: false,
+          enableSuggestions: false,
+          obscureText: false,
+        ),
+        actions: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  TextButton(
+                    child: Text("Resend Code", style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
+                    onPressed: () async {
+                      Alert.load(context);
+                      final result = await resendConfirmationCode(user);
+                      Navigator.of(context).pop();
+                      if (result["success"]) {
+                        Alert.show(
+                          context,
+                          "Confirmation code successfully resent.",
+                          result["message"],
+                          UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
+                          "dismiss"
+                        );
+                      }
+                      else {
+                        Alert.show(
+                          context,
+                          "An error has occurred while resending the confirmation code.\nPlease try again later.",
+                          result["message"],
+                          UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
+                          "ok"
+                        );
+                      }
+                    }
+                  ),
+                  TextButton(
+                    child: Text("Confirm Code", style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
+                    onPressed: () async {
+                      Alert.load(context);
+                      final result = await confirmUser(user, codeController.text);
+                      if (result["success"]) {
+                        await signInUser(user);
+                        Navigator.of(context).pop();
+                        Alert.show(
+                          context,
+                          "Successfully verified ${user.authDetails.username}",
+                          result["message"],
+                          UserTheme.isDark ? Colors.green[700]! : Colors.green[300]!,
+                          "login"
+                        );
+                      }
+                      else {
+                        Navigator.of(context).pop();
+                        Alert.show(
+                          context,
+                          "An error has occurred while verifying ${user.authDetails.username}",
+                          result["message"],
+                          UserTheme.isDark ? Colors.red[700]! : Colors.red[300]!,
+                          result["message"].contains("An account with the email already exists.") ? "try with a different email" : "dismiss"
+                        );
+                      }
+                    }
+                  ),
+                ],
+              ),
+              TextButton(
+                  child: Text("Dismiss", style: TextStyle(color: UserTheme.isDark ? Colors.white : Colors.black)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }
+              ),
+            ],
+          ),
+        ]
+      )
+    );
+  }
+
+  static load(context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => const AlertDialog(
+        backgroundColor: Colors.transparent,
+        content: SizedBox(
+          height: 50.0,
+          width: 50.0,
+          child: Loading(backgroundColor: Colors.white, color: Colors.deepPurple)
+        ),
+      )
+    );
+  }
+
 }
 
 /* ================================================================================================
@@ -87,11 +199,11 @@ class Loading extends StatelessWidget {
     return Center(
       child: Container(
         decoration: BoxDecoration(
-          color: backgroundColor ?? (UserTheme.isDark ? Colors.black : const Color(Palette.orange)),
+          color: backgroundColor ?? Colors.transparent,
           borderRadius: const BorderRadius.all(Radius.circular(5.0)),
         ),
         child: SpinKitFadingCircle(
-          color: color ?? (UserTheme.isDark ? const Color(Palette.orange) : Colors.black),
+          color: color ?? (UserTheme.isDark ? Colors.deepPurple[200] : Colors.deepPurple[800]),
           size: size ?? 50.0,
         ),
       ),

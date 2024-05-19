@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:franz/global.dart';
 import 'package:franz/services/api_service.dart';
 
 class AudioPlayerButton extends StatefulWidget {
@@ -146,7 +147,7 @@ class _NewAudioPlayerButtonState extends State<NewAudioPlayerButton>
         }
         widget.changePlayerState(_key, path);
       },
-      child: _fetchingFile ? const CircularProgressIndicator():
+      child: _fetchingFile ? const Loading(size: 25,) :
       AnimatedIcon(
         icon: AnimatedIcons.play_pause,
         progress: _animationController,
